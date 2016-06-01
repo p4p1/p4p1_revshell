@@ -123,22 +123,37 @@ int client(char *hostname, int portno)
         	return 1;
     	}
 
-	/*for(i = 0; i < 1024 && (c = getchar()) != EOF; i++){
-		buf[i] = c;
-	}*/
+	for(i = 0; i < 1024 && (c = getchar()) != '\n'; i++){
+                buf[i] = c;
+        }
 
-	fscanf(stdin, " %s", buf);
-	
-	int sent = 0;
-	while(sent < BUFSIZE){
-		char *ptr = &buf[sent];
-		send(s, ptr, strlen(buf), 0);
-		sent++;
-	}
+        buf[i+1] = '\0';
 
-	printf("%s", buf);
+        printf("%s\n", buf);
 
-	return 0;
+        //fscanf(stdin, " %s", buf);
+        int bytesSent;
+        int bytesRecv = SOCKET_ERROR;
+
+        bytesSent = send(s, buf, strlen(buf), 0);
+
+        while(bytesRecv == SOCKET_ERROR){
+                bytesRecv = recv(s, buf, strlen(buf), 0);
+                if(bytesRecv == 0 || bytesRecv == WSAECONNRESET){
+                        printf("Client: Connection Closed.\n");
+                        break;
+                } else {
+                        printf("Client: recv() is OK.\n");
+                        printf("Client: Bytes received: %ld\n", bytesRecv);
+                        printf("data received: %s\n", buf);
+                }
+        }
+
+        printf("%s", buf);
+
+        WSACleanup();
+        return 0;
+
 }
 
 int server(int portno)
