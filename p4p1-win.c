@@ -12,44 +12,11 @@
 #include <sys/types.h>
 #include <io.h>
 #include <winsock2.h>
-
-#pragma comment(lib, "ws2_32.lib")	//winsock library
+#include <windows.h>
 
 #define BUFSIZE 1024
 #define str(a) #a
 #define xstr(a) str(a)
-
-#if 0
-/*
- * Struct exposed from in.h
- */
-
-/* Internet address */
-struct in_addr {
-	unsigned int s_addr;
-};
-
-/* Internet style socket address */
-struct sockaddr_in {
-	unsigned short int sin_ family;	/* Address family */
-	unsigned short int sin_port;	/* Port number */
-	struct in_addr sin_addr;		/* IP address */
-	unsigned char sin_zero[...]		/* Pad to size of 'struct sockaddr' */
-};
-
-/*
- * Struct exported from netdb.h
- */
-
-/* Domain name service (DNS) host entry */
-struct hostent {
-	char	*h_name;		/* official name of host */
-	char	**h_aliases;	/* alias list */
-	int		h_addrtype;		/* host address type */
-	int		h_length;		/* lenght of address */
-	char	**h_addr_list;	/* list of addresses */
-}
-#endif
 
 /*
  * error - wrapper for perror
@@ -96,64 +63,53 @@ int main(int argc, char *argv[])
 int client(char *hostname, int portno)
 {
 	WSADATA wsa;
-    	SOCKET s;
-    	struct sockaddr_in server;
-	char buf[BUFSIZE]; 
-	char c;
-	int i;
-
-    	if (WSAStartup(MAKEWORD(2,2),&wsa) != 0) {
-		printf("Failed. Error Code : %d",WSAGetLastError());
-		return 1;
-    	}
-     
-    	//Create a socket
-    	if((s = socket(AF_INET , SOCK_STREAM , 0 )) == INVALID_SOCKET) {
-        	printf("Could not create socket : %d" , WSAGetLastError());
-    	}
-     
-     
-    	server.sin_addr.s_addr = inet_addr(hostname);
-    	server.sin_family = AF_INET;
-    	server.sin_port = htons(portno);
- 
-    	//Connect to remote server
-    	if (connect(s , (struct sockaddr *)&server , sizeof(server)) < 0) {
-        	puts("connect error");
-        	return 1;
+    	if (WSAStartup(MAKEWORD(2,2),&wsa) != NO_ERROR) {
+		error("WSAStartup Error.");
     	}
 
-	for(i = 0; i < 1024 && (c = getchar()) != '\n'; i++){
-                buf[i] = c;
-        }
+	/*socket*/
+	SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if(s == INVALID_SOCKET){
+		error("error at socket.");
+	}
 
-        buf[i+1] = '\0';
+	/*Connect*/
+	struct sockaddr_in client;
+	client.sin_family = AF_INET;
+	client.sin_addr.s_addr = inet_addr(hostname);
+	client.sin_port = htons(portno);
 
-        printf("%s\n", buf);
+	if(connect(s, (SOCKADDR*)&client, sizeof(client)) == SOCKET_ERROR){
+		error("Failed to connect.\n");
+	}
 
-        //fscanf(stdin, " %s", buf);
-        int bytesSent;
-        int bytesRecv = SOCKET_ERROR;
+	/*Send & Recv*/
+	int bytesSent, bytesRecv = SOCKET_ERROR;
+	char sendbuf[BUFSIZE] = "";
+	char recvbuf[BUFSIZE] = "";
 
-        bytesSent = send(s, buf, strlen(buf), 0);
+	printf("<p4p1 />");
+	fscanf(stdin, " %s", sendbuf);
+	bytesSent = send(s, sendbuf, strlen(sendbuf), 0);
+	if(bytesSent == SOCKET_ERROR){
+		error("send error");
+	}
 
-        while(bytesRecv == SOCKET_ERROR){
-                bytesRecv = recv(s, buf, strlen(buf), 0);
-                if(bytesRecv == 0 || bytesRecv == WSAECONNRESET){
-                        printf("Client: Connection Closed.\n");
-                        break;
-                } else {
-                        printf("Client: recv() is OK.\n");
-                        printf("Client: Bytes received: %ld\n", bytesRecv);
-                        printf("data received: %s\n", buf);
-                }
-        }
+	while(bytesRecv == SOCKET_ERROR){
+		bytesRecv = recv(s, recvbuf, BUFSIZE, 0);
+		if(bytesRecv == 0 || bytesRecv == WSAECONNRESET){
+			error("Connection Closed.\n");
+		}
 
-        printf("%s", buf);
+		if(bytesRecv < 0){
+			exit(0);
+		} else {
+			printf("\n%s", recvbuf);
+		}
+	}
 
-        WSACleanup();
-        return 0;
-
+	WSACleanup();
+	return 0;
 }
 
 int server(int portno)
