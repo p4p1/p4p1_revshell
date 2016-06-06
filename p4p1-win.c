@@ -114,7 +114,77 @@ int client(char *hostname, int portno)
 
 int server(int portno)
 {
+WSADATA wsaData;
+        int wsaerr = WSAStartup(MAKEWORD(2, 2), &wsaData);
 
+        if(wsaerr != 0){
+                error("Server : The Winsock dll not found!");
+        }
+
+        /*socket*/
+        SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+        if(s == INVALID_SOCKET){
+                error("error at socket");
+        }
+
+        /*bind*/
+        struct sockaddr_in service;
+        service.sin_family = AF_INET;
+        service.sin_addr.s_addr = inet_addr("192.168.1.17");
+        service.sin_port = htons(portno);
+
+        if(bind(s, (SOCKADDR*)&service, sizeof(service)) == SOCKET_ERROR){
+                closesocket(s);
+                error("server bind failed");
+        }
+
+        /*listen*/
+        if(listen(s, 10) == SOCKET_ERROR){
+                printf("Server : listen(): Error istening on socket %ld.\n", WSA                                                                                        GetLastError());
+        }
+
+        /*accept*/
+        SOCKET AcceptSocket;
+
+        while(1){
+                AcceptSocket = SOCKET_ERROR;
+                while(AcceptSocket == SOCKET_ERROR){
+                        AcceptSocket = accept(s, NULL, NULL);
+                }
+                printf("Server: Client Connected!\n");
+                s = AcceptSocket;
+                break;
+        }
+        while(1){
+                int bytesSent;
+                int bytesRecv = SOCKET_ERROR;
+                char sendbuf[BUFSIZE] = "";
+                char recvbuf[BUFSIZE] = "";
+
+                bytesRecv = recv(s, recvbuf, BUFSIZE, 0);
+
+                if(bytesRecv == SOCKET_ERROR){
+                        printf("Server : recv() error %ld.\n", WSAGetLastError()                                                                                        );
+                        error("recv");
+                }
+
+                FILE *fp = popen(recvbuf, "r");
+                char ch;
+                int i = 0;
+                while((ch = fgetc(fp)) != EOF){
+                        sendbuf[i] = ch;
+                        i++;
+                }
+
+                bytesSent = send(s, sendbuf, strlen(sendbuf), 0);
+
+                if(bytesSent == SOCKET_ERROR){
+                        error("send error");
+                }
+
+                pclose(fp);
+        }
+        WSACleanup();
 	return 0;
 }
 void usage()
