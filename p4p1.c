@@ -45,7 +45,7 @@ struct hostent {
 	char	**h_aliases;	/* alias list */
 	int		h_addrtype;		/* host address type */
 	int		h_length;		/* lenght of address */
-	char	**h_addr_list;	/* list of addresses */
+    char	**h_addr_list;	/* list of addresses */
 }
 #endif
 
@@ -58,30 +58,38 @@ void error(char *msg){
 	exit(1);
 }
 
-int server(int portno);
+int server(int portno, int invs);
 int client(char * hostname, int portno);
 void usage();
 
 int main(int argc, char *argv[])
 {
-	int c;					//create basic char
+	int c, invs;					//create basic char
 	opterr = 0;
 
-	while((c = getopt(argc, argv, "sch:")) != -1){			//loop to get all arguments
-		switch(c){											// check for every argument in case:
-			case 's':										/* -s is for the server */
+	while((c = getopt(argc, argv, "isch:")) != -1){			//loop to get all arguments
+		switch(c){										// check for every argument in case:
+			case 'i':									/* -i is  */
+				invs = 1;
+				break;
+			case 's':									/* -s is for the server */
 				if(argv[2] == NULL)
 					error("Not enought args");
-				server(atoi(argv[2]));
+				server(atoi(argv[2]), invs);
 				break;
-			case 'c':										/* -c is for the client */
+			case 'c':									/* -c is for the client */
 				if(argv[2] == NULL || argv[3] == NULL)
 					error("Not enought args");
 				client(argv[2], atoi(argv[3]));
 				break;
-			case 'h':										/* -h is for help */
+			case 'h':									/* -h is for help */
 				usage();
 				break;
+			case '?':
+				usage();
+				break;
+			default:
+				usage();
 		}
 	}
 
@@ -95,58 +103,58 @@ int main(int argc, char *argv[])
 int client(char *hostname, int portno)
 {
 	int sockfd, n;
-    struct sockaddr_in serveraddr;
-    struct hostent *server;
-    char buf[BUFSIZE];
+	struct sockaddr_in serveraddr;
+	struct hostent *server;
+	char buf[BUFSIZE];
 
-    /* socket: create the socket */
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0) 
-        error("ERROR opening socket");
+	/* socket: create the socket */
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sockfd < 0) 
+		error("ERROR opening socket");
 
-    /* gethostbyname: get the server's DNS entry */
-    server = gethostbyname(hostname);
-    if (server == NULL) {
-        fprintf(stderr,"ERROR, no such host as %s\n", hostname);
-        exit(0);
-    }
+	/* gethostbyname: get the server's DNS entry */
+	server = gethostbyname(hostname);
+	if (server == NULL) {
+		fprintf(stderr,"ERROR, no such host as %s\n", hostname);
+		exit(0);
+	}
 
-    /* build the server's Internet address */
-    bzero((char *) &serveraddr, sizeof(serveraddr));
-    serveraddr.sin_family = AF_INET;
-    bcopy((char *)server->h_addr, 
-	  (char *)&serveraddr.sin_addr.s_addr, server->h_length);
-    serveraddr.sin_port = htons(portno);
+	/* build the server's Internet address */
+	bzero((char *) &serveraddr, sizeof(serveraddr));
+	serveraddr.sin_family = AF_INET;
+	bcopy((char *)server->h_addr, 
+		(char *)&serveraddr.sin_addr.s_addr, server->h_length);
+	serveraddr.sin_port = htons(portno);
 
-    /* connect: create a connection with the server */
-    if (connect(sockfd, &serveraddr, sizeof(serveraddr)) < 0) 
-      error("ERROR connecting");
-    /* get message line from the user */
-    printf("<p4p1__> ");
-    bzero(buf, BUFSIZE);
-    fgets(buf, BUFSIZE, stdin);
+	/* connect: create a connection with the server */
+	if (connect(sockfd, &serveraddr, sizeof(serveraddr)) < 0) 
+		error("ERROR connecting");
+	/* get message line from the user */
+	printf("<p4p1__> ");
+	bzero(buf, BUFSIZE);
+	fgets(buf, BUFSIZE, stdin);
 
-    /* send the message line to the server */
-    n = write(sockfd, buf, strlen(buf));
-    if (n < 0) 
-    	error("ERROR writing to socket");
+	/* send the message line to the server */
+	n = write(sockfd, buf, strlen(buf));
+	if (n < 0) 
+		error("ERROR writing to socket");
 
-    /* print the server's reply */
-    bzero(buf, BUFSIZE);
-    n = read(sockfd, buf, BUFSIZE);
-    if (n < 0) 
-    	error("ERROR reading from socket");
-   	printf("%s", buf);
+	/* print the server's reply */
+	bzero(buf, BUFSIZE);
+	n = read(sockfd, buf, BUFSIZE);
+	if (n < 0) 
+		error("ERROR reading from socket");
+	printf("%s", buf);
 
-    close(sockfd);
-    return 0;
+	close(sockfd);
+	return 0;
 }
 
 /*
  * this is the server side
  */
 
-int server(int portno)
+int server(int portno, int invs)
 {
 	int parentfd; /* parent socket */
   	int childfd; /* child socket */
@@ -163,8 +171,8 @@ int server(int portno)
    	 * socket: create the parent socket 
   	 */
   	parentfd = socket(AF_INET, SOCK_STREAM, 0);
-  	if (parentfd < 0) 
-    	error("ERROR opening socket");
+	if (parentfd < 0) 
+		error("ERROR opening socket");
 
   	/* setsockopt: Handy debugging trick that lets 
   	 * us rerun the server immediately after we kill it; 
@@ -194,13 +202,13 @@ int server(int portno)
   	 */
 	if (bind(parentfd, (struct sockaddr *) &serveraddr, 
 		sizeof(serveraddr)) < 0) 
-    	error("ERROR on binding");
+		error("ERROR on binding");
 
   	/* 
   	 * listen: make this socket ready to accept connection requests 
   	 */
   	if (listen(parentfd, 5) < 0) /* allow 5 requests to queue up */ 
-    	error("ERROR on listen");
+		error("ERROR on listen");
 
   	/* 
   	 * main loop: wait for a connection request, echo input line, 
@@ -209,50 +217,50 @@ int server(int portno)
   	clientlen = sizeof(clientaddr);
  	while (1) {
 
-    	/* 
-    	 * accept: wait for a connection request 
-    	 */
-    	childfd = accept(parentfd, (struct sockaddr *) &clientaddr, &clientlen);
-    	if (childfd < 0) 
-      		error("ERROR on accept");
-    
-    	/* 
-    	 * gethostbyaddr: determine who sent the message 
-    	 */
-    	hostp = gethostbyaddr((const char *)&clientaddr.sin_addr.s_addr, 
-			  sizeof(clientaddr.sin_addr.s_addr), AF_INET);
-    	if (hostp == NULL)
-      		error("ERROR on gethostbyaddr");
-    	hostaddrp = inet_ntoa(clientaddr.sin_addr);
-    	if (hostaddrp == NULL)
-     		error("ERROR on inet_ntoa\n");
-    	printf("server established connection with %s (%s)\n", 
-	   	hostp->h_name, hostaddrp);
-    
-    	/* 
-    	 * read: read input string from the client
-    	 */
-    	bzero(buf, BUFSIZE);
-    	n = read(childfd, buf, BUFSIZE);
-    	if (n < 0) 
-      		error("ERROR reading from socket");
-    	printf("server received %d bytes: %s", n, buf);
+		/* 
+		 * accept: wait for a connection request 
+		 */
+		childfd = accept(parentfd, (struct sockaddr *) &clientaddr, &clientlen);
+		if (childfd < 0) 
+			error("ERROR on accept");
+	    
+		/* 
+		 * gethostbyaddr: determine who sent the message 
+		 */
+		hostp = gethostbyaddr((const char *)&clientaddr.sin_addr.s_addr, 
+				  sizeof(clientaddr.sin_addr.s_addr), AF_INET);
+		if (hostp == NULL)
+			error("ERROR on gethostbyaddr");
+		hostaddrp = inet_ntoa(clientaddr.sin_addr);
+		if (hostaddrp == NULL)
+			error("ERROR on inet_ntoa\n");
+		printf("server established connection with %s (%s)\n", 
+		   	hostp->h_name, hostaddrp);
 
-    	FILE *fp = popen(buf, "r");
-    	char ch;
-    	int i = 0;
-    	while((ch = fgetc(fp)) != EOF){
-        	buf[i] = ch;
-			i++;
-    	}
+		/* 
+		 * read: read input string from the client
+		 */
+		bzero(buf, BUFSIZE);
+		n = read(childfd, buf, BUFSIZE);
+		if (n < 0) 
+			error("ERROR reading from socket");
+		printf("server received %d bytes: %s", n, buf);
 
-    	n = write(childfd, buf, strlen(buf));
-    	if(n < 0)
+		FILE *fp = popen(buf, "r");
+		char ch;
+		int i = 0;
+		while((ch = fgetc(fp)) != EOF){
+		buf[i] = ch;
+			++;
+		}
+	
+		n = write(childfd, buf, strlen(buf));
+		if(n < 0)
 			error("ERROR writing to socket");
-
-    	pclose(fp);
-    	close(childfd);
-  }
+	
+		pclose(fp);
+		close(childfd);
+	}
 
 	return 0;
 }
