@@ -1,3 +1,9 @@
+/*
+ * this is for a mimic of a a reverse shell on windows.
+ * it should be as a daemon but i did not start looking for that.
+ * this back door should work on 32bit xp's.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
