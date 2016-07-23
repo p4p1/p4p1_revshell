@@ -1,0 +1,96 @@
+#!/bin/bash
+
+WEBPATH=/var/www/html/exe/
+MAKENAME32=p4p1-o_32_Vx.exe
+MAKENAME64=p4p1-o_64_Vx.exe
+
+if [[ "$UID" -ne "$ROOT_UID" ]]; then
+
+	echo "Must be root to run this script."
+	exit $E_NOTROOT
+
+
+elif [ "$1" = "mrproper" ]; then
+
+        echo "*       _ _       _"
+        echo "*  _ __| | | _ __/ |"
+        echo "* | '_ \\_  _| '_\\  |"
+        echo "* | .__/ |_|| .__/_|"
+        echo "* |_|       |_|"
+        echo "*****mrproper********"
+        echo "[*] Copy exe to version"
+        cp -v *.exe version/
+        echo "[*] Remove exe"
+        rm -rf *.exe
+	echo "[*] Copy serer to version"
+	cp -v p4p1-s_server version/
+        echo "[*] Remove server executable"
+	rm -rf p4p1-s_linux 
+
+else
+
+	if [ "$1" = "-h" ]; then
+
+		echo "usage:"
+		echo "./comp -c                   -> config mode"
+		echo "./comp [version number]     -> basic setup"
+		echo "./comp mrproper             -> clean up files"
+
+	elif [ "$1" = "-c" ]; then
+
+		echo "*       _ _       _"
+		echo "*  _ __| | | _ __/ |"
+		echo "* | '_ \\_  _| '_\\  |"
+		echo "* | .__/ |_|| .__/_|"
+		echo "* |_|       |_|"
+		echo "******Configure******"
+		echo "[&] Configuring client"
+		echo "[*] Enter custom port"
+		read portno
+		echo "[*] Enter custom path for download"
+		read path
+		echo "[!] The path function is not stable it might not work."
+
+		echo $portno > port.cfg
+		echo $path > path.cfg
+
+
+	else
+
+		echo "*       _ _       _"
+		echo "*  _ __| | | _ __/ |"
+		echo "* | '_ \\_  _| '_\\  |"
+		echo "* | .__/ |_|| .__/_|"
+		echo "* |_|       |_|"
+		echo "*********************"
+
+		if [ -z "$1" ]; then
+
+			echo "[!] Error: Not enought arguments"
+			exit
+
+		else
+
+			VERSION=$1
+
+			echo "[*] Making p4p1 version $VERSION"
+			make
+
+			echo "[*] Renaming files"
+			mv -v $MAKENAME32 p4p1-o_32_V$VERSION.exe
+			mv -v $MAKENAME64 p4p1-o_64_V$VERSION.exe
+
+			echo "[*] Copying "
+			cp p4p1-o_32_V$VERSION.exe $WEBPATH
+			cp p4p1-o_64_V$VERSION.exe $WEBPATH
+
+			echo "[*] Setting up nc for listening on default p4p1 port"
+			nc -l 4441
+
+		fi
+
+	fi
+
+fi
+
+exit
