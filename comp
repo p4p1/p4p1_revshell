@@ -1,4 +1,10 @@
 #!/bin/bash
+# this file is to compile the executables
+# and cleanup all of the files
+# and create the cfg files but they are not required
+# note that the cfg files need to be in the same path than the
+# executable. this can be changed in the source file.
+
 
 WEBPATH=/var/www/html/exe/
 MAKENAME32=p4p1-o_32_Vx.exe
