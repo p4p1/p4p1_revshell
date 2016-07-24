@@ -7,8 +7,9 @@
 
 
 WEBPATH=/var/www/html/exe/
-MAKENAME32=p4p1-o_32_Vx.exe
-MAKENAME64=p4p1-o_64_Vx.exe
+MAKENAMEW32=p4p1-o_32_Vx.exe
+MAKENAMEW64=p4p1-o_64_Vx.exe
+MAKENAMEL=p4p1-o_Vx
 
 if [[ "$UID" -ne "$ROOT_UID" ]]; then
 
@@ -31,7 +32,7 @@ elif [ "$1" = "mrproper" ]; then
 	echo "[*] Copy serer to version"
 	cp -v p4p1-s_server version/
         echo "[*] Remove server executable"
-	rm -rf p4p1-s_linux 
+	rm -rf p4p1-s_linux
 
 else
 
@@ -70,25 +71,28 @@ else
 		echo "* |_|       |_|"
 		echo "*********************"
 
-		if [ -z "$1" ]; then
+		if [ -z "$1" ] && [ -z "$2" ]; then
 
 			echo "[!] Error: Not enought arguments"
 			exit
 
 		else
 
-			VERSION=$1
+			VERSIONW=$1
+			VERSIONL=$2
 
 			echo "[*] Making p4p1 version $VERSION"
 			make
 
 			echo "[*] Renaming files"
-			mv -v $MAKENAME32 p4p1-o_32_V$VERSION.exe
-			mv -v $MAKENAME64 p4p1-o_64_V$VERSION.exe
+			mv -v $MAKENAMEW32 p4p1-o_32_V$VERSIONW.exe
+			mv -v $MAKENAMEW64 p4p1-o_64_V$VERSIONW.exe
+			mv -v $MAKENAMEL p4p1-o_V$VERSIONL
 
 			echo "[*] Copying "
-			cp p4p1-o_32_V$VERSION.exe $WEBPATH
-			cp p4p1-o_64_V$VERSION.exe $WEBPATH
+			cp p4p1-o_32_V$VERSIONW.exe $WEBPATH
+			cp p4p1-o_64_V$VERSIONW.exe $WEBPATH
+			cp p4p1-o_V$VERSIONL
 
 			echo "[*] Setting up nc for listening on default p4p1 port"
 			nc -l 4441
