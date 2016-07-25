@@ -24,12 +24,12 @@ with the listening port, and connect to it with the client in the same app.
 Execute p4p1-o_Vx.exe
 
 ##Attacker:
-nc -l 4441
-0
-       _ _       _
-  _ __| | | _ __/ |
- | '_ \_  _| '_ \ |
- | .__/ |_|| .__/_|
- |_|       |_|
-
-<p4p1 />
+nc -l 4441<br />
+0<br />
+       _ _       _<br />
+  _ __| | | _ __/ |<br />
+ | '_ \_  _| '_ \ |<br />
+ | .__/ |_|| .__/_|<br />
+ |_|       |_|<br />
+<br />
+<p4p1 /><br />
