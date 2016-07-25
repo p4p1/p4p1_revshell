@@ -25,6 +25,6 @@ Execute p4p1-o_Vx.exe
 
 ##Attacker:
 nc -l 4441<br />
-0<br />
+0<- dont forget this so that the prompt shows up.<br />
 
 \<p4p1 /\><br />
