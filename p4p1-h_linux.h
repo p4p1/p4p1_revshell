@@ -21,6 +21,7 @@
 #define str(a) #a
 #define xstr(a) str(a)
 #define SOCKET_ERR -1
+#define END do{ int i; i = 1+1; }while(2 == 1)
 
 /*
  * get buf and check if p4p1 custom command

@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 
     		}// end cn while loop
 
-    		close:do{ int i = 1+1; }while(1==0); //ending label
+    		close:END; //ending label
 		pclose(pPipe);
 		close(s);
   	}

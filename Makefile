@@ -18,7 +18,11 @@ W64CEXEC=p4p1-o_64_Vx.exe
 LSEXEC=p4p1-s_linux
 LCEXEC=p4p1-o_Vx
 
-all: clientwindows serverlinux
+all: linux windows
+
+linux: serverlinux clientlinux
+
+windows: clientwindows
 
 clientwindows: p4p1-h_win.h p4p1-o_win.c
 	$(CC32) p4p1-o_win.c $(WFLAGS) -o $(W32CEXEC)
@@ -35,5 +39,6 @@ clean:
 
 mrproper: clean
 	rm -rf $(LSEXEC)
-	rm -rf $(W32CEXEC)
-	rm -rf $(W64CEXEC)
+	rm -rf $(LCEXEC)
+	rm -rf $(WC32CEXEC)
+	rm -rf $(WC64CEXEC)
