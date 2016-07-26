@@ -8,20 +8,26 @@
  *
  ******/
 
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
- #include <unistd.h>
- #include <sys/types.h>
- #include <sys/socket.h>
- #include <netinet/in.h>
- #include <netdb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <curl/curl.h>
 
 #define BUFSIZE 9999
 #define str(a) #a
 #define xstr(a) str(a)
 #define SOCKET_ERR -1
 #define END do{ int i; i = 1+1; }while(2 == 1)
+
+size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+    size_t written = fwrite(ptr, size, nmemb, stream);
+    return written;
+}
 
 /*
  * get buf and check if p4p1 custom command

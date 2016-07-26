@@ -15,7 +15,7 @@ WFLAGS=-lwsock32
 LFLAGS=-Wall -pthread -lpthread
 W32CEXEC=p4p1-o_32_Vx.exe
 W64CEXEC=p4p1-o_64_Vx.exe
-LSEXEC=p4p1-s_linux
+LSEXEC=p4p1-s_Vx
 LCEXEC=p4p1-o_Vx
 
 all: linux windows

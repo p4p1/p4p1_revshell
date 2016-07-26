@@ -23,7 +23,6 @@ int main(int argc, char *argv[])
     	FILE * fp = fopen("port.cfg", "r");
     	int s, new_s, c, *new_sock, portno;
     	struct sockaddr_in server, client;
-    	char buf[BUFSIZE];
     	char * sidChar = "5";
 	char * hostaddrp;
 

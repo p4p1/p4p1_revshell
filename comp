@@ -1,9 +1,4 @@
 #!/bin/bash
-# this file is to compile the executables
-# and cleanup all of the files
-# and create the cfg files but they are not required
-# note that the cfg files need to be in the same path than the
-# executable. this can be changed in the source file.
 # +---------------------+
 # |       _ _       _	|
 # |  _ __| | | _ __/ |	|
@@ -11,13 +6,22 @@
 # | | .__/ |_|| .__/_|	|
 # | |_|       |_|	|
 # +---------------------+
+# this file is to compile the executables
+# and cleanup all of the files
+# and create the cfg files but they are not required
+# note that the cfg files need to be in the same path than the
+# executable. this can be changed in the source file.
+# to compile all of the programs run this command:
+# 		sudo ./comp 9
 
 
 WEBPATH=/var/www/html/exe/
 MAKENAMEW32C=p4p1-o_32_Vx.exe
 MAKENAMEW64C=p4p1-o_64_Vx.exe
 MAKENAMELC=p4p1-o_Vx
-MAKENAMELS=p4p1-s_server
+MAKENAMELS=p4p1-s_Vx
+me=`whoami`
+err=`$?`
 
 if [[ "$UID" -ne "$ROOT_UID" ]]; then
 
@@ -82,19 +86,18 @@ else
 		echo "* |_|       |_|"
 		echo "*********************"
 
-		if [ -z "$1" ] && [ -z "$2" ]; then
+		if [ -z "$1" ]; then
 
 			echo "[!] Error: Not enought arguments"
-			exit
+			exit -1
 
 		else
 
-			VERSIONW=$1
-			VERSIONL=$2
+			VERSION=$1
 
 			echo "[*] Making p4p1 version $VERSION"
 			make
-			if [ "$?" = "2" ]; then
+			if [ "$err" = "2" ]; then
 				echo "[!] Please download mingw"
 				echo "[*] The program will compile the linux client and server"
 				echo "[*] Press enter to continue"
@@ -103,18 +106,28 @@ else
 			fi
 
 			echo "[*] Renaming files"
-			mv -v $MAKENAMEW32 p4p1-o_32_V$VERSIONW.exe
-			mv -v $MAKENAMEW64 p4p1-o_64_V$VERSIONW.exe
-			mv -v $MAKENAMELC p4p1-o_V$VERSIONL
-			mv -v $MAKENAMELS p4p1-s_V$VERSIONL
+			if [ "$err" = "2" ]; then
+				echo "[*] only renaming linux version"
+				mv -v $MAKENAMELC p4p1-o_V$VERSION
+				mv -v $MAKENAMELS p4p1-s_V$VERSION
+			else
+				mv -v $MAKENAMEW32 p4p1-o_32_V$VERSION.exe
+				mv -v $MAKENAMEW64 p4p1-o_64_V$VERSION.exe
+				mv -v $MAKENAMELC p4p1-o_V$VERSION
+				mv -v $MAKENAMELS p4p1-s_V$VERSION
+			fi
 
-			echo "[*] Copying "
-			cp p4p1-o_32_V$VERSIONW.exe $WEBPATH
-			cp p4p1-o_64_V$VERSIONW.exe $WEBPATH
-			cp p4p1-o_V$VERSIONL $WEBPATH
+			if [ $me  = "fu" ]; then
+				echo "[*] Copying to website"
+				cp p4p1-o_32_V$VERSION.exe $WEBPATH
+				cp p4p1-o_64_V$VERSION.exe $WEBPATH
+				cp p4p1-o_V$VERSION $WEBPATH
+				cp p4p1-s_V$VERSION $WEBPATH
+			fi
 
 			echo "[*] Setting up nc for listening on default p4p1 port"
-			nc -l 4441
+			SERVEREXECL=p4p1-s_V$VERSION
+			./$SERVEREXECL
 
 		fi
 

