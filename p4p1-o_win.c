@@ -8,8 +8,10 @@ int main(int argc, char * argv[])
 
     // Create the basic variables so that you can get the port data
 	int portno;     //number of port
+	char ip[];
 	char portchar[6];   //Char retrieved from .cfg file
 	FILE * fp = fopen("port.cfg", "r"); //Open up the cfg file
+	FILE * fip = fopen("ip.cfg", "r");
 
 	if(fp == NULL){
 		portno = 4441;      //If no file set up default port to prevent errors
@@ -24,6 +26,20 @@ int main(int argc, char * argv[])
 
 		portno = atoi(portchar);            //Set up custom port
 		fclose(fp);
+	}
+
+	if(fip == NULL){
+		ip = xstr(86.247.205.102);      //If no file set up default ip to prevent errors
+	} else {
+		int i = 0;
+		char c;
+		while( (c = fgetc(fip)) != EOF){     // Get char from file while not at EOF
+			ip[i] = c;
+			i++;
+		}
+		ip[i+1] = '\0';               //Terminate string
+
+		fclose(fip);
 	}
 
 	//Main program
@@ -59,7 +75,7 @@ int main(int argc, char * argv[])
 		struct sockaddr_in client;				//server to connect information
 		client.sin_family = AF_INET;
 		client.sin_port = htons(portno);
-		client.sin_addr.s_addr = inet_addr(xstr(86.247.205.102));	//this should not be hard coded.
+		client.sin_addr.s_addr = inet_addr(ip);	//this should not be hard coded.
 
 
 		/* create pointers so that the synthacts gets faster*/
