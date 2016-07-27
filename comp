@@ -72,7 +72,10 @@ else
 		echo "[*] Enter custom path for download"
 		read path
 		echo "[!] The path function is not stable it might not work."
+		echo "[*] Enter custom ip."
+		read ip
 
+		echo $ip > ip.cfg
 		echo $portno > port.cfg
 		echo $path > path.cfg
 
