@@ -98,13 +98,16 @@ else
 
 			VERSION=$1
 
-			echo "[*] Making p4p1 version $VERSION"
-			make
+			echo "[*] Making p4p1 version $VERSION for windows"
+			make windows
 			if [ "$err" = "2" ]; then
 				echo "[!] Please download mingw"
-				echo "[*] The program will compile the linux client and server"
+				echo "[*] The program will compile the linux client and server version $VERSION"
 				echo "[*] Press enter to continue"
 				read
+				make linux
+			else
+				echo "[*] Making p4p1 version $VERSION for linux"
 				make linux
 			fi
 
