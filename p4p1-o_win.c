@@ -8,7 +8,8 @@ int main(int argc, char * argv[])
 
     // Create the basic variables so that you can get the port data
 	int portno;     //number of port
-	char ip[];
+	char ip[16];
+	char ipchar[16];
 	char portchar[6];   //Char retrieved from .cfg file
 	FILE * fp = fopen("port.cfg", "r"); //Open up the cfg file
 	FILE * fip = fopen("ip.cfg", "r");
@@ -29,18 +30,22 @@ int main(int argc, char * argv[])
 	}
 
 	if(fip == NULL){
-		ip = xstr(86.247.205.102);      //If no file set up default ip to prevent errors
+		strcpy(ip, "86.247.205.102");      //If no file set up default ip to prevent errors
 	} else {
 		int i = 0;
 		char c;
 		while( (c = fgetc(fip)) != EOF){     // Get char from file while not at EOF
-			ip[i] = c;
+			ipchar[i] = c;
 			i++;
 		}
-		ip[i+1] = '\0';               //Terminate string
+		ipchar[i] = '\0';
+
+		strcpy(ip, ipchar);
 
 		fclose(fip);
 	}
+
+	printf("%s:%d", ip, portno);
 
 	//Main program
 	while(1){
