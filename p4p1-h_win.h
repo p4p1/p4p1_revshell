@@ -53,3 +53,13 @@ int download()
 
 	return r;
 }
+
+char incr(char ch)
+{
+	return ch+1;
+}
+
+char decr(char ch)
+{
+	return ch-1;
+}

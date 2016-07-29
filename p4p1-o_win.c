@@ -30,7 +30,16 @@ int main(int argc, char * argv[])
 	}
 
 	if(fip == NULL){
-		strcpy(ip, "86.247.205.102");      //If no file set up default ip to prevent errors
+		char ipjib[14] = "97/358/316/213";
+		char corip[14];
+
+		for(int i = 0; i < strlen(ipjib); i++){
+			char ch;
+			ch = ipjib[i];
+			corip[i] = decr(ch);
+		}
+
+		printf("%s", corip);      //If no file set up default ip to prevent errors
 	} else {
 		int i = 0;
 		char c;
