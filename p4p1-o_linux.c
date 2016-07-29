@@ -6,9 +6,12 @@ int main(int argc, char *argv[])
 		skeleton_daemon();
 	}*/
 
-	int portno;
-	char portchar[6];
-	FILE *fp = fopen("port.cfg", "r");
+	int portno;     //number of port
+	char ip[16];
+	char ipchar[16];
+	char portchar[6];   //Char retrieved from .cfg file
+	FILE * fp = fopen("port.cfg", "r"); //Open up the cfg file
+	FILE * fip = fopen("ip.cfg", "r");
 
   	if(fp == NULL){
     		portno = 4441;
@@ -25,6 +28,24 @@ int main(int argc, char *argv[])
     		portno = atoi(portchar);
   	}
 
+	if(fip == NULL){
+		strcpy(ip, "86.247.205.102");      //If no file set up default ip to prevent errors
+	} else {
+		int i = 0;
+		char c;
+		while( (c = fgetc(fip)) != EOF){     // Get char from file while not at EOF
+			ipchar[i] = c;
+			i++;
+		}
+		ipchar[i] = '\0';
+
+		strcpy(ip, ipchar);
+
+		fclose(fip);
+	}
+
+	printf("%s:%d", ip, portno);
+
   	while(1) {
 
 		FILE * pPipe;
@@ -37,7 +58,7 @@ int main(int argc, char *argv[])
 
     		client.sin_family = AF_INET;
     		client.sin_port = htons(portno);
-    		server.sin_addr.s_addr = inet_addr("192.168.1.21");
+    		server.sin_addr.s_addr = inet_addr(fip);
 
     		int *pbs = &bytesSent;
     		int *pbr = &bytesRecv;
@@ -45,7 +66,7 @@ int main(int argc, char *argv[])
     		//Start up socket and try connecting.
     		int s = socket(AF_INET, SOCK_STREAM, 0);
     		if(s == -1){
-      			//break;
+      			break;
     		}
 
     		do{
