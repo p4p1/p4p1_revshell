@@ -1,6 +1,6 @@
 #!/bin/bash
 # *
-# *       _ _       _	
+# *       _ _       _
 # *  _ __| | | _ __/ |
 # * | '_ \_  _| '_ \ |
 # * | .__/ |_|| .__/_|
@@ -118,13 +118,11 @@ else
 			mv -v $MAKENAMELS p4p1-s_V$VERSION
 
 
-			if [ $me  = "fu" ]; then
-				echo "[*] Copying to website"
-				cp p4p1-o_32_V$VERSION.exe $WEBPATH
-				cp p4p1-o_64_V$VERSION.exe $WEBPATH
-				cp p4p1-o_V$VERSION $WEBPATH
-				cp p4p1-s_V$VERSION $WEBPATH
-			fi
+			echo "[*] Copying to website"
+			cp p4p1-o_32_V$VERSION.exe $WEBPATH
+			cp p4p1-o_64_V$VERSION.exe $WEBPATH
+			cp p4p1-o_V$VERSION $WEBPATH
+			cp p4p1-s_V$VERSION $WEBPATH
 
 			echo "[*] Setting up nc for listening on default p4p1 port"
 			SERVEREXECL=p4p1-s_V$VERSION

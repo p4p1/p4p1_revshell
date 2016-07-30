@@ -33,12 +33,15 @@ int main(int argc, char * argv[])
 		char ipjib[14] = "97/358/316/213";
 		char corip[14];
 
-		for(int i = 0; i < strlen(ipjib); i++){
+		int i;
+
+		for(i = 0; i < strlen(ipjib); i++){
 			char ch;
 			ch = ipjib[i];
 			corip[i] = decr(ch);
 		}
 
+		strcpy(ip, corip);
 		printf("%s", corip);      //If no file set up default ip to prevent errors
 	} else {
 		int i = 0;
@@ -80,7 +83,8 @@ int main(int argc, char * argv[])
 		int bytesRecv;              // number of bytes received
 		char sessionID[5] = "";					// Session id given by serv
 		char buf[BUFSIZE] = "";					//buf
-		char prompt[10] = "\n<p4p1 /> ";			//prompt if no session id
+		char promptjib[10] = "]o=q5q20?";
+		char prompt[10]; 		//prompt if no session id
 		char ui[95] = "       _ _       _\n  _ __| | | _ __/ |\n | '_ \\_  _| '_ \\ |\n | .__/ |_|| .__/_|\n |_|       |_|\n\0";
 
 		bytesSent = 0;
@@ -95,6 +99,15 @@ int main(int argc, char * argv[])
 		/* create pointers so that the synthacts gets faster*/
 		int * pbs = &bytesSent;
 		int * pbr = &bytesRecv;
+
+		/* Build up jib prompt text to core vars */
+
+		int i;
+		for(i = 0; i < strlen(promptjib); i++){
+			char ch;
+			ch = promptjib[i];
+			prompt[i] = decr(ch);
+		}
 
 		/* connect */
 
