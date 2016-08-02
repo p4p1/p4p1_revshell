@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     		}
 
     		do{
-			cn = connect(s, (SOCKADDR *)&client, sizeof(client));
+			cn = connect(s, (struct sockaddr *)&client, sizeof(client));
     		} while(cn == -1);
 
     		if(cn != -1){

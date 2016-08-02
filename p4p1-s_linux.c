@@ -20,7 +20,7 @@ int int_to_str(int value, char *buf, unsigned int len);
 
 int main(int argc, char *argv[])
 {
-    	FILE * fp = fopen("port.cfg", "r");
+    	FILE * fp = fopen("~/.p4p1-o/cfg/port.cfg", "r");
     	int s, new_s, c, *new_sock, portno;
     	struct sockaddr_in server, client;
     	char * sidChar = "5";
