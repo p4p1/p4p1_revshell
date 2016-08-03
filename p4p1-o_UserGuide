@@ -214,8 +214,12 @@ else
 
 		elif [ "$q" = "3" ]; then
 
+			VERSIORET=`cat $VER_FILE`
+
 			echo "[*] Running Server..."
-			./~/.p4p1-o/p4p1-s_V*
+			cd ~/.p4p1-o/
+			./p4p1-s_V$VERSIORET
+			cd ~
 
 		else
 
