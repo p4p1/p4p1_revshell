@@ -33,15 +33,12 @@ DESKTOP_PATH=~/Desktop
 UN_FILE=~/.p4p1-o/cfg/un.cfg
 PORT_FILE=~/.p4p1-o/cfg/port.cfg
 IP_FILE=~/.p4p1-o/cfg/ip.cfg
+VER_FILE=~/.p4p1-o/cfg/ver.cfg
 AUTORUN=autorun.inf
 MAKENAMEW32C=p4p1-o_32_Vx.exe
 MAKENAMEW64C=p4p1-o_64_Vx.exe
 MAKENAMELC=p4p1-o_Vx
 MAKENAMELS=p4p1-s_Vx
-W32EXE_PATH="~/.p4p1-o/exe/p4p1-o_32_V9.exe"
-W64EXE_PATH="~/.p4p1-o/exe/p4p1-o_64_V9.exe"
-W32EXE=p4p1-o_32_V9.exe
-W64EXE=p4p1-o_64_V9.exe
 EXT_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
 UN=`cat ~/.p4p1-o/cfg/un.cfg`
 
@@ -101,6 +98,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 	read q
 
 	if [ "$q" = "no" ]; then
+		rm -rf ~/.p4p1-o/
 		exit E_NOINSTALL
 	fi
 
@@ -108,6 +106,9 @@ elif [ ! -d "$HOME_PATH" ]; then
 	mkdir -v $HOME_PATH
 	mkdir -v $CONF_PATH
 	mkdir -v $EXE_PATH
+
+	echo "[*] Saving Version.."
+	echo $VERSION > $VER_FILE
 
 	echo "[*] Hello new user please enter youre name:"
 	read name
@@ -144,6 +145,8 @@ elif [ ! -d "$HOME_PATH" ]; then
 		echo $EXT_IP > $IP_FILE
 	fi
 
+	mv p4p1-s_V$VERSION $HOME_PATH
+
 	echo "[*] Instalation finished thank you for using :)"
 
 else
@@ -167,6 +170,12 @@ else
 
 		if [ "$q" = "1" ]; then
 
+			VERSIORET=`cat $VER_FILE`
+			W32EXE_PATH="~/.p4p1-o/exe/p4p1-o_32_V$VERSIORET.exe"
+			W64EXE_PATH="~/.p4p1-o/exe/p4p1-o_64_V$VERSIORET.exe"
+			W32EXE=p4p1-o_32_V$VERSIORET.exe
+			W64EXE=p4p1-o_64_V$VERSIORET.exe
+
 			echo "[*] Please enter the usb path"
 			read USB_PATH
 			echo "[*] is it a 32 bit or 64 bit?"
@@ -188,6 +197,12 @@ else
 			echo "[*] Copied to file with exe and done!"
 
 		elif [ "$q" = "2" ]; then
+
+			VERSIORET=`cat $VER_FILE`
+			W32EXE_PATH="~/.p4p1-o/exe/p4p1-o_32_V$VERSIORET.exe"
+			W64EXE_PATH="~/.p4p1-o/exe/p4p1-o_64_V$VERSIORET.exe"
+			W32EXE=p4p1-o_32_V$VERSIORET.exe
+			W64EXE=p4p1-o_64_V$VERSIORET.exe
 
 			echo "[*] Retreiving files ..."
 			cd $EXE_PATH
