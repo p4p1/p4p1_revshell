@@ -114,8 +114,8 @@ elif [ ! -d "$HOME_PATH" ]; then
 	read name
 	echo name > $UN_FILE
 
-	W32EXE=p4p1-o_32_V$VERSION
-	W64EXE=p4p1-o_64_V$VERSION
+	W32EXE=p4p1-o_32_V$VERSION.exe
+	W64EXE=p4p1-o_64_V$VERSION.exe
 
 	if [[ ! -e "$W32EXE" && ! -e "$W64EXE" ]]; then
 
