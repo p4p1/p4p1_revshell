@@ -71,6 +71,7 @@ if [ "$1" = "-h" ]; then
 		echo "[?]Usage:"
 		echo "         ./$0  ->only mode available for now"
 		echo "         ./$0 mrproper -> move the exes to version."
+		echo "         p4p1-s -> command line server tool"
 
 	fi
 
