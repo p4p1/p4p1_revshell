@@ -14,8 +14,10 @@
 
 function Remove {
 	REMOVED_ALL=0
+	VER=`cat ~/.p4p1-o/cfg/ver.cfg`
 
-	zip -r p4p1-o_backup.zip ~/.p4p1-o/
+	zip -r p4p1-b_V$VER.zip ~/.p4p1-o/
+	mv p4p1-b_V$VER.zip backups/
 
 	rm -rf ~/.p4p1-o/
 	exit $REMOVED_ALL
@@ -40,7 +42,6 @@ MAKENAMEW64C=p4p1-o_64_Vx.exe
 MAKENAMELC=p4p1-o_Vx
 MAKENAMELS=p4p1-s_Vx
 EXT_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
-UN=`cat ~/.p4p1-o/cfg/un.cfg`
 
 
 echo "*       _ _       _"
@@ -50,7 +51,36 @@ echo "* | .__/ |_|| .__/_|"
 echo "* |_|       |_|"
 echo "*********welcome*********"
 
-if [ "$1" = "-c" ]; then
+if [ "$1" = "-h" ]; then
+
+	if [ ! -d "$HOME_PATH" ]; then
+
+		echo "[?] Usage:"
+		echo "           ./$0  -> basic installation"
+		echo "           ./$0 -d -> cleanup after compile error"
+		echo "[?] If the error code is $E_EXEMISS please insure that"
+		echo "[?] You have a p4p1-o exe with the version specified"
+		echo "[?] Or mingw. If you installend mingw do the cleanup and"
+		echo "[?] Redo the basic installation"
+		echo "[?] Note: you need 32 and 64 bit mingw to remove the error"
+		echo "[?]       Or a 32 and 64 bit version of the program and use"
+		echo "[?]       the specific version."
+
+	else
+
+		echo "[?]Usage:"
+		echo "         ./$0  ->only mode available for now"
+		echo "         ./$0 mrproper -> move the exes to version."
+
+	fi
+
+elif [ "$1" = "-d" ];then
+
+	echo "[1] Creating a zip backup in the local dir"
+	echo "[!] And removing all files"
+	Remove
+
+elif [ ! -d "$HOME_PATH" ]; then
 
 	if [ ! -e "Makefile" ]; then
 		echo "[!] Error no makefile found!"
@@ -83,18 +113,14 @@ if [ "$1" = "-c" ]; then
 
 	echo "[*] Compiled all of the p4p1-o and p4p1-s files."
 
-elif [ ! -d "$HOME_PATH" ]; then
-
-	echo "[*] Enter Current Version."
-	read VERSION
-
 	if [ ! -e "p4p1-s_V$VERSION" ]; then
-		echo "[!] Please compile first"
-		echo "[!] ./p4p1-o_UserGuide -c"
+		echo "[!] Error during compile of server"
+		echo "[!] Send a message at k0oo@icloud.com for trouble shooting"
+		echo "[!] Or update this program."
 		exit $E_NOCOMP
 	fi
 
-	echo "[*] First execution do you want to install?? (yes/no)"
+	echo "[*] First execution do you want to install all of the files for the server? (yes/no)"
 	read q
 
 	if [ "$q" = "no" ]; then
@@ -112,7 +138,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 	echo "[*] Hello new user please enter youre name:"
 	read name
-	echo name > $UN_FILE
+	echo $name > $UN_FILE
 
 	W32EXE=p4p1-o_32_V$VERSION.exe
 	W64EXE=p4p1-o_64_V$VERSION.exe
@@ -120,8 +146,9 @@ elif [ ! -d "$HOME_PATH" ]; then
 	if [[ ! -e "$W32EXE" && ! -e "$W64EXE" ]]; then
 
 		echo "[!] missing executables"
-		echo "[!] To reinstall exes so that this file work please use the debug mode."
-		echo "[!] See Usage with -h to use debug mode."
+		echo "[!] To reinstall exes go to the download page or install mingw."
+		echo "[!] And restart this app with -d"
+		echo "[!] See Usage with -h for more information"
 		echo -e "\e[31m[!] Error code: $E_EXEMISS\e[0m"
 
 	else
@@ -162,6 +189,7 @@ else
 		echo "[*] Done."
 
 	else
+		UN=`cat ~/.p4p1-o/cfg/un.cfg`
 
 		echo "[*] Hy $UN."
 		echo "[*] Welcome to p4p1-o, This program was made by p4p1."
