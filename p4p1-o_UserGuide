@@ -177,6 +177,18 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 	mv p4p1-s_V$VERSION $HOME_PATH
 
+	echo "[*] Do you want the command line tool?? (yes / no)"
+	echo "[*] Need root password for install"
+	read q
+
+	if [ "$q" = "yes" ]; then
+
+		cd $HOME_PATH
+		sudo ln -s p4p1-s_V$VERSION /usr/sbin/p4p1-s
+		echo "[*] Installed commadn line tool"
+
+	fi
+
 	echo "[*] Installation finished thank you for using :)"
 
 else
