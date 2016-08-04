@@ -15,6 +15,8 @@ WFLAGS=-lwsock32
 LFLAGS=-Wall -pthread -lpthread
 W32CEXEC=p4p1-o_32_Vx.exe
 W64CEXEC=p4p1-o_64_Vx.exe
+W32SEXEC=p4p1-s_32_Vx.exe
+W64SEXEC=p4p1-s_64_Vx.exe
 LSEXEC=p4p1-s_Vx
 LCEXEC=p4p1-o_Vx
 
@@ -22,11 +24,15 @@ all: linux windows
 
 linux: serverlinux clientlinux
 
-windows: clientwindows
+windows: clientwindows serverwindows
 
 clientwindows: p4p1-h_win.h p4p1-o_win.c
 	$(CC32) p4p1-o_win.c $(WFLAGS) -o $(W32CEXEC)
 	$(CC64) p4p1-o_win.c $(WFLAGS) -o $(W64CEXEC)
+
+serverwindows: p4p1-s_win.c
+	$(CC32) p4p1-s_win.c $(WFLAGS) -o $(W32SEXEC)
+	$(CC64) p4p1-s_win.c $(WFLAGS) -o $(W64SEXEC)
 
 serverlinux: p4p1-s_linux.c
 	$(CC) p4p1-s_linux.c $(LFLAGS) -o $(LSEXEC)
