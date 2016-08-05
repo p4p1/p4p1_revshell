@@ -6,24 +6,16 @@
 
 #define BUFSIZE 9999
 
-char decr(char ch)
-{
-	return ch-1;
-}
-
 int main(int argc, char *argv[])
 {
 
 	int portno;
-	char ip[16];
-	char ipchar[16];
 	char portchar[6];
 
 	FILE * fp = fopen("port.cfg", "r");
-	FILE * fip = fopen("ip.cfg", "r");
 
 	if(fp == NULL){
-		portno = 44441;      //If no file set up default port to prevent errors
+		portno = 4441;      //If no file set up default port to prevent errors
 	} else {
 		int i = 0;
 		char c;
@@ -37,34 +29,6 @@ int main(int argc, char *argv[])
 		fclose(fp);
 	}
 
-	if(fip == NULL){
-		char ipjib[14] = "2:3/279/2/28";
-		char corip[14];
-
-		int i;
-
-		for(i = 0; i < strlen(ipjib); i++){
-			char ch;
-			ch = ipjib[i];
-			corip[i] = decr(ch);
-		}
-
-		strcpy(ip, corip);
-	      //If no file set up default ip to prevent errors
-	} else {
-		int i = 0;
-		char c;
-		while( (c = fgetc(fip)) != EOF){     // Get char from file while not at EOF
-			ipchar[i] = c;
-			i++;
-		}
-		ipchar[i] = '\0';
-
-		strcpy(ip, ipchar);
-
-		fclose(fip);
-	}
-
 	printf("       _ _       _\n  _ __| | | _ __/ |\n | '_ \\_  _| '_ \\ |\n | .__/ |_|| .__/_|\n |_|       |_|\n");
 	printf("[*] Setting up winsock\n");
 	WSADATA wsa;
@@ -74,7 +38,7 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	printf("[*] Creating socket");
+	printf("[*] Creating socket\n");
 	/*Create socket*/
 	SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if( s == INVALID_SOCKET){
@@ -86,7 +50,7 @@ int main(int argc, char *argv[])
 
 	struct sockaddr_in server;
 	server.sin_family = AF_INET;
-	server.sin_addr.s_addr = inet_addr(ip);
+	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_port = htons(portno);
 
 	printf("[*] Binding");
@@ -98,7 +62,7 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	printf("[*] Listening on %s:%d", ip, portno);
+	printf("[*] Listening on port: %d\n", portno);
 	/*listen*/
 	if(listen(s, 10) == SOCKET_ERROR){
 		printf("[!]Server:listen():Error listening to socket %ld.\n", WSAGetLastError());
@@ -133,7 +97,7 @@ int main(int argc, char *argv[])
 
 	strcpy(buf, "1");
 
-	printf("[*] Send Client ID.");
+	printf("[*] Send Client ID.\n");
 	*pbs = send(s, buf, strlen(buf), 0);
 	if( *pbs == SOCKET_ERROR ){
 		printf("[!] Server : send error %ld.\n", WSAGetLastError());
@@ -162,6 +126,7 @@ int main(int argc, char *argv[])
 			if( *pbr == SOCKET_ERROR ){
 				printf("[!] Server : recv error %ld.\n", WSAGetLastError());
 			}
+			printf("%s\n", buf);
 		}
 	}
 
