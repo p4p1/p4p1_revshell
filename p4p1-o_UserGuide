@@ -155,11 +155,14 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 	W32EXE=p4p1-o_32_V$VERSION.exe
 	W64EXE=p4p1-o_64_V$VERSION.exe
+	W32SEXE=p4p1-s_32_V$VERSION.exe
+	W64SEXE=p4p1-s_64_V$VERSION.exe
+	LCEXE=p4p1-o_V$VERSION
 
 	if [[ ! -e "$W32EXE" && ! -e "$W64EXE" ]]; then
 
 		echo "[!] missing executables"
-		echo "[!] To reinstall exes go to the download page or install mingw."
+		echo "[!] To reinstall exes go to github and download them or install mingw."
 		echo "[!] And restart this app with -d"
 		echo "[!] See Usage with -h for more information"
 		echo -e "\e[31m[!] Error code: $E_EXEMISS\e[0m"
@@ -169,6 +172,23 @@ elif [ ! -d "$HOME_PATH" ]; then
 		echo "[*] Copy exe into $EXE_PATH"
 		mv -v $W32EXE $EXE_PATH
 		mv -v $W64EXE $EXE_PATH
+		mv -v $W32SEXE $EXE_PATH
+		mv -v $W64SEXE $EXE_PATH
+
+	fi
+
+	if [ ! -e "$LCEXE" ]; then
+
+		echo "[!] missing executables"
+		echo "[!] To reinstall exes go to github and download them or install mingw."
+		echo "[!] And restart this app with -d"
+		echo "[!] See Usage with -h for more information"
+		echo -e "\e[31m[!] Error code: $E_EXEMISS\e[0m"
+
+	else
+
+		echo "[*] Copy linux client to $EXE_PATH"
+		mv -v $LCEXE $EXE_PATH
 
 	fi
 
@@ -195,14 +215,21 @@ elif [ ! -d "$HOME_PATH" ]; then
 	mv p4p1-s_V$VERSION $HOME_PATH
 
 	echo "[*] Do you want the command line tool?? (yes / no)"
-	echo "[*] Need root password for install"
 	read q
 
 	if [ "$q" = "yes" ]; then
 
-		cd $HOME_PATH
-		sudo ln -s p4p1-s_V$VERSION /usr/sbin/p4p1-s
-		echo "[*] Installed commadn line tool"
+		if [[ "$OSTYPE" = "darwin"* ]];then
+
+			echo "alias p4p1-s='cd ~/.p4p1-o/ ; ./p4p1-s_V$VERSION'" >> .bash_profile
+			echo "[*] Command line tool installed"
+
+		else
+
+			echo "alias p4p1-s='cd ~/.p4p1-o/ ; ./p4p1-s_V$VERSION'" >> .bashrc
+			echo "[*] Command line tool installed"
+
+		fi
 
 	fi
 
@@ -234,12 +261,14 @@ else
 			VERSIORET=`cat $VER_FILE`
 			W32EXE_PATH="~/.p4p1-o/exe/p4p1-o_32_V$VERSIORET.exe"
 			W64EXE_PATH="~/.p4p1-o/exe/p4p1-o_64_V$VERSIORET.exe"
+			LEXE_PATH="~/.p4p1-o/exe/p4p1-o_V$VERSIORET"
 			W32EXE=p4p1-o_32_V$VERSIORET.exe
 			W64EXE=p4p1-o_64_V$VERSIORET.exe
+			LEXE=p4p1-o_V$VERSIORET
 
 			echo "[*] Please enter the usb path"
 			read USB_PATH
-			echo "[*] is it a 32 bit or 64 bit?"
+			echo "[*] is it a 32 bit windows a 64 bit windows or a linux?"
 			read q
 
 			cd $USB_PATH
@@ -250,10 +279,15 @@ else
 				cp -v $W32EXE_PATH .
 				echo "open=$W32EXE" >> $AUTORUN
 
-			else
+			elif [ "$q" = "64"]; then
 
 				cp -v $W64EXE_PATH .
 				echo "open=$W64EXE" >> $AUTORUN
+
+			else
+
+				cp -v $LEXE_PATH .
+				echo "open=$LEXE" >> $AUTORUN
 
 			fi
 
