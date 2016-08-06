@@ -105,10 +105,21 @@ elif [ ! -d "$HOME_PATH" ]; then
 		echo "[*] The program will compile the linux client and server version $VERSION"
 		echo "[*] Press enter to continue"
 		read
-		make linux
 
-		mv -v $MAKENAMELC p4p1-o_V$VERSION
-		mv -v $MAKENAMELS p4p1-s_V$VERSION
+		if [[ "$OSTYPE" = "darwin"* ]];then
+
+			make mac
+
+			mv -v $MAKENAMELC p4p1-o_V$VERSION
+			mv -v $MAKENAMELS p4p1-s_V$VERSION
+
+		else
+
+			make linux
+			
+			mv -v $MAKENAMELS p4p1-s_V$VERSION
+
+		fi
 
 	else
 

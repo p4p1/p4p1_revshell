@@ -57,8 +57,6 @@ int main(int argc, char * argv[])
 		fclose(fip);
 	}
 
-	printf("%s:%d", ip, portno);
-
 	//Main program
 	while(1){
 		//startup sa
@@ -123,7 +121,6 @@ int main(int argc, char * argv[])
 						return -1;
 					} else {
 						sessionID[0] = buf[0];
-						printf("sid = %c", sessionID[0]);
 						memset(buf, 0, BUFSIZE);
 					}
 			}
@@ -135,7 +132,6 @@ int main(int argc, char * argv[])
 					|| WSAGetLastError() == WSAECONNRESET){
 						break;
 					} else {
-						printf("connection refused\n");
 						goto close;
 					}
 				}
@@ -156,7 +152,6 @@ int main(int argc, char * argv[])
 					|| WSAGetLastError() == WSAECONNRESET){
 						break;
 					} else {
-						printf("connection refused\n");
 						goto close;
 					}
 				}
@@ -214,7 +209,6 @@ int main(int argc, char * argv[])
 				|| WSAGetLastError() == WSAECONNRESET){
 					break;
 				} else {
-					printf("connection refused\n");
 					goto close;
 				}
 			}
