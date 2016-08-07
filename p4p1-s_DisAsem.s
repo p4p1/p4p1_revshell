@@ -1,4 +1,5 @@
 (__TEXT,__text) section
+
 _main:
 	pushq	%rbp
 	movq	%rsp, %rbp
@@ -191,6 +192,7 @@ _main:
 	retq
 	callq	0x100001ba8
 	nopw	%cs:(%rax,%rax)
+
 __OSSwapInt16:
 	pushq	%rbp
 	movq	%rsp, %rbp
@@ -206,6 +208,7 @@ __OSSwapInt16:
 	popq	%rbp
 	retq
 	nopw	%cs:(%rax,%rax)
+
 _connection_handler:
 	pushq	%rbp
 	movq	%rsp, %rbp
@@ -388,6 +391,7 @@ _connection_handler:
 	retq
 	callq	0x100001ba8
 	nopw	%cs:(%rax,%rax)
+	
 _int_to_str:
 	pushq	%rbp
 	movq	%rsp, %rbp
