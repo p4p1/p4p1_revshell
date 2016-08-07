@@ -85,8 +85,7 @@ int main(int argc, char * argv[])
 		int bytesRecv;              // number of bytes received
 		char sessionID[5] = "";					// Session id given by serv
 		char buf[BUFSIZE] = "";					//buf
-		char promptjib[10] = "\n<p4p1 />";
-		char prompt[10]; 		//prompt if no session id
+		char prompt[10] = "\n<p4p1 />";
 		char ui[95] = "       _ _       _\n  _ __| | | _ __/ |\n | '_ \\_  _| '_ \\ |\n | .__/ |_|| .__/_|\n |_|       |_|\n\0";
 
 		bytesSent = 0;
