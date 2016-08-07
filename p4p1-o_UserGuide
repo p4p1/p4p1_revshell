@@ -116,7 +116,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 		else
 
 			make linux
-			
+
 			mv -v $MAKENAMELS p4p1-s_V$VERSION
 
 		fi
@@ -232,12 +232,12 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 		if [[ "$OSTYPE" = "darwin"* ]];then
 
-			echo "alias p4p1-s='cd ~/.p4p1-o/ ; ./p4p1-s_V$VERSION'" >> .bash_profile
+			echo "alias p4p1-s='cd ~/.p4p1-o/ ; ./p4p1-s_V$VERSION'" >> ~/.bash_profile
 			echo "[*] Command line tool installed"
 
 		else
 
-			echo "alias p4p1-s='cd ~/.p4p1-o/ ; ./p4p1-s_V$VERSION'" >> .bashrc
+			echo "alias p4p1-s='cd ~/.p4p1-o/ ; ./p4p1-s_V$VERSION'" >> ~/.bashrc
 			echo "[*] Command line tool installed"
 
 		fi
