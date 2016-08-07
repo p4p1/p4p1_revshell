@@ -125,8 +125,21 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 		mv -v $MAKENAMEW32C p4p1-o_32_V$VERSION.exe
 		mv -v $MAKENAMEW64C p4p1-o_64_V$VERSION.exe
-		echo "[*] Making p4p1 version $VERSION for linux"
-		make linux
+		mv -v $MAKENAMEW32S p4p1-s_32_V$VERSION.exe
+		mv -v $MAKENAMEW64S p4p1-s_64_V$VERSION.exe
+
+		if [[ "$OSTYPE" = "darwin"* ]];then
+
+			echo "[*] Making p4p1 version $VERSION for mac"
+			make mac
+
+		else
+
+			echo "[*] Making p4p1 version $VERSION for linux"
+			make linux
+
+		fi
+
 
 		mv -v $MAKENAMELC p4p1-o_V$VERSION
 		mv -v $MAKENAMELS p4p1-s_V$VERSION
