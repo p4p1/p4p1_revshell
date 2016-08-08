@@ -1,4 +1,4 @@
-#include "p4p1-h_linux.h"
+#include "p4p1-mac.h"
 
 int main(int argc, char *argv[])
 {
