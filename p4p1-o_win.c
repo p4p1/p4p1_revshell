@@ -201,7 +201,7 @@ int main(int argc, char * argv[])
 								} else {
 									download(buf);
 									memset(buf, 0, BUFSIZE);
-									strcpy(buf, "file downloaded from p4p1server.hopto.org\n");
+									strcpy(buf, "file downloaded\n");
 								}
 							}
 						} else {
