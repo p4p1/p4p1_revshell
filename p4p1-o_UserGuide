@@ -326,15 +326,10 @@ else
 		elif [ "$q" = "2" ]; then
 
 			VERSIORET=`cat $VER_FILE`
-			W32EXE_PATH="~/.p4p1-o/exe/p4p1-o_32_V$VERSIORET.exe"
-			W64EXE_PATH="~/.p4p1-o/exe/p4p1-o_64_V$VERSIORET.exe"
-			W32EXE=p4p1-o_32_V$VERSIORET.exe
-			W64EXE=p4p1-o_64_V$VERSIORET.exe
 
 			echo "[*] Retrieving files ..."
 			cd $EXE_PATH
-			cp -v $W32EXE $DESKTOP_PATH
-			cp -v $W64EXE $DESKTOP_PATH
+			cp -v * $DESKTOP_PATH
 
 		elif [ "$q" = "3" ]; then
 
@@ -343,7 +338,6 @@ else
 			echo "[*] Running Server..."
 			cd ~/.p4p1-o/
 			./p4p1-s_V$VERSIORET
-			cd ~
 
 		elif [ "$q" = "4" ];then
 

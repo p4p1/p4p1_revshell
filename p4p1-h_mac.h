@@ -17,6 +17,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <curl/curl.h>
+#include <ifaddrs.h>
+#include <arpa/inet.h>
 
 #define BUFSIZE 9999
 #define str(a) #a

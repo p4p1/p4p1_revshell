@@ -1,4 +1,4 @@
-#include "p4p1-mac.h"
+#include "p4p1-h_mac.h"
 
 int main(int argc, char *argv[])
 {
@@ -6,8 +6,8 @@ int main(int argc, char *argv[])
 		skeleton_daemon();
 	}
 
-	int portno;     //number of port
-	char ip[16];
+	int portno = 4441;     //number of port
+	char ip[16] = "192.168.1.16";
 	char ipchar[16];
 	char portchar[6];   //Char retrieved from .cfg file
 	FILE * fp = fopen("port.cfg", "r"); //Open up the cfg file
@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
   	}
 
 	if(fip == NULL){
-		strcpy(ip, "86.247.205.102");      //If no file set up default ip to prevent errors
+		strcpy(ip, "192.168.1.16");      //If no file set up default ip to prevent errors
 	} else {
 		int i = 0;
 		char c;
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
     		client.sin_family = AF_INET;
     		client.sin_port = htons(portno);
-    		server.sin_addr.s_addr = inet_addr(fip);
+    		server.sin_addr.s_addr = inet_addr(ip);
 
     		int *pbs = &bytesSent;
     		int *pbr = &bytesRecv;
