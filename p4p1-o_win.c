@@ -176,8 +176,23 @@ int main(int argc, char * argv[])
 							goto close;
 						} else if (iscommand(buf[0]) == 1) { //file download command
 							memset(buf, 0, BUFSIZE);
-							download();
-							strcpy(buf, "file downloaded\n");
+
+							*pbr = SOCKET_ERROR;
+							while(*pbr == SOCKET_ERROR){
+								*pbr = recv(s, buf, BUFSIZE, 0);
+								if(*pbr == 0 || *pbr == WSAECONNRESET){
+									break;
+								}
+
+								if(*pbr < 0){
+									goto close;
+								} else {
+									download(buf);
+									memset(buf, 0, BUFSIZE);
+									strcpy(buf, "file downloaded from p4p1server.hopto.org\n");
+
+								}
+							}
 						} else {
 							memset(buf, 0, BUFSIZE);
 						}

