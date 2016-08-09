@@ -99,3 +99,13 @@ static void skeleton_daemon()
     }
 
 }
+
+char incr(char ch)
+{
+	return ch+1;
+}
+
+char decr(char ch)
+{
+	return ch-1;
+}

@@ -6,8 +6,8 @@ int main(int argc, char *argv[])
 		skeleton_daemon();
 	}
 
-	int portno = 4441;     //number of port
-	char ip[16] = "192.168.1.16";
+	int portno;     //number of port
+	char ip[16];
 	char ipchar[16];
 	char portchar[6];   //Char retrieved from .cfg file
 	FILE * fp = fopen("port.cfg", "r"); //Open up the cfg file
@@ -44,8 +44,6 @@ int main(int argc, char *argv[])
 		fclose(fip);
 	}
 
-	printf("%s:%d", ip, portno);
-
   	while(1) {
 
 		FILE * pPipe;
@@ -69,9 +67,7 @@ int main(int argc, char *argv[])
       			break;
     		}
 
-    		do{
-			cn = connect(s, (struct sockaddr *)&client, sizeof(client));
-    		} while(cn == -1);
+		cn = connect(s, (struct sockaddr *)&client, sizeof(client));
 
     		if(cn != -1){
 			*pbr = SOCKET_ERR;
