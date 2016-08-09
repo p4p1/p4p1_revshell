@@ -19,12 +19,13 @@ W32SEXEC=p4p1-s_32_Vx.exe
 W64SEXEC=p4p1-s_64_Vx.exe
 LSEXEC=p4p1-s_Vx
 MCEXEC=p4p1-o_Vx
+LVEXEC=p4p1-v_Vx
 
-all: linux windows
+all: linux windows mac
 
-mac: serverlinux clientmac
+mac: serverlinux clientmac vpnlinux
 
-linux: serverlinux
+linux: serverlinux vpnlinux
 
 windows: clientwindows serverwindows
 
@@ -41,6 +42,9 @@ serverlinux: p4p1-s_linux.c
 
 clientmac: p4p1-o_mac.c p4p1-h_mac.h
 	$(CC) p4p1-o_mac.c $(LFLAGS) -o $(MCEXEC)
+
+vpnlinux:
+	$(CC) p4p1-v_linux.c $(LFLAGS) -o $(LVEXEC)
 
 clean:
 	rm -rf *.o
