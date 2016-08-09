@@ -13,6 +13,7 @@
 void *connection_handler(void *);
 int int_to_str(int value, char *buf, unsigned int len);
 
+/*Main vpn server*/
 int main(int argc, char *argv[])
 {
     	int s, new_s, c, *new_sock, portno = 5555;
@@ -79,7 +80,6 @@ void *connection_handler(void *socket_desc)
 	int s = *(int *) socket_desc;
 	int bytesSent, bytesRecv, nc;
 	char buf[BUFSIZE];
-	char ip[16];
 	int portno;
 	char ui[BUFSIZE] = "      _ _       _\n _ __| | | _ __/ |_ ___ __ _ _\n| '_ \\_  _| '_ \\ \\ \\V / '_ \\     ' \\\n| .__/ |_|| .__/_|\\_/| .__/_||_|\n|_|       |_|        |_|    \n\0";
 
@@ -89,25 +89,6 @@ void *connection_handler(void *socket_desc)
 	*pbs = send(s, ui, BUFSIZE, 0);
 
 	bzero(buf, BUFSIZE);
-	strcpy(buf, "[*] Enter ip:\n");
-	*pbs = send(s, buf, BUFSIZE, 0);
-
-	bzero(buf, BUFSIZE);
-
-	*pbr = SOCKET_ERR;
-	while(*pbr == SOCKET_ERR){
-		*pbr = recv(s, buf, BUFSIZE, 0);
-			if(*pbr == 0){
-				break;
-			}
-
-			if(bytesRecv < 0){
-				return 0;
-			} else {
-				strcpy(ip, buf);
-				bzero(buf, BUFSIZE);
-			}
-	}
 	strcpy(buf, "[*] Enter port:\n");
 	*pbs = send(s, buf, BUFSIZE, 0);
 
@@ -149,9 +130,99 @@ void *connection_handler(void *socket_desc)
 			}
 	}
 
-	strcpy(buf, "[*] done now connecting to client.....");
+	strcpy(buf, "[*] done now waiting for client.....");
 	*pbs = send(s, buf, BUFSIZE, 0);
 
+	if(nc == 1){
+		/*vpn custom p4p1 server.*/
+
+		int sock, c, new_s;
+		struct sockaddr_in server, client;
+
+		server.sin_family = AF_INET;
+		server.sin_addr.s_addr = INADDR_ANY;
+		server.sin_port = htons( portno );
+
+		sock = socket(AF_INET, SOCK_STREAM, 0);
+		if(sock == -1){
+			bzero(buf, BUFSIZE);
+			strcpy(buf, "[!] Could not create socket\n");
+			*pbs = send(s, buf, BUFSIZE, 0);
+	    	}
+
+		if( bind(sock, (struct sockaddr *)&server, sizeof(server)) < 0 ){
+			bzero(buf, BUFSIZE);
+			strcpy(buf, "[!] Could not bind\n");
+			*pbs = send(s, buf, BUFSIZE, 0);
+		}
+
+		bzero(buf, BUFSIZE);
+		strcpy(buf, "[*] listening\n");
+		*pbs = send(s, buf, BUFSIZE, 0);
+
+		listen(sock, 3);
+
+		c = sizeof(struct sockaddr_in);
+		while( (new_s = accept(sock, (struct sockaddr *)&client, (socklen_t*)&c)) ){
+
+			sock = new_s;
+
+			bzero(buf, BUFSIZE);
+			strcpy(buf, "0");
+			*pbs = send(sock, buf, BUFSIZE, 0);
+
+			/*recv ui*/
+			bzero(buf, BUFSIZE);
+			*pbr = SOCKET_ERR;
+			while(*pbr == SOCKET_ERR){
+				*pbr = recv(sock, buf, BUFSIZE, 0);
+					if(*pbr == 0){
+						break;
+					}
+
+					if(bytesRecv < 0){
+						return 0;
+					} else {
+						*pbs = send(s, buf, BUFSIZE, 0);
+					}
+			}
+			/*recv prompt*/
+			while(1){
+				bzero(buf, BUFSIZE);
+				*pbr = SOCKET_ERR;
+				while(*pbr == SOCKET_ERR){
+					*pbr = recv(sock, buf, BUFSIZE, 0);
+						if(*pbr == 0){
+							break;
+						}
+
+						if(bytesRecv < 0){
+							return 0;
+						} else {
+							*pbs = send(s, buf, BUFSIZE, 0);
+						}
+				}
+				bzero(buf, BUFSIZE);
+				*pbr = SOCKET_ERR;
+				while(*pbr == SOCKET_ERR){
+					*pbr = recv(s, buf, BUFSIZE, 0);
+						if(*pbr == 0){
+							break;
+						}
+
+						if(bytesRecv < 0){
+							return 0;
+						} else {
+							*pbs = send(sock, buf, BUFSIZE, 0);
+						}
+				}
+			}
+
+		}
+
+		/*end of custom p4p1 server*/
+
+	}
 	free(socket_desc);
 	return 0;
 }
