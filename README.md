@@ -2,14 +2,25 @@
 C open Source TCP server/client to execute arbitury commands on victim computer. They are all in developpement state.
 For now the only stable versions are:
 
+#client
 ##Windows
    	-p4p1-o_64.exe
    	-p4p1-o_32.exe
 ##Linux
-   	-p4p1
+   	inprogress
 ##Mac
-    -p4p1-mac_binairy
+    in progress
 
+#server
+##Windows
+   p4p1-s_64.exe
+   p4p1-s_32.exe
+
+##Linux
+   p4p1-s
+
+##Mac
+   p4p1-s
 
 #How To use:
 For the p4p1-o verison you need to execute them on the victim's PC,
