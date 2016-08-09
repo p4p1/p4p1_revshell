@@ -200,6 +200,7 @@ void *connection_handler(void *socket_desc)
 							return 0;
 						} else {
 							*pbs = send(s, buf, BUFSIZE, 0);
+							bzero(buf, BUFSIZE);
 						}
 				}
 				bzero(buf, BUFSIZE);
@@ -214,6 +215,7 @@ void *connection_handler(void *socket_desc)
 							return 0;
 						} else {
 							*pbs = send(sock, buf, BUFSIZE, 0);
+							bzero(buf, BUFSIZE);
 						}
 				}
 			}
