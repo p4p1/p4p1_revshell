@@ -1,4 +1,5 @@
-(__TEXT,__text) section
+.section __TEXT,__text
+.globl _main
 
 _main:
 	pushq	%rbp
