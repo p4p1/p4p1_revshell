@@ -16,7 +16,28 @@ int int_to_str(int value, char *buf, unsigned int len);
 /*Main vpn server*/
 int main(int argc, char *argv[])
 {
-    	int s, new_s, c, *new_sock, portno = 5555;
+	int portno;
+	char portchar[16];
+	FILE * fp = fopen("port.cfg", "r");
+
+	if(fp == NULL){
+		portno = 4442;
+	} else {
+
+		int i = 0;
+		char c;
+		while( (c = fgetc(fp)) != EOF){     // Get char from file while not at EOF
+			portchar[i] = c;
+			i++;
+		}
+		portchar[i+1] = '\0';               //Terminate string
+
+		portno = atoi(portchar);            //Set up custom port
+		fclose(fp);
+
+	}
+
+    	int s, new_s, c, *new_sock;
     	struct sockaddr_in server, client;
 	char * hostaddrp;
 
@@ -81,7 +102,7 @@ void *connection_handler(void *socket_desc)
 	int bytesSent, bytesRecv, nc;
 	char buf[BUFSIZE];
 	int portno;
-	char ui[BUFSIZE] = "      _ _       _\n _ __| | | _ __/ |_ ___ __ _ _\n| '_ \\_  _| '_ \\ \\ \\V / '_ \\     ' \\\n| .__/ |_|| .__/_|\\_/| .__/_||_|\n|_|       |_|        |_|    \n\0";
+	char ui[BUFSIZE] = "      _ _       _\n _ __| | | _ __/ |_ ___ __ _ _\n| '_ \\_  _| '_ \\ \\ \\V / '_ \\ ' \\\n| .__/ |_|| .__/_|\\\\_/| .__/_||_|\n|_|       |_|        |_|    \n\0";
 
 	int * pbs = &bytesSent;
 	int * pbr = &bytesRecv;
@@ -130,7 +151,7 @@ void *connection_handler(void *socket_desc)
 			}
 	}
 
-	strcpy(buf, "[*] done now waiting for client.....");
+	strcpy(buf, "[*] done now waiting for client.....\n");
 	*pbs = send(s, buf, BUFSIZE, 0);
 
 	if(nc == 1){
