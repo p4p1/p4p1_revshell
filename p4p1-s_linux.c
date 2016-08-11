@@ -154,9 +154,22 @@ void *connection_handler(void *socket_desc)
                 		printf("[x] Socket non Existant");
             		}
 
-        	} else if( buf[0] == '_'){	// get number of clients connected
+        	} else if( buf[0] == '*'){	// url
 
-            		//printf("Number of clients: %d", sessionID);
+			write(sock, buf, BUFSIZE);
+			bzero(buf, BUFSIZE);
+
+			//Read url prompt
+            		read(sock, buf, BUFSIZE);
+			printf("%s", buf);
+			bzero(buf, BUFSIZE);
+			fgets(buf, BUFSIZE, stdin);
+
+			write(sock, buf, BUFSIZE);
+			bzero(buf, BUFSIZE);
+			read(sock, buf, BUFSIZE);
+			printf("%s", buf);
+			bzero(buf, BUFSIZE);
 
         	} else if( buf[0] == '&' ){
 
@@ -171,6 +184,7 @@ void *connection_handler(void *socket_desc)
             		read(sock, buf, BUFSIZE);
 
             		printf("%s", buf);
+			bzero(buf, BUFSIZE);
         	}
     	}
     	//Free the socket_desc
