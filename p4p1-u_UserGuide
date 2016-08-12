@@ -25,6 +25,26 @@ function Remove {
 
 }
 
+function Debug {
+
+	DEGUBED=0
+	UNDEBUG=1
+	EXE_PATH=~/.p4p1-o/exe/
+	VER=`cat ~/.p4p1-o/cfg/ver.cfg`
+	if [[ ! -e "p4p1-o_32_V$VER.exe" && ! -e "p4p1-o_64_V$VER.exe"  && ! -e "p4p1-s_32_V$VER.exe" && ! -e "p4p1-s_64_V$VER.exe" && ! -e "p4p1-v_32_V$VER.exe" && ! -e "p4p1-v_64_V$VER.exe" ]]; then
+
+		echo "[!] NO FILES!"
+		exit $UNDEBUG
+
+	else
+
+		mv -v p4p1-*_*_V$VER.exe $EXE_PATH
+		exit $DEGUBED
+
+	fi
+
+}
+
 E_NOINSTALL=40
 E_EXEMISS=41
 E_NOCHOICE=42
@@ -89,6 +109,12 @@ elif [ "$1" = "-d" ];then
 	echo "[1] Creating a zip backup in the local dir"
 	echo "[!] And removing all files"
 	Remove
+
+elif [ "$1" = "-e" ]; then
+
+	echo "[2] Debug Mode!"
+	echo "[!] Please put in this file all of the .exe"
+	Debug
 
 elif [ ! -d "$HOME_PATH" ]; then
 
@@ -201,7 +227,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 		echo "[!] missing executables"
 		echo "[!] To reinstall exes go to github and download them or install mingw."
-		echo "[!] And restart this app with -d"
+		echo "[!] And restart this app with -e"
 		echo "[!] See Usage with -h for more information"
 		echo -e "\e[31m[!] Error code: $E_EXEMISS\e[0m"
 
