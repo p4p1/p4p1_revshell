@@ -217,7 +217,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 	fi
 
-	if [ ! -e "$LCEXE" ]; then
+	if [ ! -e "$LCEXE"  && ! -e "$LVEXE" && ! -e "$LSEXE" ]; then
 
 		echo "[!] missing executables"
 		echo "[!] To reinstall exes go to github and download them or install mingw."
@@ -230,6 +230,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 		echo "[*] Copy linux client to $EXE_PATH"
 		mv -v $LCEXE $EXE_PATH
 		mv -v $LVEXE $EXE_PATH
+		mv -v $LSEXE $HOME_PATH
 
 	fi
 
@@ -252,8 +253,6 @@ elif [ ! -d "$HOME_PATH" ]; then
 		echo $EXT_IP > $IP_FILE
 
 	fi
-
-	mv p4p1-s_V$VERSION $HOME_PATH
 
 	echo "[*] Do you want the command line tool?? (yes / no)"
 	read q
