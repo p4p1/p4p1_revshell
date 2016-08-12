@@ -17,6 +17,8 @@ W32CEXEC=p4p1-o_32_Vx.exe
 W64CEXEC=p4p1-o_64_Vx.exe
 W32SEXEC=p4p1-s_32_Vx.exe
 W64SEXEC=p4p1-s_64_Vx.exe
+W32VEXEC=p4p1-v_32_Vx.exe
+W64VEXEC=p4p1-v_64_Vx.exe
 LSEXEC=p4p1-s_Vx
 MCEXEC=p4p1-o_Vx
 LVEXEC=p4p1-v_Vx
@@ -27,11 +29,15 @@ mac: serverlinux clientmac vpnlinux
 
 linux: serverlinux vpnlinux
 
-windows: clientwindows serverwindows
+windows: clientwindows serverwindows vpnwindows
 
 clientwindows: p4p1-h_win.h p4p1-o_win.c
 	$(CC32) p4p1-o_win.c $(WFLAGS) -o $(W32CEXEC)
 	$(CC64) p4p1-o_win.c $(WFLAGS) -o $(W64CEXEC)
+
+vpnwindows: p4p1-v_win.c p4p1-h_win.h
+	$(CC32) p4p1-v_win.c $(WFLAGS) -o $(W32VEXEC)
+	$(CC64) p4p1-v_win.c $(WFLAGS) -o $(W64VEXEC)
 
 serverwindows: p4p1-s_win.c
 	$(CC32) p4p1-s_win.c $(WFLAGS) -o $(W32SEXEC)
@@ -52,5 +58,10 @@ clean:
 mrproper: clean
 	rm -rf $(LSEXEC)
 	rm -rf $(MCEXEC)
-	rm -rf $(WC32CEXEC)
-	rm -rf $(WC64CEXEC)
+	rm -rf $(W32CEXEC)
+	rm -rf $(W64CEXEC)
+	rm -rf $(W32SEXEC)
+	rm -rf $(W64SEXEC)
+	rm -rf $(W32VEXEC)
+	rm -rf $(W64VEXEC)
+	rm -rf $(LVEXEC)

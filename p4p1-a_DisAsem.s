@@ -392,7 +392,7 @@ _connection_handler:
 	retq
 	callq	0x100001ba8
 	nopw	%cs:(%rax,%rax)
-	
+
 _int_to_str:
 	pushq	%rbp
 	movq	%rsp, %rbp
