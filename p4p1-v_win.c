@@ -73,7 +73,6 @@ int main(int argc ,char *argv[])
 		int cn;
 		int bytesSent, bytesRecv;
 		char buf[BUFSIZE];
-		char ui[BUFSIZE] = "      _ _       _\n _ __| | | _ __/ |_ ___ __ _ _\n| '_ \\_  _| '_ \\ \\ \\V / '_ \\ ' \\\n| .__/ |_|| .__/_|\\\\_/| .__/_||_|\n|_|       |_|        |_|    \n\0";
 
 		bytesSent = 0;
 		bytesRecv = SOCKET_ERROR;
@@ -96,15 +95,6 @@ int main(int argc ,char *argv[])
 		int nc;
 
 		if(cn != SOCKET_ERROR){
-			*pbs = send(s, ui, BUFSIZE, 0);
-			if( *pbs == SOCKET_ERROR ){
-				if(WSAGetLastError() != WSAECONNREFUSED
-				|| WSAGetLastError() == WSAECONNRESET){
-					goto close;
-				} else {
-					goto close;
-				}
-			}
 
 			memset(buf, 0, BUFSIZE);
 			strcpy(buf, "[*] Send the port:");
@@ -167,7 +157,7 @@ int main(int argc ,char *argv[])
 		}
 
 		memset(buffer, 0, BUFSIZE);
-	        buffer[0] = '0';
+	        buffer[0] = '1';
 	        *pbs = send(sock, buffer, BUFSIZE, 0);
 	        if( *pbs == SOCKET_ERROR ){
 	                if(WSAGetLastError() != WSAECONNREFUSED

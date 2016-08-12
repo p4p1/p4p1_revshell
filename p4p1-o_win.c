@@ -81,6 +81,7 @@ int main(int argc, char * argv[])
 		char buf[BUFSIZE] = "";					//buf
 		char prompt[10] = "\n<p4p1 />";
 		char ui[95] = "       _ _       _\n  _ __| | | _ __/ |\n | '_ \\_  _| '_ \\ |\n | .__/ |_|| .__/_|\n |_|       |_|\n\0";
+		char uivpn[145] = "      _ _       _\n _ __| | | _ __/ |_ ___ __ _ _\n| '_ \\_  _| '_ \\ \\ \\V / '_ \\ ' \\\n| .__/ |_|| .__/_|\\\\_/| .__/_||_|\n|_|       |_|        |_|    \n\0";
 
 		bytesSent = 0;
 		bytesRecv = SOCKET_ERROR;
@@ -124,6 +125,16 @@ int main(int argc, char * argv[])
 			// Send ui if no session id
 			if(sessionID[0] == '0'){	//if session id is 0 that means you are working with nc
 				*pbs = send(s, ui, sizeof(ui), 0);
+				if(*pbs == SOCKET_ERROR) { //server disconnected!
+					if(WSAGetLastError() != WSAECONNREFUSED
+					|| WSAGetLastError() == WSAECONNRESET){
+						break;
+					} else {
+						goto close;
+					}
+				}
+			} else if( sessionID[0] == '1' ){
+				*pbs = send(s, uivpn, sizeof(ui), 0);
 				if(*pbs == SOCKET_ERROR) { //server disconnected!
 					if(WSAGetLastError() != WSAECONNREFUSED
 					|| WSAGetLastError() == WSAECONNRESET){
