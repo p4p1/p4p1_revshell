@@ -89,6 +89,7 @@ if [ "$1" = "-h" ]; then
 		echo "[?] Usage:"
 		echo "           ./$0  -> basic installation"
 		echo "           ./$0 -d -> cleanup after compile error"
+		echo "           ./$0 -e -> move the exe so that the program works"
 		echo "[?] If the error code is $E_EXEMISS please insure that"
 		echo "[?] You have a p4p1-o exe with the version specified"
 		echo "[?] Or mingw. If you installend mingw do the cleanup and"
@@ -308,8 +309,7 @@ else
 	if [ "$1" = "mrproper" ]; then
 
 		echo "[*] Cleaning all of the p4p1 versions"
-		mv -v p4p1-o_V* version/
-		mv -v p4p1-s_V* version/
+		Rmove
 		echo "[*] Done."
 
 	else
@@ -426,7 +426,7 @@ else
 			fi
 
 		elif [ "$q" = "5" ];then
-			
+
 			if [[ ! -e "$VPN_PORT_FILE" && ! -e "$VPN_IP_FILE" ]]; then
 
 				echo "[*] Please enter ip of vpn"
