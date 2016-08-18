@@ -481,7 +481,9 @@ else
 			fi
 
 			echo "[*] Connecting to vpn with netcat,"
-			nc $ip $port
+			while [ 1 ]; do
+				nc $ip $port
+			done
 
 		else
 
