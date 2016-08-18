@@ -25,6 +25,35 @@ function Remove {
 
 }
 
+function installComp{
+
+	E_NOLINUX=1
+	E_NOROOT=2
+	OS=`uname`
+	if [ $OS = "Linux" ]; then
+
+		if [[ $EUID -ne 0 ]]; then
+
+			echo "[*] You must run as root"
+			exit $E_NOROOT
+
+		else
+
+			echo "[*] Installing mingw-32&64"
+			apt-get install mingw-w64
+			apt-get install mingw32
+
+		fi
+
+	else
+
+		echo "[*] You must be on linux of this to work!"
+		exit $E_NOLINUX
+
+	fi
+
+}
+
 function Debug {
 
 	DEGUBED=0
@@ -177,7 +206,6 @@ elif [ ! -d "$HOME_PATH" ]; then
 			make linux
 
 		fi
-
 
 		mv -v $MAKENAMELC p4p1-o_V$VERSION
 		mv -v $MAKENAMELS p4p1-s_V$VERSION
