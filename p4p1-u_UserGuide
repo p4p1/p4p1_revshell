@@ -119,6 +119,7 @@ if [ "$1" = "-h" ]; then
 		echo "           ./$0  -> basic installation"
 		echo "           ./$0 -d -> cleanup after compile error"
 		echo "           ./$0 -e -> move the exe so that the program works"
+		echo "           ./$0 -i -> installing windows compiler for linux"
 		echo "[?] If the error code is $E_EXEMISS please insure that"
 		echo "[?] You have a p4p1-o exe with the version specified"
 		echo "[?] Or mingw. If you installend mingw do the cleanup and"
@@ -147,6 +148,12 @@ elif [ "$1" = "-e" ]; then
 	echo "[2] Debug Mode!"
 	echo "[!] Please put in this file all of the .exe"
 	Debug
+
+elif [ "$1" = "-i" ]; then
+
+	echo "[3] Install windows compiler for linux"
+	echo "[!] This will only work for ubuntu"
+	installComp
 
 elif [ ! -d "$HOME_PATH" ]; then
 
