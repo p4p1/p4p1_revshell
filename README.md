@@ -39,3 +39,13 @@ nc -l 4441<br />
 0<- dont forget this so that the prompt shows up.<br />
 
 \<p4p1 /\><br />
+
+********
+**TODO**
+********
+
+-ncurses for gui of server
+-better app using ncurse for p4p1-u_UserGuide when home folder located
+-add screen shot to windows client
+-better vpn for windows
+-reverse vpn for windows and linux
