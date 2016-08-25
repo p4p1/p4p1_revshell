@@ -25,7 +25,7 @@ function Remove {
 
 }
 
-function installComp{
+function installComp {
 
 	E_NOLINUX=1
 	E_NOROOT=2
