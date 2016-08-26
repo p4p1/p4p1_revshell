@@ -18,8 +18,6 @@ W64CEXEC=p4p1-o_64_Vx.exe
 W32VEXEC=p4p1-v_32_Vx.exe
 W64VEXEC=p4p1-v_64_Vx.exe
 LSEXEC=p4p1-s_Vx
-MCEXEC=p4p1-o_Vx
-LVEXEC=p4p1-v_Vx
 
 all: linux windows
 
@@ -45,11 +43,7 @@ serverlinux: p4p1-s_linux.c
 
 mrproper:
 	rm -rf $(LSEXEC)
-	rm -rf $(MCEXEC)
 	rm -rf $(W32CEXEC)
 	rm -rf $(W64CEXEC)
-	rm -rf $(W32SEXEC)
-	rm -rf $(W64SEXEC)
 	rm -rf $(W32VEXEC)
 	rm -rf $(W64VEXEC)
-	rm -rf $(LVEXEC)
