@@ -15,21 +15,17 @@ WFLAGS=-lwsock32
 LFLAGS=-Wall -pthread -lpthread -lncurses
 W32CEXEC=p4p1-o_32_Vx.exe
 W64CEXEC=p4p1-o_64_Vx.exe
-W32SEXEC=p4p1-s_32_Vx.exe
-W64SEXEC=p4p1-s_64_Vx.exe
 W32VEXEC=p4p1-v_32_Vx.exe
 W64VEXEC=p4p1-v_64_Vx.exe
 LSEXEC=p4p1-s_Vx
 MCEXEC=p4p1-o_Vx
 LVEXEC=p4p1-v_Vx
 
-all: linux windows mac
+all: linux windows
 
-mac: serverlinux clientmac vpnlinux
+linux: serverlinux
 
-linux: serverlinux vpnlinux
-
-windows: clientwindows serverwindows vpnwindows
+windows: clientwindows vpnwindows
 
 clientwindows: p4p1-h_win.h p4p1-o_win.c
 	$(CC32) p4p1-o_win.c $(WFLAGS) -o $(W32CEXEC)
@@ -46,16 +42,8 @@ serverwindows: p4p1-s_win.c
 serverlinux: p4p1-s_linux.c
 	$(CC) p4p1-s_linux.c $(LFLAGS) -o $(LSEXEC)
 
-clientmac: p4p1-o_mac.c p4p1-h_mac.h
-	$(CC) p4p1-o_mac.c $(LFLAGS) -o $(MCEXEC)
 
-vpnlinux:
-	$(CC) p4p1-v_linux.c $(LFLAGS) -o $(LVEXEC)
-
-clean:
-	rm -rf *.o
-
-mrproper: clean
+mrproper:
 	rm -rf $(LSEXEC)
 	rm -rf $(MCEXEC)
 	rm -rf $(W32CEXEC)

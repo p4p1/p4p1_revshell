@@ -60,7 +60,7 @@ function Debug {
 	UNDEBUG=1
 	EXE_PATH=~/.p4p1-o/exe/
 	VER=`cat ~/.p4p1-o/cfg/ver.cfg`
-	if [[ ! -e "p4p1-o_32_V$VER.exe" && ! -e "p4p1-o_64_V$VER.exe"  && ! -e "p4p1-s_32_V$VER.exe" && ! -e "p4p1-s_64_V$VER.exe" && ! -e "p4p1-v_32_V$VER.exe" && ! -e "p4p1-v_64_V$VER.exe" ]]; then
+	if [[ ! -e "p4p1-o_32_V$VER.exe" && ! -e "p4p1-o_64_V$VER.exe"  &&  ! -e "p4p1-v_32_V$VER.exe" && ! -e "p4p1-v_64_V$VER.exe" ]]; then
 
 		echo "[!] NO FILES!"
 		exit $UNDEBUG
@@ -94,12 +94,8 @@ VER_FILE=~/.p4p1-o/cfg/ver.cfg
 AUTORUN=autorun.inf
 MAKENAMEW32C=p4p1-o_32_Vx.exe
 MAKENAMEW64C=p4p1-o_64_Vx.exe
-MAKENAMEW32S=p4p1-s_32_Vx.exe
-MAKENAMEW64S=p4p1-s_64_Vx.exe
 MAKENAMEW32V=p4p1-v_32_Vx.exe
 MAKENAMEW64V=p4p1-v_64_Vx.exe
-MAKENAMELC=p4p1-o_Vx
-MAKENAMELS=p4p1-s_Vx
 MAKENAMELV=p4p1-v_Vx
 EXT_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
 
@@ -131,7 +127,7 @@ if [ "$1" = "-h" ]; then
 	else
 
 		echo "[?]Usage:"
-		echo "         ./$0  ->only mode available for now"
+		echo "         ./$0  ->only mode available"
 		echo "         ./$0 mrproper -> move the exes to version."
 		echo "         p4p1-s -> command line server tool"
 
@@ -178,17 +174,13 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 		if [[ "$OSTYPE" = "darwin"* ]];then
 
-			make mac
-
-			mv -v $MAKENAMELC p4p1-o_V$VERSION
+			make linux
 			mv -v $MAKENAMELS p4p1-s_V$VERSION
-			mv -v $MAKENAMELV p4p1-v_V$VERSION
 
 		else
 
 			make linux
 
-			mv -v $MAKENAMELV p4p1-v_V$VERSION
 			mv -v $MAKENAMELS p4p1-s_V$VERSION
 
 		fi
@@ -197,15 +189,13 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 		mv -v $MAKENAMEW32C p4p1-o_32_V$VERSION.exe
 		mv -v $MAKENAMEW64C p4p1-o_64_V$VERSION.exe
-		mv -v $MAKENAMEW32S p4p1-s_32_V$VERSION.exe
-		mv -v $MAKENAMEW64S p4p1-s_64_V$VERSION.exe
 		mv -v $MAKENAMEW32V p4p1-v_32_V$VERSION.exe
 		mv -v $MAKENAMEW64V p4p1-v_64_V$VERSION.exe
 
 		if [[ "$OSTYPE" = "darwin"* ]];then
 
 			echo "[*] Making p4p1 version $VERSION for mac"
-			make mac
+			make linux
 
 		else
 
@@ -214,9 +204,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 		fi
 
-		mv -v $MAKENAMELC p4p1-o_V$VERSION
 		mv -v $MAKENAMELS p4p1-s_V$VERSION
-		mv -v $MAKENAMELV p4p1-v_V$VERSION
 
 	fi
 
@@ -253,15 +241,11 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 	W32EXE=p4p1-o_32_V$VERSION.exe
 	W64EXE=p4p1-o_64_V$VERSION.exe
-	W32SEXE=p4p1-s_32_V$VERSION.exe
-	W64SEXE=p4p1-s_64_V$VERSION.exe
 	W32VEXE=p4p1-v_32_V$VERSION.exe
 	W64VEXE=p4p1-v_64_V$VERSION.exe
-	LCEXE=p4p1-o_V$VERSION
 	LSEXE=p4p1-s_V$VERSION
-	LVEXE=p4p1-v_V$VERSION
 
-	if [[ ! -e "$W32EXE" && ! -e "$W64EXE"  && ! -e "$W32SEXE" && ! -e "$W64SEXE" && ! -e "$W32VEXE" && ! -e "$W64VEXE" ]]; then
+	if [[ ! -e "$W32EXE" && ! -e "$W64EXE"   && ! -e "$W32VEXE" && ! -e "$W64VEXE" ]]; then
 
 		echo "[!] missing executables"
 		echo "[!] To reinstall exes go to github and download them or install mingw."
@@ -274,14 +258,13 @@ elif [ ! -d "$HOME_PATH" ]; then
 		echo "[*] Copy exe into $EXE_PATH"
 		mv -v $W32EXE $EXE_PATH
 		mv -v $W64EXE $EXE_PATH
-		mv -v $W32SEXE $EXE_PATH
-		mv -v $W64SEXE $EXE_PATH
+
 		mv -v $W32VEXE $EXE_PATH
 		mv -v $W64VEXE $EXE_PATH
 
 	fi
 
-	if [ ! -e "$LCEXE"  && ! -e "$LVEXE" && ! -e "$LSEXE" ]; then
+	if [ ! -e "$LSEXE" ]; then
 
 		echo "[!] missing executables"
 		echo "[!] To reinstall exes go to github and download them or install mingw."
@@ -292,8 +275,6 @@ elif [ ! -d "$HOME_PATH" ]; then
 	else
 
 		echo "[*] Copy linux client to $EXE_PATH"
-		mv -v $LCEXE $EXE_PATH
-		mv -v $LVEXE $EXE_PATH
 		mv -v $LSEXE $HOME_PATH
 
 	fi
