@@ -103,17 +103,19 @@ int main(int argc, char * argv[])
 		/* receive session ID */
 		if(cn != SOCKET_ERROR){
 
+			/*Recv sessionID*/
 			*pbr = SOCKET_ERROR;
-
 			sessionID[0] = wrecvsid(s, BUFSIZE, pbr);
 
+			/*Send ui with session id*/
 			if(sendui(s, sessionID[0], pbs) == 1){
 				goto close;
 			}
 
 		}
-		/*End of session id block
-		 ***/
+		/*
+		 *End of session id blocks
+		 **/
 
 		while(cn != SOCKET_ERROR){
 
@@ -223,4 +225,3 @@ int main(int argc, char * argv[])
 	}//end of main while loop.
 	return 0;
 }
-

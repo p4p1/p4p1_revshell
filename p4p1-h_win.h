@@ -55,7 +55,7 @@ int download(char * url)
 
 /*
  * wrapper for recv the sessionid
- */
+ **/
 char wrecvsid(int sock, int size, int *br)
 {
 	int pbr = *(int *)br;
