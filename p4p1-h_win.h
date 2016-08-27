@@ -20,6 +20,13 @@
 
 typedef HRESULT (WINAPI *UDTF)(LPVOID, LPCTSTR, LPCTSTR, DWORD, LPVOID);
 
+char wrecvsid(int sock, int size, int *br);
+char incr(char ch);
+char decr(char ch);
+int iscommand(char buf);
+int download(char * url);
+int sendui(int s, char uin, int * bs);
+
 /*
  * get buf and check if p4p1 custom command
  */
