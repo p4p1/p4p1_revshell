@@ -96,8 +96,6 @@ int main(int argc, char * argv[])
 		int * pbs = &bytesSent;
 		int * pbr = &bytesRecv;
 
-		/* Build up jib prompt text to core vars */
-
 		/* connect */
 
 		do{
@@ -109,7 +107,9 @@ int main(int argc, char * argv[])
 			*pbr = SOCKET_ERROR;
 			//Receive the session id
 
-	    		while(*pbr == SOCKET_ERROR){
+			sessionID[0] = wrecvsid(s, BUFSIZE, pbr);
+
+	    		/*while(*pbr == SOCKET_ERROR){
 				*pbr = recv(s, buf, BUFSIZE, 0);
 					if(*pbr == 0 || *pbr == WSAECONNRESET){
 						break;
@@ -121,7 +121,7 @@ int main(int argc, char * argv[])
 						sessionID[0] = buf[0];
 						memset(buf, 0, BUFSIZE);
 					}
-			}
+			}*/
 			// Send ui if no session id
 			if(sessionID[0] == '0'){	//if session id is 0 that means you are working with nc
 				*pbs = send(s, ui, sizeof(ui), 0);
