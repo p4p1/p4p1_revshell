@@ -53,6 +53,30 @@ int download(char * url)
 	return r;
 }
 
+/*
+ * wrapper for recv the sessionid
+ */
+
+char wrecvsid(int sock, int size, int *br)
+{
+	int pbr = *(int *)br;
+	char buf[size];
+	pbr = SOCKET_ERROR;
+	while(pbr == SOCKET_ERROR){
+		pbr = recv(sock, buf, size, 0);
+			if(pbr == 0 || pbr == WSAECONNRESET){
+				break;
+			}
+
+			if(pbr < 0){
+				return -1;
+			} else {
+				return buf[0];
+			}
+	}
+
+}
+
 char incr(char ch)
 {
 	return ch+1;
