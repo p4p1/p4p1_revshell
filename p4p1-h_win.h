@@ -56,7 +56,6 @@ int download(char * url)
 /*
  * wrapper for recv the sessionid
  */
-
 char wrecvsid(int sock, int size, int *br)
 {
 	int pbr = *(int *)br;
@@ -77,6 +76,47 @@ char wrecvsid(int sock, int size, int *br)
 
 }
 
+/*
+ * Wrapper to send prompt
+ */
+int sendui(int s, char uin, int * bs)
+{
+	int pbs = *(int *)bs;
+	char ui[95] = "       _ _       _\n  _ __| | | _ __/ |\n | '_ \\_  _| '_ \\ |\n | .__/ |_|| .__/_|\n |_|       |_|\n\0";
+	char uivpn[146] = "      _ _       _\n _ __| | | _ __/ |_ ___ __ _ _\n| '_ \\_  _| '_ \\ \\ \\V / '_ \\ ' \\\n| .__/ |_|| .__/_|\\\\_/| .__/_||_|\n|_|       |_|        |_|    \n\0";
+
+	if(uin == '0'){
+		pbs = send(s, ui, sizeof(ui), 0);
+	        if(pbs == SOCKET_ERROR) { //server disconnected!
+	        	if(WSAGetLastError() != WSAECONNREFUSED
+	                || WSAGetLastError() == WSAECONNRESET){
+	                	return 1;
+	                } else {
+	       	                return 1;
+	                }
+		}
+	}
+
+	if(uin == '1'){
+		pbs = send(s, uivpn, sizeof(uivpn), 0);
+                if(pbs == SOCKET_ERROR) { //server disconnected!
+                        if(WSAGetLastError() != WSAECONNREFUSED
+                        || WSAGetLastError() == WSAECONNRESET){
+                                return 1;
+                        } else {
+                                return 1;
+                        }
+                }
+	}
+
+
+	return 0;
+}
+
+
+/*
+ *Verry simple crypo to hide some stuff
+ **/
 char incr(char ch)
 {
 	return ch+1;
