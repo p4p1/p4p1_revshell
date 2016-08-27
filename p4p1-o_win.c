@@ -80,8 +80,6 @@ int main(int argc, char * argv[])
 		char sessionID[5] = "";					// Session id given by serv
 		char buf[BUFSIZE] = "";					//buf
 		char prompt[10] = "\n<p4p1 />";
-		char ui[95] = "       _ _       _\n  _ __| | | _ __/ |\n | '_ \\_  _| '_ \\ |\n | .__/ |_|| .__/_|\n |_|       |_|\n\0";
-		char uivpn[146] = "      _ _       _\n _ __| | | _ __/ |_ ___ __ _ _\n| '_ \\_  _| '_ \\ \\ \\V / '_ \\ ' \\\n| .__/ |_|| .__/_|\\\\_/| .__/_||_|\n|_|       |_|        |_|    \n\0";
 
 		bytesSent = 0;
 		bytesRecv = SOCKET_ERROR;
@@ -104,46 +102,15 @@ int main(int argc, char * argv[])
 
 		/* receive session ID */
 		if(cn != SOCKET_ERROR){
+
 			*pbr = SOCKET_ERROR;
-			//Receive the session id
 
 			sessionID[0] = wrecvsid(s, BUFSIZE, pbr);
 
-	    		/*while(*pbr == SOCKET_ERROR){
-				*pbr = recv(s, buf, BUFSIZE, 0);
-					if(*pbr == 0 || *pbr == WSAECONNRESET){
-						break;
-					}
-
-					if(bytesRecv < 0){
-						return -1;
-					} else {
-						sessionID[0] = buf[0];
-						memset(buf, 0, BUFSIZE);
-					}
-			}*/
-			// Send ui if no session id
-			if(sessionID[0] == '0'){	//if session id is 0 that means you are working with nc
-				*pbs = send(s, ui, sizeof(ui), 0);
-				if(*pbs == SOCKET_ERROR) { //server disconnected!
-					if(WSAGetLastError() != WSAECONNREFUSED
-					|| WSAGetLastError() == WSAECONNRESET){
-						break;
-					} else {
-						goto close;
-					}
-				}
-			} else if( sessionID[0] == '1' ){
-				*pbs = send(s, uivpn, sizeof(ui), 0);
-				if(*pbs == SOCKET_ERROR) { //server disconnected!
-					if(WSAGetLastError() != WSAECONNREFUSED
-					|| WSAGetLastError() == WSAECONNRESET){
-						break;
-					} else {
-						goto close;
-					}
-				}
+			if(sendui(s, sessionID[0], pbs) == 1){
+				goto close;
 			}
+
 		}
 		/*End of session id block
 		 ***/
@@ -256,3 +223,4 @@ int main(int argc, char * argv[])
 	}//end of main while loop.
 	return 0;
 }
+
