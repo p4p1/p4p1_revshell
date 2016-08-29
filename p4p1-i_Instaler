@@ -15,7 +15,7 @@
 function Remove {
 
 	REMOVED_ALL=0
-	VER=`cat ~/.p4p1-o/cfg/ver.cfg`
+	VER=`cat /usr/.p4p1-o/cfg/ver.cfg`
 
 	zip -r p4p1-b_V$VER.zip ~/.p4p1-o/
 	mv p4p1-b_V$VER.zip backups/
@@ -58,8 +58,8 @@ function Debug {
 
 	DEGUBED=0
 	UNDEBUG=1
-	EXE_PATH=~/.p4p1-o/exe/
-	VER=`cat ~/.p4p1-o/cfg/ver.cfg`
+	EXE_PATH=/usr/.p4p1-o/exe/
+	VER=`cat /usr/.p4p1-o/cfg/ver.cfg`
 	if [[ ! -e "p4p1-o_32_V$VER.exe" && ! -e "p4p1-o_64_V$VER.exe"  &&  ! -e "p4p1-v_32_V$VER.exe" && ! -e "p4p1-v_64_V$VER.exe" ]]; then
 
 		echo "[!] NO FILES!"
@@ -80,17 +80,17 @@ E_NOCHOICE=42
 E_MAKE=43
 E_NOCOMP=44
 E_NOROOT=45
-HOME_PATH=~/.p4p1-o/
-CONF_PATH=~/.p4p1-o/cfg/
-EXE_PATH=~/.p4p1-o/exe/
+HOME_PATH=/usr/.p4p1-o/
+CONF_PATH=/usr/.p4p1-o/cfg/
+EXE_PATH=/usr/.p4p1-o/exe/
 WEBSERVER_PATH=/var/www/html/exe
 DESKTOP_PATH=~/Desktop
-UN_FILE=~/.p4p1-o/cfg/un.cfg
-PORT_FILE=~/.p4p1-o/cfg/port.cfg
-IP_FILE=~/.p4p1-o/cfg/ip.cfg
-VPN_PORT_FILE=~/.p4p1-o/cfg/vpn_port.cfg
-VPN_IP_FILE=~/.p4p1-o/cfg/vpn_ip.cfg
-VER_FILE=~/.p4p1-o/cfg/ver.cfg
+UN_FILE=/usr/.p4p1-o/cfg/un.cfg
+PORT_FILE=/usr/.p4p1-o/cfg/port.cfg
+IP_FILE=/usr/.p4p1-o/cfg/ip.cfg
+VPN_PORT_FILE=/usr/.p4p1-o/cfg/vpn_port.cfg
+VPN_IP_FILE=/usr/.p4p1-o/cfg/vpn_ip.cfg
+VER_FILE=/usr/.p4p1-o/cfg/ver.cfg
 AUTORUN=autorun.inf
 MAKENAMEW32C=p4p1-o_32_Vx.exe
 MAKENAMEW64C=p4p1-o_64_Vx.exe
@@ -152,6 +152,11 @@ elif [ "$1" = "-i" ]; then
 	installComp
 
 elif [ ! -d "$HOME_PATH" ]; then
+
+	if [[ $EUID -ne 0 ]]; then
+		echo "[*] Must be run as root!"
+		exit $E_NOROOT
+	fi
 
 	if [ ! -e "Makefile" ]; then
 

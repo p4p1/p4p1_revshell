@@ -41,6 +41,8 @@ serverlinux: p4p1-s_linux.c papimain.c papi.h papimain.h
 	$(CC) $(LFLAGS) -c p4p1-s_linux.c papimain.c
 	$(CC) -o $(LSEXEC) $(LFLAGS) p4p1-s_linux.o papimain.o $(LFLAGS)
 
+clean:
+	rm -rf *.o
 
 mrproper:
 	rm -rf $(LSEXEC)
