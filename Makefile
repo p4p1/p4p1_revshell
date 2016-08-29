@@ -37,8 +37,9 @@ serverwindows: p4p1-s_win.c
 	$(CC32) p4p1-s_win.c $(WFLAGS) -o $(W32SEXEC)
 	$(CC64) p4p1-s_win.c $(WFLAGS) -o $(W64SEXEC)
 
-serverlinux: p4p1-s_linux.c
-	$(CC) p4p1-s_linux.c $(LFLAGS) -o $(LSEXEC)
+serverlinux: p4p1-s_linux.c papimain.c papi.h papimain.h
+	$(CC) $(LFLAGS) -c p4p1-s_linux.c papimain.c
+	$(CC) -o $(LSEXEC) $(LFLAGS) p4p1-s_linux.o papimain.o $(LFLAGS)
 
 
 mrproper:
