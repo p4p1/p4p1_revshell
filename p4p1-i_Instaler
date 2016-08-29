@@ -17,10 +17,10 @@ function Remove {
 	REMOVED_ALL=0
 	VER=`cat /usr/.p4p1-o/cfg/ver.cfg`
 
-	zip -r p4p1-b_V$VER.zip ~/.p4p1-o/
+	zip -r p4p1-b_V$VER.zip /usr/.p4p1-o/
 	mv p4p1-b_V$VER.zip backups/
 
-	rm -rf ~/.p4p1-o/
+	rm -rf /usr/.p4p1-o/
 	exit $REMOVED_ALL
 
 }
@@ -97,8 +97,13 @@ MAKENAMEW64C=p4p1-o_64_Vx.exe
 MAKENAMEW32V=p4p1-v_32_Vx.exe
 MAKENAMEW64V=p4p1-v_64_Vx.exe
 MAKENAMELV=p4p1-v_Vx
+MAKENAMELS=p4p1-s_Vx
 EXT_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
 
+if [[ $EUID -ne 0 ]]; then
+	echo "[*] Must be run as root!"
+	exit $E_NOROOT
+fi
 
 echo "*       _ _       _"
 echo "*  _ __| | | _ __/ |"
@@ -152,11 +157,6 @@ elif [ "$1" = "-i" ]; then
 	installComp
 
 elif [ ! -d "$HOME_PATH" ]; then
-
-	if [[ $EUID -ne 0 ]]; then
-		echo "[*] Must be run as root!"
-		exit $E_NOROOT
-	fi
 
 	if [ ! -e "Makefile" ]; then
 
@@ -316,7 +316,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 		else
 
-			echo "alias p4p1-s='cd ~/.p4p1-o/ ; ./p4p1-s_V$VERSION'" >> ~/.bashrc
+			echo "alias p4p1-s='cd /usr/.p4p1-o/ ; ./p4p1-s_V$VERSION'" >> ~/.bashrc
 			echo "[*] Command line tool installed"
 
 		fi
