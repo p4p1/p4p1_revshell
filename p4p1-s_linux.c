@@ -7,9 +7,12 @@ int main(int argc, char *argv[])
 	init_variables(&inf, argv);
 	initscr();
 	keypad(stdscr, TRUE);
-	noecho();
+	//noecho();
 
 	main_loop(&inf);
+
+
+
 	refresh();
 
 	getch();
@@ -52,6 +55,7 @@ void init_variables(struct server_info * inf, char * argv[])
 	FILE * unamefile = fopen("/usr/.p4p1-o/cfg/un.cfg", "r");
 	char fportbuf[50];
 	char fipbuf[50];
+	char funbuf[50];
 	char c;
 	int i;
 
@@ -74,6 +78,14 @@ void init_variables(struct server_info * inf, char * argv[])
 		}
 		fipbuf[i-1] = '\0';
 
+		i = 0;
+		while( ( c = fgetc(unamefile) ) != EOF ){
+			funbuf[i] = c;
+			i++;
+		}
+		funbuf[i-1] = '\0';
+
+		strcpy(inf->username, funbuf);
 		strcpy(inf->ip, fipbuf);
 		inf->portno = atoi(fportbuf);
 	}
@@ -82,6 +94,9 @@ void init_variables(struct server_info * inf, char * argv[])
 	inf->server.sin_family = AF_INET;
 	inf->server.sin_addr.s_addr = INADDR_ANY;
 	inf->server.sin_port = htons( inf->portno );
+	inf->cliNum = 0;
+	inf->byteSent = 0;
+	inf->byteRecv = SOCKET_ERROR;
 
 	getmaxyx(stdscr, inf->win.row, inf->win.col);
 
@@ -97,4 +112,34 @@ void init_variables(struct server_info * inf, char * argv[])
 		error("Unknown ip", -1);
 	}
 
+	fclose(portfile);
+	fclose(ipfile);
+	fclose(unamefile);
+
+}
+
+void pscreen(char * str, int x, int y)
+{
+	mvprintw(y, x, "%s", str);
+	refresh();
+}
+
+void quit(int c, int s)
+{
+	printw("thank you for using byebye");
+	refresh();
+
+	close(s);
+	getch();
+	endwin();
+	exit(c);
+}
+
+void printlogo()
+{
+	printw("       _ _       _\n");
+    	printw("  _ __| | | _ __/ |\n");
+    	printw(" | '_ \\_  _| '_ \\ |\n");
+    	printw(" | .__/ |_|| .__/_|\n");
+    	printw(" |_|       |_|\n");
 }

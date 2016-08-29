@@ -6,5 +6,6 @@
 int main_loop(struct server_info * inf);
 void *connection_handler(void *);
 void bnlisten(struct server_info *inf);
+void clearbuf(char * buf, int size);
 
 #endif
