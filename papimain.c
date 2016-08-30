@@ -4,23 +4,28 @@ int main_loop(struct server_info * inf)
 {
 	int c, new_s, *new_sock;
 	char * sessionid = "5";
-	bnlisten(inf);
-	printlogo();
-	printw("Listening on %s:%d\n", inf->ip, inf->portno);
-	refresh();
 
-	int * pbs = &inf->byteSent;
-	int * pbr = &inf->byteRecv;
+	erase();
+	getmaxyx(stdscr, inf->win.row, inf->win.col);
+
+	bnlisten(inf);
+	printlogo(inf);
+	mvprintw((inf->win.row) / 2, (inf->win.col-35)/2,"Listening on %s:%d\n", inf->ip, inf->portno);
+	refresh();
 
 	c = sizeof(struct sockaddr_in);
 	while( (new_s = accept(inf->s, (struct sockaddr *)&inf->client, (socklen_t*)&c)) ){
 
+		erase();
+
+		inf->cliNum++;
 		inf->hostaddrp = inet_ntoa(inf->client.sin_addr);
 		if(inf->hostaddrp == NULL){
 			error("inet_ntoa()", 1);
 		}
 
-		printw("Connection from %s:%d\nSending client Id", inf->hostaddrp, inf->portno);
+		printlogo(inf);
+		mvprintw(6, 0, "[*] Connection from %s:%d\n", inf->hostaddrp, inf->portno);
 		refresh();
 		write(new_s, sessionid, strlen(sessionid));
 
@@ -46,18 +51,24 @@ void *connection_handler(void * sock)
 {
 	int s = *(int *) sock;
 	int leaveloop = 0;
-	int pbs, pbr;
+	int pbs;
+	int row, col;
 
 	char buf[BUFSIZE];
+
+	getmaxyx(stdscr, row, col);
 
 	while(!leaveloop){
 
 		bzero(buf, BUFSIZE);
+		clastrow();
 
-		printw("\n<p4p1 -%d-> ", s);
+		mvprintw(row-1, 0, "<p4p1 -%d-> ", s);
 		refresh();
 
-		scanw("%s", buf);
+		mvscanw(row-1, 12, "%s", buf);
+
+		mvprintw(9, 0, "");
 
 		pbs = send(s, buf, strlen(buf), 0);
 		if(pbs == SOCKET_ERROR){
@@ -91,7 +102,7 @@ void *connection_handler(void * sock)
 
 				bzero(buf, BUFSIZE);
 				read(s, buf, BUFSIZE);
-				printw("%s", buf);
+				mvprintw(9, 0, "%s", buf);
 
 			}
 
@@ -103,6 +114,7 @@ void *connection_handler(void * sock)
 	free(sock);
 	quit(0, s);
 
+	return 0;
 }
 
 void bnlisten(struct server_info * inf)
