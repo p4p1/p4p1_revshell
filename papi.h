@@ -26,9 +26,6 @@ struct server_info {
 	int s;	//socket desc
 	int cliNum;
 
-	int byteSent;
-	int byteRecv;
-
 	int portno;
 	char ip[16];
 	char username[50];
@@ -45,5 +42,6 @@ void error(char * msg, int num);
 void usage(char * exname);
 void quit(int c, int s);
 void printlogo();
+void clastrow();
 
 #endif
