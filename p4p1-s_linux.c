@@ -1,4 +1,5 @@
 #include "papi.h"
+#include "papimain.h"
 
 int main(int argc, char *argv[])
 {
@@ -7,11 +8,8 @@ int main(int argc, char *argv[])
 	init_variables(&inf, argv);
 	initscr();
 	keypad(stdscr, TRUE);
-	//noecho();
 
 	main_loop(&inf);
-
-
 
 	refresh();
 
@@ -95,10 +93,6 @@ void init_variables(struct server_info * inf, char * argv[])
 	inf->server.sin_addr.s_addr = INADDR_ANY;
 	inf->server.sin_port = htons( inf->portno );
 	inf->cliNum = 0;
-	inf->byteSent = 0;
-	inf->byteRecv = SOCKET_ERROR;
-
-	getmaxyx(stdscr, inf->win.row, inf->win.col);
 
 	if(inf->s == -1){
 		error("Can't init socket.", -1);
@@ -126,20 +120,36 @@ void pscreen(char * str, int x, int y)
 
 void quit(int c, int s)
 {
+	clear();
+	close(s);
 	printw("thank you for using byebye");
 	refresh();
-
-	close(s);
 	getch();
 	endwin();
 	exit(c);
 }
 
-void printlogo()
+void printlogo(struct server_info * inf)
 {
-	printw("       _ _       _\n");
-    	printw("  _ __| | | _ __/ |\n");
-    	printw(" | '_ \\_  _| '_ \\ |\n");
-    	printw(" | .__/ |_|| .__/_|\n");
-    	printw(" |_|       |_|\n");
+
+	getmaxyx(stdscr, inf->win.row, inf->win.col);
+
+	mvprintw(0, 0, "       _ _       _\n");
+    	mvprintw(1, 0, "  _ __| | | _ __/ |\n");
+    	mvprintw(2, 0, " | '_ \\_  _| '_ \\ |\t\t[NumberOfClients: %d]\n",inf->cliNum);
+    	mvprintw(3, 0, " | .__/ |_|| .__/_|\n");
+    	mvprintw(4, 0, " |_|       |_|\n");
+
+}
+
+void clastrow()
+{
+	int row, col, i;
+	getmaxyx(stdscr, row, col);
+
+	for(i = 0; i < col; i++){
+		mvprintw(row-1, i, " ");
+	}
+
+
 }
