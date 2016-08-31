@@ -43,5 +43,6 @@ void usage(char * exname);
 void quit(int c, int s);
 void printlogo();
 void clastrow();
+void clearmain();
 
 #endif

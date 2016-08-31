@@ -68,6 +68,7 @@ void *connection_handler(void * sock)
 
 		mvscanw(row-1, 12, "%s", buf);
 
+		clearmain();
 		mvprintw(9, 0, "");
 
 		pbs = send(s, buf, strlen(buf), 0);

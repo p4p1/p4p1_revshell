@@ -142,14 +142,26 @@ void printlogo(struct server_info * inf)
 
 }
 
+void clearmain()
+{
+	int row, col, i, q;
+	getmaxyx(stdscr, row, col);
+
+	for(q = 1; q < 20; q++){
+		for(i = 0; i < col; i++){
+			mvprintw(row-q, i, " ");
+		}
+	}
+}
+
 void clastrow()
 {
+
 	int row, col, i;
 	getmaxyx(stdscr, row, col);
 
 	for(i = 0; i < col; i++){
 		mvprintw(row-1, i, " ");
 	}
-
 
 }
