@@ -5,6 +5,11 @@ int main(int argc, char *argv[])
 {
 	struct server_info inf;
 
+	if(!strcmp(argv[1], "-h")){
+		usage(argv[0]);
+		return 0;
+	}
+
 	init_variables(&inf, argv);
 	initscr();
 	keypad(stdscr, TRUE);

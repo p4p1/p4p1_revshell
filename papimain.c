@@ -79,19 +79,17 @@ void *connection_handler(void * sock)
 
 			if( buf[0] == '&' ){
 
-				write(s, buf, BUFSIZE);
 				quit(0, s);
 
 			} else if( buf[0] == '*' ){
 
-				write(s, buf, BUFSIZE);
 				bzero(buf, BUFSIZE);
 
 				//Read url prompt
 	            		read(s, buf, BUFSIZE);
 				printw("%s", buf);
 				bzero(buf, BUFSIZE);
-				scanw("%s", buf);
+				mvscanw(row-1, 12, "%s", buf);
 
 				write(s, buf, BUFSIZE);
 				bzero(buf, BUFSIZE);
