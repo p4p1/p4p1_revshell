@@ -127,6 +127,7 @@ int main(int argc, char * argv[])
 		close:
 		_pclose(pPipe);
 		WSACleanup();
+		Sleep(5000);	//5 sec cooldown so that when it quits the server it doesnt flip out.
 	}//end of main while loop.
 	return 0;
 }
