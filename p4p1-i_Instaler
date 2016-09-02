@@ -41,7 +41,6 @@ function installComp {
 
 			echo "[*] Installing mingw-32&64"
 			apt-get install mingw-w64
-			apt-get install mingw32
 
 		fi
 
@@ -92,11 +91,7 @@ VPN_PORT_FILE=/usr/.p4p1-o/cfg/vpn_port.cfg
 VPN_IP_FILE=/usr/.p4p1-o/cfg/vpn_ip.cfg
 VER_FILE=/usr/.p4p1-o/cfg/ver.cfg
 AUTORUN=autorun.inf
-MAKENAMEW32C=p4p1-o_32_Vx.exe
-MAKENAMEW64C=p4p1-o_64_Vx.exe
-MAKENAMEW32V=p4p1-v_32_Vx.exe
-MAKENAMEW64V=p4p1-v_64_Vx.exe
-MAKENAMELV=p4p1-v_Vx
+MAKENAMEW=p4p1-o_Vx.exe
 MAKENAMELS=p4p1-s_Vx
 EXT_IP=`dig +short myip.opendns.com @resolver1.opendns.com`
 
@@ -192,10 +187,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 
 	else
 
-		mv -v $MAKENAMEW32C p4p1-o_32_V$VERSION.exe
-		mv -v $MAKENAMEW64C p4p1-o_64_V$VERSION.exe
-		mv -v $MAKENAMEW32V p4p1-v_32_V$VERSION.exe
-		mv -v $MAKENAMEW64V p4p1-v_64_V$VERSION.exe
+		mv -v $MAKENAMEW p4p1-o_V$VERSION.exe
 
 		if [[ "$OSTYPE" = "darwin"* ]];then
 
@@ -244,13 +236,10 @@ elif [ ! -d "$HOME_PATH" ]; then
 	read name
 	echo $name > $UN_FILE
 
-	W32EXE=p4p1-o_32_V$VERSION.exe
-	W64EXE=p4p1-o_64_V$VERSION.exe
-	W32VEXE=p4p1-v_32_V$VERSION.exe
-	W64VEXE=p4p1-v_64_V$VERSION.exe
+	WEXE=p4p1-o_V$VERSION.exe
 	LSEXE=p4p1-s_V$VERSION
 
-	if [[ ! -e "$W32EXE" && ! -e "$W64EXE"   && ! -e "$W32VEXE" && ! -e "$W64VEXE" ]]; then
+	if [[ ! -e "$WEXE" ]]; then
 
 		echo "[!] missing executables"
 		echo "[!] To reinstall exes go to github and download them or install mingw."
@@ -261,11 +250,7 @@ elif [ ! -d "$HOME_PATH" ]; then
 	else
 
 		echo "[*] Copy exe into $EXE_PATH"
-		mv -v $W32EXE $EXE_PATH
-		mv -v $W64EXE $EXE_PATH
-
-		mv -v $W32VEXE $EXE_PATH
-		mv -v $W64VEXE $EXE_PATH
+		mv -v $WEXE $EXE_PATH
 
 	fi
 

