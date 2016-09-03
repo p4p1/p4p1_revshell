@@ -11,6 +11,7 @@ int main_loop(struct server_info * inf)
 	bnlisten(inf);
 	printlogo(inf);
 	mvprintw((inf->win.row) / 2, (inf->win.col-35)/2,"Listening on %s:%d\n", inf->ip, inf->portno);
+	mvprintw( (inf->win.row)-1, 0, "" );
 	refresh();
 
 	c = sizeof(struct sockaddr_in);
@@ -73,23 +74,25 @@ void *connection_handler(void * sock)
 
 		pbs = send(s, buf, strlen(buf), 0);
 		if(pbs == SOCKET_ERROR){
-			printw("Cant send data! Client down\n");
+			mvprintw(row, col, "Cant send data! Client down\n");
 			break;
 		} else {
 
 			if( buf[0] == '&' ){
 
+				write(s, buf, BUFSIZE);
 				quit(0, s);
 
 			} else if( buf[0] == '*' ){
 
+				write(s, buf, BUFSIZE);
 				bzero(buf, BUFSIZE);
 
 				//Read url prompt
 	            		read(s, buf, BUFSIZE);
 				printw("%s", buf);
 				bzero(buf, BUFSIZE);
-				mvscanw(row-1, 12, "%s", buf);
+				scanw("%s", buf);
 
 				write(s, buf, BUFSIZE);
 				bzero(buf, BUFSIZE);
@@ -101,7 +104,7 @@ void *connection_handler(void * sock)
 
 				bzero(buf, BUFSIZE);
 				read(s, buf, BUFSIZE);
-				mvprintw(9, 0, "%s", buf);
+				mvprintw(8, 0, "%s", buf);
 
 			}
 

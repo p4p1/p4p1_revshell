@@ -5,11 +5,6 @@ int main(int argc, char *argv[])
 {
 	struct server_info inf;
 
-	if(!strcmp(argv[1], "-h")){
-		usage(argv[0]);
-		return 0;
-	}
-
 	init_variables(&inf, argv);
 	initscr();
 	keypad(stdscr, TRUE);
@@ -141,9 +136,10 @@ void printlogo(struct server_info * inf)
 
 	mvprintw(0, 0, "       _ _       _\n");
     	mvprintw(1, 0, "  _ __| | | _ __/ |\n");
-    	mvprintw(2, 0, " | '_ \\_  _| '_ \\ |\t\t[NumberOfClients: %d]\n",inf->cliNum);
+    	mvprintw(2, 0, " | '_ \\_  _| '_ \\ |\n");
     	mvprintw(3, 0, " | .__/ |_|| .__/_|\n");
     	mvprintw(4, 0, " |_|       |_|\n");
+	mvprintw(2, (inf->win.col )/2, "[NumberOfClients: %d]", inf->cliNum);
 
 }
 
@@ -152,7 +148,7 @@ void clearmain()
 	int row, col, i, q;
 	getmaxyx(stdscr, row, col);
 
-	for(q = 1; q < 20; q++){
+	for(q = 1; q < 16; q++){
 		for(i = 0; i < col; i++){
 			mvprintw(row-q, i, " ");
 		}
@@ -169,4 +165,16 @@ void clastrow()
 		mvprintw(row-1, i, " ");
 	}
 
+}
+
+int reusesock(struct server_info * inf)
+{
+	int yes=1;
+	//char yes='1'; // use this under Solaris
+
+	if (setsockopt(inf->s, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
+	    return 1;
+	}
+
+	return 0;
 }
