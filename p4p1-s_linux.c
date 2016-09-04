@@ -1,14 +1,17 @@
 #include "papi.h"
 #include "papimain.h"
+#include "papiarg.h"
 
 int main(int argc, char *argv[])
 {
 	struct server_info inf;
 
+
 	init_variables(&inf, argv);
+	check_arg(&inf, argv);
 	initscr();
 	keypad(stdscr, TRUE);
-
+	
 	main_loop(&inf);
 
 	refresh();
@@ -120,9 +123,17 @@ void pscreen(char * str, int x, int y)
 
 void quit(int c, int s)
 {
+	int row, col;
+	getmaxyx(stdscr, row, col);
+
 	clear();
 	close(s);
-	printw("thank you for using byebye");
+	mvprintw(0, 0, "       _ _       _\n");
+	mvprintw(1, 0, "  _ __| | | _ __/ |\n");
+	mvprintw(2, 0, " | '_ \\_  _| '_ \\ |\n");
+	mvprintw(3, 0, " | .__/ |_|| .__/_|\n");
+	mvprintw(4, 0, " |_|       |_|\n");
+	mvprintw( row / 2, (col-26) /2, "thank you for using byebye");
 	refresh();
 	getch();
 	endwin();

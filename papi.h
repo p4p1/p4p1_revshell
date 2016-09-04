@@ -1,5 +1,5 @@
-#ifndef p4p1_h
-#define p4p1_h
+#ifndef papi_h
+#define papi_h
 
 #include <stdio.h>
 #include <string.h>
@@ -8,6 +8,9 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+
+#include <fcntl.h> // for cp
+#include <errno.h> // for cp
 
 #include <ncurses.h>
 #include <pthread.h>
@@ -21,6 +24,12 @@ struct window {
 
 };
 
+struct arg_options {
+
+	char * usb_path;
+
+};
+
 struct server_info {
 
 	int s;	//socket desc
@@ -31,6 +40,7 @@ struct server_info {
 	char username[50];
 	char * hostaddrp;
 
+	struct arg_options argo;
 	struct window win;
 	struct sockaddr_in server, client;
 

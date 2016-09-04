@@ -10,7 +10,8 @@ int main_loop(struct server_info * inf)
 
 	bnlisten(inf);
 	printlogo(inf);
-	mvprintw((inf->win.row) / 2, (inf->win.col-35)/2,"Listening on %s:%d\n", inf->ip, inf->portno);
+	mvprintw(((inf->win.row) / 2)-1, (inf->win.col-30)/2, "Hello %s You are", inf->username);
+	mvprintw((inf->win.row) / 2, (inf->win.col-35)/2,"listening on %s:%d", inf->ip, inf->portno);
 	mvprintw( (inf->win.row)-1, 0, "" );
 	refresh();
 
