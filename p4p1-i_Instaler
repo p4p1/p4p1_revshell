@@ -41,6 +41,8 @@ function installComp {
 
 			echo "[*] Installing mingw-32&64"
 			apt-get install mingw-w64
+			echo "[*] Installing ncurse library"
+			apt-get install libncurses-dev
 
 		fi
 
