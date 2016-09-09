@@ -101,6 +101,22 @@ void *connection_handler(void * sock)
 				printw("%s", buf);
 				bzero(buf, BUFSIZE);
 
+			} else if ( buf[0] == 'c' && buf[1] == 'd' ){
+
+				write(s, buf, BUFSIZE);
+				bzero(buf, BUFSIZE);
+
+				read(s, buf, BUFSIZE);
+				printw("%s", buf);
+				bzero(buf, BUFSIZE);
+				scanw("%s", buf);
+
+				write(s, buf, BUFSIZE);
+				bzero(buf, BUFSIZE);
+				read(s, buf, BUFSIZE);
+				printw("%s", buf);
+				bzero(buf, BUFSIZE);
+
 			} else {
 
 				bzero(buf, BUFSIZE);

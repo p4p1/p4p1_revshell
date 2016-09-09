@@ -6,18 +6,9 @@ int main(int argc, char *argv[])
 {
 	struct server_info inf;
 
-
 	init_variables(&inf, argv);
-	check_arg(&inf, argv);
-	initscr();
-	keypad(stdscr, TRUE);
-	
-	main_loop(&inf);
+	check_arg(&inf, argv, argc);
 
-	refresh();
-
-	getch();
-	endwin();
 	return 0;
 }
 

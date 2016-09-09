@@ -1,30 +1,47 @@
 #include "papiarg.h"
 
-void check_arg(struct server_info * inf, char * argv[])
+void check_arg(struct server_info * inf, char * argv[], int argc)
 {
-	if(!strcmp(argv[1], "-h")){
-		usage(argv[0]);
-		exit(0);
-	} else if(!strcmp(argv[1], "-usb")){
+	if(argc >= 2){
 
-		if(strlen(argv[2]) > 0 && strlen(argv[2]) < 50){
-			//strcpy(inf->argo.usb_path, argv[2]);
-			copy_exe_to_path(argv[2]);
-		} else {
+		if(!strcmp(argv[1], "-usb")){
+
+			if(argc >= 3){
+
+				if(strlen(argv[2]) > 0 && strlen(argv[2]) < 50){
+					printf("usb\n");
+				} else {
+					usage(argv[0]);
+				}
+				
+			} else {
+
+				usage(argv[0]);
+				error("Not enought args", 1);
+
+			}
+
+		} else if(!strcmp(argv[1], "-h")){
+
 			usage(argv[0]);
+
+		} else {
+
+			usage(argv[0]);
+
 		}
 
-		exit(0);
+	} else {
+
+		initscr();
+		keypad(stdscr, TRUE);
+		main_loop(inf);
+		refresh();
+		getch();
+		endwin();
+
 	}
-}
 
-void copy_exe_to_path(char * pth)
-{
-	char * cmd = "cp /usr/.p4p1-o/* ";
-	strcat(cmd, pth);
-	system(cmd);
-
-	//cp(inf->argo.usb_path, "/usr/.p4p1-o/p4p1-o");
 }
 
 /*

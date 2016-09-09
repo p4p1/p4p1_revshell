@@ -226,9 +226,14 @@ int processdata(SOCKET s, char cmd, char cmd2)
 				if(*pbr < 0){
 					return -1;
 				} else {
+					int q = 0;
+					while(buf[q] != '\n'){
+						q++;
+					}
+					buf[q] = '\0';
+					buf[q+1] = 0;
 					change_dir(buf);
 					memset(buf, 0, BUFSIZE);
-					strcpy(buf, "changed dir\n");
 				}
 			}
 
@@ -290,7 +295,7 @@ int processdata(SOCKET s, char cmd, char cmd2)
  */
 int iscommand(char buf)
 {
-	if(buf == '*'){
+	if(buf == '*') {
 		return 1;
 	} else if(buf == '&') {
 		return 2;
