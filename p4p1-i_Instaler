@@ -61,14 +61,14 @@ function Debug {
 	UNDEBUG=1
 	EXE_PATH=/usr/.p4p1-o/exe/
 	VER=`cat /usr/.p4p1-o/cfg/ver.cfg`
-	if [[ ! -e "p4p1-o_32_V$VER.exe" && ! -e "p4p1-o_64_V$VER.exe"  &&  ! -e "p4p1-v_32_V$VER.exe" && ! -e "p4p1-v_64_V$VER.exe" ]]; then
+	if [[ ! -e "p4p1-o_V$VER.exe" ]]; then
 
 		echo "[!] NO FILES!"
 		exit $UNDEBUG
 
 	else
 
-		mv -v p4p1-*_*_V$VER.exe $EXE_PATH
+		mv -v p4p1-*_V$VER.exe $EXE_PATH
 		exit $DEGUBED
 
 	fi
@@ -122,8 +122,8 @@ if [ "$1" = "-h" ]; then
 		echo "[?] You have a p4p1-o exe with the version specified"
 		echo "[?] Or mingw. If you installend mingw do the cleanup and"
 		echo "[?] Redo the basic installation"
-		echo "[?] Note: you need 32 and 64 bit mingw to remove the error"
-		echo "[?]       Or a 32 and 64 bit version of the program and use"
+		echo "[?] Note: you need mingw to remove the error"
+		echo "[?]       Or a version of the program, and use"
 		echo "[?]       the specific version."
 
 	else
