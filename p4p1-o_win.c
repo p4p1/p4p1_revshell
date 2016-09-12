@@ -234,6 +234,7 @@ int processdata(SOCKET s, char cmd, char cmd2)
 					buf[q+1] = 0;
 					change_dir(buf);
 					memset(buf, 0, BUFSIZE);
+					strcpy(buf, "changed dir\n");
 				}
 			}
 
