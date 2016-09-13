@@ -13,7 +13,7 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 				} else {
 					usage(argv[0]);
 				}
-				
+
 			} else {
 
 				usage(argv[0]);
@@ -21,9 +21,15 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 
 			}
 
-		} else if(!strcmp(argv[1], "-h")){
+		} else if(!strcmp(argv[1], "-c")){
 
-			usage(argv[0]);
+			printf("Check for connections and send email notif");
+
+			if(argc >= 3){
+				printf("Email notification at %s", argv[2]);
+			} else {
+				printf("On screen notification");
+			}
 
 		} else {
 
@@ -32,6 +38,10 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 		}
 
 	} else {
+
+		/*
+		 * Man function
+		 **/
 
 		initscr();
 		keypad(stdscr, TRUE);
