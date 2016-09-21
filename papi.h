@@ -9,8 +9,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
-#include <fcntl.h> // for cp
-#include <errno.h> // for cp
+#include <netinet/in.h>
 
 #include <ncurses.h>
 #include <pthread.h>
@@ -18,18 +17,27 @@
 #define BUFSIZE 9999
 #define SOCKET_ERROR -1
 
+/*
+ * Window structure
+ ***/
 struct window {
 
 	int row, col;
 
 };
 
+/*
+ * Argument options structure
+ ***/
 struct arg_options {
 
 	char * usb_path;
 
 };
 
+/*
+ * Main variable structure
+ ***/
 struct server_info {
 
 	int s;	//socket desc
@@ -46,6 +54,10 @@ struct server_info {
 
 };
 
+/*
+ * Function declarations see p4p1-s_linux.c
+ * for each function details
+ ***/
 void init_variables(struct server_info * inf, char * argv[]);
 void pscreen(char * str, int x, int y);
 void error(char * msg, int num);

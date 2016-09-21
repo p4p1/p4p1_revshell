@@ -1,5 +1,8 @@
 #include "papimain.h"
 
+/*
+ * p4p1 Main program loop
+ ***/
 int main_loop(struct server_info * inf)
 {
 	int c, new_s, *new_sock;
@@ -49,6 +52,9 @@ int main_loop(struct server_info * inf)
 	return 0;
 }
 
+/*
+ * p4p1 connection handler for user
+ ***/
 void *connection_handler(void * sock)
 {
 	int s = *(int *) sock;
@@ -73,7 +79,7 @@ void *connection_handler(void * sock)
 		clearmain();
 		mvprintw(9, 0, "");
 
-		pbs = send(s, buf, strlen(buf), 0);
+
 		if(pbs == SOCKET_ERROR){
 			mvprintw(row, col, "Cant send data! Client down\n");
 			break;
@@ -86,14 +92,14 @@ void *connection_handler(void * sock)
 
 			} else if( buf[0] == '*' ){
 
-				write(s, buf, BUFSIZE);
+				write(s, "*\n\0", 3);
 				bzero(buf, BUFSIZE);
 
 				//Read url prompt
 	            		read(s, buf, BUFSIZE);
-				printw("%s", buf);
+				mvprintw(row-1, 0, "%s", buf);
 				bzero(buf, BUFSIZE);
-				scanw("%s", buf);
+				mvscanw(row-1, 4, "%s", buf);
 
 				write(s, buf, BUFSIZE);
 				bzero(buf, BUFSIZE);
@@ -103,13 +109,13 @@ void *connection_handler(void * sock)
 
 			} else if ( buf[0] == 'c' && buf[1] == 'd' ){
 
-				write(s, buf, BUFSIZE);
+				write(s, "cd\n\0", 4);
 				bzero(buf, BUFSIZE);
 
 				read(s, buf, BUFSIZE);
-				printw("%s", buf);
+				mvprintw(row-1, 0, "%s", buf);
 				bzero(buf, BUFSIZE);
-				scanw("%s", buf);
+				mvscanw(row-1, 4,"%s", buf);
 
 				write(s, buf, BUFSIZE);
 				bzero(buf, BUFSIZE);
@@ -118,7 +124,7 @@ void *connection_handler(void * sock)
 				bzero(buf, BUFSIZE);
 
 			} else {
-
+				pbs = send(s, buf, strlen(buf), 0);
 				bzero(buf, BUFSIZE);
 				read(s, buf, BUFSIZE);
 				mvprintw(8, 0, "%s", buf);
@@ -136,6 +142,9 @@ void *connection_handler(void * sock)
 	return 0;
 }
 
+/*
+ * Bind and listening function
+ **/
 void bnlisten(struct server_info * inf)
 {
 
