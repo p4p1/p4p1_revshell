@@ -171,7 +171,7 @@ int setupvar(fileWrapper * file)
 
 void connected(fileWrapper * file, int * cn)
 {
-	do{
+	do {
 		*cn = connect(file->s, (SOCKADDR*) &file->client, sizeof(file->client));
 	} while( *cn == SOCKET_ERROR);
 }
