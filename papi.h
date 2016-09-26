@@ -29,9 +29,6 @@ typedef struct {
 
 
 	pthread_t onConnect[NUMOCLIENTS];
-	pthread_cond_t cond_connect;
-	pthread_mutex_t mutex_connect;
-
 } serverthread;
 
 /*

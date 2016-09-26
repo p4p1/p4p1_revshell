@@ -34,6 +34,9 @@ int main(int argc, char *argv[])
 	 **/
 	init_variables(&inf, argv);
 
+	/*
+	 *
+	 **/
 	init_threads(&inf, argv);
 
 	/*
@@ -129,6 +132,8 @@ void init_variables(struct server_info * inf, char * argv[])
 	inf->server.sin_family = AF_INET;
 	inf->server.sin_addr.s_addr = INADDR_ANY;
 	inf->server.sin_port = htons( inf->portno );
+
+	serverThread.saved_sockets = (int *) malloc(NUMOCLIENTS * sizeof(int));
 
 	if(inf->s == -1){
 		error("Can't init socket.", -1);
