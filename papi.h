@@ -16,6 +16,23 @@
 
 #define BUFSIZE 9999
 #define SOCKET_ERROR -1
+#define NUMOCLIENTS 100
+
+/*
+ * Thread structure
+ ***/
+typedef struct {
+
+	int cliNum;
+	int * saved_sockets;
+	int connectedTo;
+
+
+	pthread_t onConnect[NUMOCLIENTS];
+	pthread_cond_t cond_connect;
+	pthread_mutex_t mutex_connect;
+
+} serverthread;
 
 /*
  * Window structure
@@ -41,7 +58,6 @@ struct arg_options {
 struct server_info {
 
 	int s;	//socket desc
-	int cliNum;
 
 	int portno;
 	char ip[16];
@@ -54,11 +70,14 @@ struct server_info {
 
 };
 
+static serverthread serverThread;
+
 /*
  * Function declarations see p4p1-s_linux.c
  * for each function details
  ***/
 void init_variables(struct server_info * inf, char * argv[]);
+void init_threads(struct server_info * inf, char * argv[]);
 void pscreen(char * str, int x, int y);
 void error(char * msg, int num);
 void usage(char * exname);

@@ -5,48 +5,48 @@
  ***/
 int main_loop(struct server_info * inf)
 {
-	int c, new_s, *new_sock;
-	char * sessionid = "5";
+	pid_t pID = fork();
 
 	erase();
 	getmaxyx(stdscr, inf->win.row, inf->win.col);
 
-	bnlisten(inf);
-	printlogo(inf);
-	mvprintw(((inf->win.row) / 2)-1, (inf->win.col-30)/2, "Hello %s You are", inf->username);
-	mvprintw((inf->win.row) / 2, (inf->win.col-35)/2,"listening on %s:%d", inf->ip, inf->portno);
-	mvprintw( (inf->win.row)-1, 0, "" );
-	refresh();
 
-	c = sizeof(struct sockaddr_in);
-	while( (new_s = accept(inf->s, (struct sockaddr *)&inf->client, (socklen_t*)&c)) ){
+	if(pID == 0){	// child
 
-		erase();
-
-		inf->cliNum++;
-		inf->hostaddrp = inet_ntoa(inf->client.sin_addr);
-		if(inf->hostaddrp == NULL){
-			error("inet_ntoa()", 1);
-		}
-
+		bnlisten(inf);
 		printlogo(inf);
-		mvprintw(6, 0, "[*] Connection from %s:%d\n", inf->hostaddrp, inf->portno);
+		mvprintw(((inf->win.row) / 2)-1, (inf->win.col-30)/2, "Hello %s You are", inf->username);
+		mvprintw((inf->win.row) / 2, (inf->win.col-35)/2,"listening on %s:%d", inf->ip, inf->portno);
+		mvprintw( (inf->win.row)-1, 0, "" );
 		refresh();
-		write(new_s, sessionid, strlen(sessionid));
 
-		pthread_t sniffer_thread;
-		new_sock = malloc(1);
-		*new_sock = new_s;
+		while(serverThread.cliNum != 1)
+			;	// Wait for connection
 
-		if( pthread_create( &sniffer_thread, NULL, connection_handler, (void *) new_sock) < 0 ){
-			error("thread error", 1);
+		serverThread.connectedTo = 0;
+		pthread_join(serverThread.onConnect[serverThread.connectedTo], NULL);
+
+	} else if (pID < 0) {
+		
+		error("Cant fork", -1);
+
+	} else { // father
+		int c, new_s, *new_sock;
+		char * sessionid = "5";
+		c = sizeof(struct sockaddr_in);
+		while( (new_s = accept(inf->s, (struct sockaddr *)&inf->client, (socklen_t*)&c)) && (serverThread.cliNum < NUMOCLIENTS) ){
+
+			inf->hostaddrp = inet_ntoa(inf->client.sin_addr);
+			if(inf->hostaddrp == NULL){
+				error("inet_ntoa()", 1);
+			}
+
+			mvprintw(6, 0, "[*] Connection from %s:%d\n", inf->hostaddrp, inf->portno);
+
+			write(new_s, sessionid, strlen(sessionid));
+			*(serverThread.saved_sockets + serverThread.cliNum) = new_s;
+			serverThread.cliNum++;
 		}
-
-
-	}
-
-	if(new_s < 0){
-		error("accept", 1);
 	}
 
 	return 0;
@@ -57,7 +57,6 @@ int main_loop(struct server_info * inf)
  ***/
 void *connection_handler(void * sock)
 {
-	int s = *(int *) sock;
 	int leaveloop = 0;
 	int pbs;
 	int row, col;
@@ -66,78 +65,11 @@ void *connection_handler(void * sock)
 
 	getmaxyx(stdscr, row, col);
 
-	while(!leaveloop){
+	while(! leaveloop){
 
-		bzero(buf, BUFSIZE);
-		clastrow();
-
-		mvprintw(row-1, 0, "<p4p1 -%d-> ", s);
-		refresh();
-
-		mvscanw(row-1, 12, "%s", buf);
-
-		clearmain();
-		mvprintw(9, 0, "");
-
-
-		if(pbs == SOCKET_ERROR){
-			mvprintw(row, col, "Cant send data! Client down\n");
-			break;
-		} else {
-
-			if( buf[0] == '&' ){
-
-				write(s, buf, BUFSIZE);
-				quit(0, s);
-
-			} else if( buf[0] == '*' ){
-
-				write(s, "*\n\0", 3);
-				bzero(buf, BUFSIZE);
-
-				//Read url prompt
-	            		read(s, buf, BUFSIZE);
-				mvprintw(row-1, 0, "%s", buf);
-				bzero(buf, BUFSIZE);
-				mvscanw(row-1, 4, "%s", buf);
-
-				write(s, buf, BUFSIZE);
-				bzero(buf, BUFSIZE);
-				read(s, buf, BUFSIZE);
-				printw("%s", buf);
-				bzero(buf, BUFSIZE);
-
-			} else if ( buf[0] == 'c' && buf[1] == 'd' ){
-
-				write(s, "cd\n\0", 4);
-				bzero(buf, BUFSIZE);
-
-				read(s, buf, BUFSIZE);
-				mvprintw(row-1, 0, "%s", buf);
-				bzero(buf, BUFSIZE);
-				mvscanw(row-1, 4,"%s", buf);
-
-				write(s, buf, BUFSIZE);
-				bzero(buf, BUFSIZE);
-				read(s, buf, BUFSIZE);
-				printw("%s", buf);
-				bzero(buf, BUFSIZE);
-
-			} else {
-				pbs = send(s, buf, strlen(buf), 0);
-				bzero(buf, BUFSIZE);
-				read(s, buf, BUFSIZE);
-				mvprintw(8, 0, "%s", buf);
-
-			}
-
-		}
-
+		while(*(int *) sock =! serverThread.connectedTo)
+			;
 	}
-
-	refresh();
-	free(sock);
-	quit(0, s);
 
 	return 0;
 }
