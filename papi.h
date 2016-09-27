@@ -67,14 +67,14 @@ struct server_info {
 
 };
 
-static serverthread serverThread;
+serverthread serverThread;
 
 /*
  * Function declarations see p4p1-s_linux.c
  * for each function details
  ***/
 void init_variables(struct server_info * inf, char * argv[]);
-void init_threads(struct server_info * inf, char * argv[]);
+void init_threads(struct server_info * inf);
 void pscreen(char * str, int x, int y);
 void error(char * msg, int num);
 void usage(char * exname);

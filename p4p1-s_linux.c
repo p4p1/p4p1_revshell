@@ -7,6 +7,10 @@
  * Do not use this for elegal purposes
  ****/
  /*
+  *
+  * Initialize the threads
+  ***
+ init_threads(&inf, argv);
 
 	-initialize the client threads
 	-in threads wait for numof clients
@@ -16,6 +20,8 @@
 	-to change socket use signals
 	-mutex for socket variable and num of clients
 
+Stuck at line 22 because cant make a way to check if variable wasedited or not
+solution : use pointers
  */
 
 #include "papi.h"
@@ -33,11 +39,6 @@ int main(int argc, char *argv[])
 	 *Initialize the variables and read program sys files
 	 **/
 	init_variables(&inf, argv);
-
-	/*
-	 *
-	 **/
-	init_threads(&inf, argv);
 
 	/*
 	 * Check current arguments and send them to the correct
@@ -134,6 +135,7 @@ void init_variables(struct server_info * inf, char * argv[])
 	inf->server.sin_port = htons( inf->portno );
 
 	serverThread.saved_sockets = (int *) malloc(NUMOCLIENTS * sizeof(int));
+	serverThread.cliNum = 0;
 
 	if(inf->s == -1){
 		error("Can't init socket.", -1);
@@ -157,14 +159,16 @@ void init_variables(struct server_info * inf, char * argv[])
 
 }
 
-void init_threads(struct server_info * inf, char * argv[])
+void init_threads(struct server_info * inf)
 {
+
 	for(int i = 0; i < NUMOCLIENTS; i++){
-		pthread_create(
-			 &serverThread.onConnect[i], NULL,
-			 connection_handler, (void *) i );
+		void * data = &i;
+		pthread_create( &serverThread.onConnect[i], NULL,
+			 connection_handler, (void *) data );
 
 	}
+
 }
 
 /*

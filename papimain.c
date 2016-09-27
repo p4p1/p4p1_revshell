@@ -6,9 +6,9 @@
 int main_loop(struct server_info * inf)
 {
 	pid_t pID = fork();
-
-	erase();
 	getmaxyx(stdscr, inf->win.row, inf->win.col);
+	int * pcn = &serverThread.cliNum;
+
 
 
 	if(pID == 0){	// child
@@ -20,32 +20,34 @@ int main_loop(struct server_info * inf)
 		mvprintw( (inf->win.row)-1, 0, "" );
 		refresh();
 
-		while(serverThread.cliNum != 1)
+		while(*pcn <= 0)
 			;	// Wait for connection
+		mvprintw(6, 0, "[*] Connection from %s:%d\n", inf->hostaddrp, inf->portno);
+		refresh();
+
+		init_threads(inf);
 
 		serverThread.connectedTo = 0;
 		pthread_join(serverThread.onConnect[serverThread.connectedTo], NULL);
 
 	} else if (pID < 0) {
-		
+
 		error("Cant fork", -1);
 
 	} else { // father
-		int c, new_s, *new_sock;
+		int c, new_s;
 		char * sessionid = "5";
 		c = sizeof(struct sockaddr_in);
 		while( (new_s = accept(inf->s, (struct sockaddr *)&inf->client, (socklen_t*)&c)) && (serverThread.cliNum < NUMOCLIENTS) ){
 
+			serverThread.cliNum++;
 			inf->hostaddrp = inet_ntoa(inf->client.sin_addr);
 			if(inf->hostaddrp == NULL){
 				error("inet_ntoa()", 1);
 			}
 
-			mvprintw(6, 0, "[*] Connection from %s:%d\n", inf->hostaddrp, inf->portno);
-
 			write(new_s, sessionid, strlen(sessionid));
 			*(serverThread.saved_sockets + serverThread.cliNum) = new_s;
-			serverThread.cliNum++;
 		}
 	}
 
@@ -58,16 +60,16 @@ int main_loop(struct server_info * inf)
 void *connection_handler(void * sock)
 {
 	int leaveloop = 0;
-	int pbs;
-	int row, col;
+	//int pbs;
+	//int row, col;
 
-	char buf[BUFSIZE];
+	//char buf[BUFSIZE];
 
-	getmaxyx(stdscr, row, col);
+	//getmaxyx(stdscr, row, col);
 
 	while(! leaveloop){
 
-		while(*(int *) sock =! serverThread.connectedTo)
+		while(( *(int *) sock =! serverThread.connectedTo))
 			;
 	}
 
