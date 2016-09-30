@@ -13,7 +13,7 @@
  init_threads(&inf, argv);
 
 	-initialize the client threads
-	-in threads wait for numof clients
+	-in threads wait for numof clients using temp files
 	-if numof clients = threadnum
 	-open up threads
 	-store sockets in array of sockets (pointers)
@@ -21,7 +21,10 @@
 	-mutex for socket variable and num of clients
 
 Stuck at line 22 because cant make a way to check if variable wasedited or not
-solution : use pointers
+solutions :
+	_use pointers / doenst work
+	_use files / doesnt work
+	_pipes / WORKS!!!!!!
  */
 
 #include "papi.h"
@@ -92,15 +95,16 @@ void init_variables(struct server_info * inf, char * argv[])
 	FILE * ipfile = fopen("/usr/.p4p1-o/cfg/ip.cfg", "r");
 	FILE * portfile = fopen("/usr/.p4p1-o/cfg/port.cfg", "r");
 	FILE * unamefile = fopen("/usr/.p4p1-o/cfg/un.cfg", "r");
+
 	char fportbuf[50];
 	char fipbuf[50];
 	char funbuf[50];
 	char c;
 	int i;
 
-	if( ipfile == NULL || portfile == NULL || unamefile == NULL) {
+	if( ipfile == NULL || portfile == NULL || unamefile == NULL ) {
 		usage(argv[0]);
-		error("Cant file the files.", -1);
+		error("Cant find the files.", -1);
 	} else {
 
 		i = 0;
@@ -135,7 +139,7 @@ void init_variables(struct server_info * inf, char * argv[])
 	inf->server.sin_port = htons( inf->portno );
 
 	serverThread.saved_sockets = (int *) malloc(NUMOCLIENTS * sizeof(int));
-	serverThread.cliNum = 0;
+	serverThread.cliNum = '0';
 
 	if(inf->s == -1){
 		error("Can't init socket.", -1);

@@ -23,7 +23,7 @@
  ***/
 typedef struct {
 
-	int cliNum;
+	char cliNum;
 	int * saved_sockets;
 	int connectedTo;
 

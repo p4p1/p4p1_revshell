@@ -5,23 +5,29 @@
  ***/
 int main_loop(struct server_info * inf)
 {
-	pid_t pID = fork();
+	pid_t pID;
+	int fd[2];
+
 	getmaxyx(stdscr, inf->win.row, inf->win.col);
-	int * pcn = &serverThread.cliNum;
+	bnlisten(inf);
 
-
+	pipe(fd);
+	pID = fork();
 
 	if(pID == 0){	// child
+		close(fd[1]);
 
-		bnlisten(inf);
 		printlogo(inf);
 		mvprintw(((inf->win.row) / 2)-1, (inf->win.col-30)/2, "Hello %s You are", inf->username);
 		mvprintw((inf->win.row) / 2, (inf->win.col-35)/2,"listening on %s:%d", inf->ip, inf->portno);
 		mvprintw( (inf->win.row)-1, 0, "" );
 		refresh();
 
-		while(*pcn <= 0)
-			;	// Wait for connection
+		while(1)
+			;
+
+		clear();
+		printlogo(inf);
 		mvprintw(6, 0, "[*] Connection from %s:%d\n", inf->hostaddrp, inf->portno);
 		refresh();
 
@@ -35,8 +41,12 @@ int main_loop(struct server_info * inf)
 		error("Cant fork", -1);
 
 	} else { // father
+		close(fd[0]);
+
 		int c, new_s;
 		char * sessionid = "5";
+		char * pcliNum = &serverThread.cliNum;
+
 		c = sizeof(struct sockaddr_in);
 		while( (new_s = accept(inf->s, (struct sockaddr *)&inf->client, (socklen_t*)&c)) && (serverThread.cliNum < NUMOCLIENTS) ){
 
@@ -46,6 +56,7 @@ int main_loop(struct server_info * inf)
 				error("inet_ntoa()", 1);
 			}
 
+			write(fd[1], pcliNum, sizeof(serverThread.cliNum));
 			write(new_s, sessionid, strlen(sessionid));
 			*(serverThread.saved_sockets + serverThread.cliNum) = new_s;
 		}
