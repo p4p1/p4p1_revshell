@@ -20,11 +20,6 @@
 	-to change socket use signals
 	-mutex for socket variable and num of clients
 
-Stuck at line 22 because cant make a way to check if variable wasedited or not
-solutions :
-	_use pointers / doenst work
-	_use files / doesnt work
-	_pipes / WORKS!!!!!!
  */
 
 #include "papi.h"
@@ -140,6 +135,7 @@ void init_variables(struct server_info * inf, char * argv[])
 
 	serverThread.saved_sockets = (int *) malloc(NUMOCLIENTS * sizeof(int));
 	serverThread.cliNum = '0';
+	serverThread.connectedTo = 0;
 
 	if(inf->s == -1){
 		error("Can't init socket.", -1);
@@ -167,9 +163,9 @@ void init_threads(struct server_info * inf)
 {
 
 	for(int i = 0; i < NUMOCLIENTS; i++){
-		void * data = &i;
+		int * t = &i;
 		pthread_create( &serverThread.onConnect[i], NULL,
-			 connection_handler, (void *) data );
+			 connection_handler, (void *) t );
 
 	}
 
@@ -219,7 +215,7 @@ void printlogo(struct server_info * inf)
     	mvprintw(2, 0, " | '_ \\_  _| '_ \\ |\n");
     	mvprintw(3, 0, " | .__/ |_|| .__/_|\n");
     	mvprintw(4, 0, " |_|       |_|\n");
-	mvprintw(2, (inf->win.col )/2, "[NumberOfClients: %d]", serverThread.cliNum);
+	mvprintw(2, (inf->win.col )/2, "[NumberOfClients: %c]", serverThread.cliNum);
 
 }
 

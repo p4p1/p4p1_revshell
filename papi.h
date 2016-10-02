@@ -16,7 +16,7 @@
 
 #define BUFSIZE 9999
 #define SOCKET_ERROR -1
-#define NUMOCLIENTS 100
+#define NUMOCLIENTS 5
 
 /*
  * Thread structure
