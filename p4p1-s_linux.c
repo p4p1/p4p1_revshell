@@ -67,6 +67,8 @@ void usage(char * exname)
 	printf("	  cd   -> Change directory\n");
 	printf("          !ch  -> Change client who you are connected to\n");
 	printf("Command Usage:\n");
+	printf("      %s -cli  -> command line interface only\n", exname);
+	printf("      %s -v    -> verbose mode\n", exname);
 	printf("      %s -h    -> show this message\n", exname);
 
 }
@@ -177,15 +179,6 @@ void init_threads(struct server_info * inf)
 }
 
 /*
- * Print text to screen
- **/
-void pscreen(char * str, int x, int y)
-{
-	mvprintw(y, x, "%s", str);
-	refresh();
-}
-
-/*
  * Exit the program correctly function
  ***/
 void quit(int c, int s)
@@ -206,6 +199,7 @@ void quit(int c, int s)
 void printlogo(struct server_info * inf)
 {
 	if(inf->argo.ncr){
+
 		getmaxyx(stdscr, inf->win.row, inf->win.col);
 
 		mvprintw(0, 0, "       _ _       _\n");
@@ -214,6 +208,16 @@ void printlogo(struct server_info * inf)
 	    	mvprintw(3, 0, " | .__/ |_|| .__/_|\n");
 	    	mvprintw(4, 0, " |_|       |_|\n");
 		mvprintw(2, (inf->win.col )/2, "[ NumberOfClients: %c ]", serverThread.cliNum);
+
+	} else if(inf->argo.cli){
+
+		printf("       _ _       _\n");
+	    	printf("  _ __| | | _ __/ |\n");
+	    	printf(" | '_ \\_  _| '_ \\ |\n");
+	    	printf(" | .__/ |_|| .__/_|\n");
+	    	printf(" |_|       |_|\n");
+		printf("[ NumberOfClients: %c ]", serverThread.cliNum);
+
 	}
 }
 
@@ -251,6 +255,7 @@ void clastrow()
 void exitmsg()
 {
 	if(inf->argo.ncr){
+
 		getmaxyx(stdscr, row, col);
 		mvprintw(0, 0, "       _ _       _\n");
 		mvprintw(1, 0, "  _ __| | | _ __/ |\n");
@@ -260,5 +265,15 @@ void exitmsg()
 		mvprintw( row / 2, (col-26) /2, "thank you for using byebye");
 		refresh();
 		getch();
+
+	} else if(inf->argo.cli){
+
+		printf("       _ _       _\n");
+		printf("  _ __| | | _ __/ |\n");
+		printf(" | '_ \\_  _| '_ \\ |\n");
+		printf(" | .__/ |_|| .__/_|\n");
+		printf( " |_|       |_|\n");
+		printf( "thank you for using byebye\n");
+
 	}
 }

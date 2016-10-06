@@ -130,7 +130,7 @@ void *connection_handler(void * sock)
 	while(! leaveloop){
 		sleep(1);
 
-		mvprintw(row-1, 0, "<p4p1 -%d-> ", s);
+		printPrompt(s);
 		mvprintw(3, col - (col/2), "[ All Clients ready to be connected    ]\n");
 		mvprintw(row-1, 12, "");
 		refresh();
@@ -167,27 +167,47 @@ void printFirstScreen(struct server_info * inf)
 		mvprintw( (inf->win.row)-1, 0, "" );
 		refresh();
 	} else if(inf->argo.cli){
-
+		printf("[!] Listening on %s:%d\n", inf->ip, inf->portno);
 	}
 }
 
-void printAcceptedConnection(struct server_info *)
+void printAcceptedConnection(struct server_info * inf, char * readBuf)
 {
 	if(inf->argo.ncr){
+
 		clear();
 		printlogo(inf);
 		mvprintw(6, 0, "[*] Connection from %s:%d\n", readBuf, inf->portno);
 		refresh();
+
 	} else if(inf->argo.cli){
+
+		printlogo(inf);
+		printf("[*] Connection from %s:%d\n", readBuf, inf->portno);
 
 	}
 }
 
 void printConHandler(int t)
 {
-	if(ncr)
-	getmaxyx(stdscr, row, col);
-	mvprintw(3, col - (col/2), "[ Initializing Client Conectors no: %d ]\n", t);
-	mvprintw(7, 0, "");
-	refresh();
+	if(serverThread.ncurses){
+		getmaxyx(stdscr, row, col);
+		mvprintw(3, col - (col/2), "[ Initializing Client Conectors no: %d ]\n", t);
+		mvprintw(7, 0, "");
+		refresh();
+	} else if(serverThread.cmd){
+		printf("[ Initializing Client Conectors no: %d ]\n", t):
+	}
+}
+
+void printPrompt(int s)
+{
+	if(serverThread.ncurses){
+		int row, col;
+		getmaxyx(stdscr, row, col);
+		mvprintw(row-1, 0, "<p4p1 -%d-> ", s);
+		refresh();
+	} else if (serverThread.cmd) {
+		printf("\n<p4p1 -%d-> ", s);
+	}
 }
