@@ -41,8 +41,6 @@ function installComp {
 
 			echo "[*] Installing mingw-32&64"
 			apt-get install mingw-w64
-			echo "[*] Installing ncurse library"
-			apt-get install libncurses-dev
 
 		fi
 
@@ -60,45 +58,16 @@ function Debug {
 	DEGUBED=0
 	UNDEBUG=1
 	EXE_PATH=/usr/.p4p1-o/exe/
-	HOME_PATH=/usr/.p4p1-o/
 	VER=`cat /usr/.p4p1-o/cfg/ver.cfg`
-	if [[ ! -e "p4p1-o_V$VER.exe" ]]; then
+	if [[ ! -e "p4p1-o_32_V$VER.exe" && ! -e "p4p1-o_64_V$VER.exe"  &&  ! -e "p4p1-v_32_V$VER.exe" && ! -e "p4p1-v_64_V$VER.exe" ]]; then
 
 		echo "[!] NO FILES!"
 		exit $UNDEBUG
 
 	else
 
-		mv -v p4p1-*_V$VER.exe $EXE_PATH
-		mv -v p4p1-*_V$VER $HOME_PATH
+		mv -v p4p1-*_*_V$VER.exe $EXE_PATH
 		exit $DEGUBED
-
-	fi
-
-}
-
-function Update {
-
-	E_NOCOMP=1
-	VER=`cat /usr/.p4p1-o/cfg/ver.cfg`
-
-	make all
-	if [[ ! -e "p4p1-o_Vx.exe" && ! -e "p4p1-s_Vx" ]]; then
-
-		mv -v p4p1-o_Vx.exe p4p1-o_V$VER.exe
-		mv -v p4p1-s_Vx p4p1-s_V$VER
-
-		rm -rf /usr/.p4p1-o/exe/*
-		mv -v p4p1-o_V$VER.exe /usr/.p4p1-o/exe/
-		rm -rf /usr/.p4p1-o/p4p1-s_V$VER
-		mv -v p4p1-s_V$VER /usr/.p4p1-o/exe/
-
-		echo "[*] Done installing bye bye"
-
-	else
-
-		echo "[!] Compile error please use the -i option"
-		exit $E_NOCOMP
 
 	fi
 
@@ -151,15 +120,14 @@ if [ "$1" = "-h" ]; then
 		echo "[?] You have a p4p1-o exe with the version specified"
 		echo "[?] Or mingw. If you installend mingw do the cleanup and"
 		echo "[?] Redo the basic installation"
-		echo "[?] Note: you need mingw to remove the error"
-		echo "[?]       Or a version of the program, and use"
+		echo "[?] Note: you need 32 and 64 bit mingw to remove the error"
+		echo "[?]       Or a 32 and 64 bit version of the program and use"
 		echo "[?]       the specific version."
 
 	else
 
 		echo "[?]Usage:"
 		echo "         ./$0  ->only mode available"
-		echo "         ./$0 -u -> Update the app"
 		echo "         ./$0 mrproper -> move the exes to version."
 		echo "         p4p1-s -> command line server tool"
 
@@ -180,14 +148,8 @@ elif [ "$1" = "-e" ]; then
 elif [ "$1" = "-i" ]; then
 
 	echo "[3] Install windows compiler for linux"
-	echo "[!] This will only work for some linx distros"
+	echo "[!] This will only work for ubuntu"
 	installComp
-
-elif [ "$1" = "-u" ]; then
-
-	echo "[4] Update the app"
-	echo "[!] Do this in a different installation zip"
-	Update
 
 elif [ ! -d "$HOME_PATH" ]; then
 
@@ -218,7 +180,6 @@ elif [ ! -d "$HOME_PATH" ]; then
 		else
 
 			make linux
-
 			mv -v $MAKENAMELS p4p1-s_V$VERSION
 
 		fi
@@ -351,7 +312,6 @@ elif [ ! -d "$HOME_PATH" ]; then
 else
 
 	echo "[*] Installation already done use -d to delete EVERYTHING if you want"
-	echo "[*] Or use -e To update/debug the executables with a patch"
 
 fi
 

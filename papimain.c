@@ -14,20 +14,18 @@
 
  	if(pID == 0){	// child has to receive all of the variables
  		close(fd[1]);
-		getmaxyx(stdscr, inf->win.row, inf->win.col);
+		printFirstScreen(inf);
+		init_threads(inf);
+		sleep(NUMOCLIENTS + 1);
 
-		printlogo(inf);
- 		mvprintw(((inf->win.row) / 2)-1, (inf->win.col-30)/2, "Hello %s You are", inf->username);
- 		mvprintw((inf->win.row) / 2, (inf->win.col-35)/2,"listening on %s:%d", inf->ip, inf->portno);
- 		mvprintw( (inf->win.row)-1, 0, "" );
- 		refresh();
-
-		sleep(1);
 
 		char readBuf[80];
+		char readSock[15];
+		int sock = 0;
+		serverThread.allDone = 1;
 		while (1){
 
-			readBuf[0] = 0;
+			readBuf[0] = '0';
 			do {
 				read(fd[0], readBuf, sizeof(readBuf));
 			} while(readBuf[0] != '1'); // client connected
@@ -37,26 +35,27 @@
 				readBuf[i] = '\0';
 			}
 
-			while(readBuf[0] == '\0' || readBuf[0] == '1')
+			for(int i = 0; i < 80; i++){ readBuf[i] = '\0'; }
+			while(readBuf[0] == '\0' || readBuf[0] == '1') // read client ip
 				read(fd[0], readBuf, sizeof(readBuf));
 
-			clear();
-			printlogo(inf);
-			mvprintw(6, 0, "[*] Connection from %s:%d\n", readBuf, inf->portno);
-			refresh();
-			printw("hi m8"); refresh();
+			printAcceptedConnection(inf);
 
-	 		init_threads(inf);
+			for(int i = 0; i < 15; i++){ readSock[i] = '\0'; }
+			read(fd[0], readSock, sizeof(readSock));
+			readSock[1] = '\0';
+			*(serverThread.saved_sockets + sock) = atoi(readSock);
 
 			do {
 				read(fd[0], readBuf, sizeof(readBuf));
-			} while (readBuf[0] != '0');
+			} while (readBuf[0] != '0');	//read quit var
+
 
 			if(serverThread.cliNum == '1'){
 	 			serverThread.connectedTo = 0;
 	 			pthread_join(serverThread.onConnect[serverThread.connectedTo], NULL);
 			}
-
+			sock++;
 		}
  	} else if (pID < 0) {
 
@@ -64,9 +63,11 @@
 
  	} else { // father
  		close(fd[0]);
+		sleep(NUMOCLIENTS + 5);
 
 		char connectionAccepted[3];
 		char resetConnectionA[3];
+		char sockstr[15];
 		connectionAccepted[0] = '1';
 		resetConnectionA[0] = '0';
 
@@ -81,24 +82,27 @@
  		c = sizeof(struct sockaddr_in);
  		while( (new_s = accept(inf->s, (struct sockaddr *)&inf->client, (socklen_t*)&c)) && (sock < NUMOCLIENTS) ){
 
+			sprintf(sockstr, "%d", new_s);
+			sock++;
+
 			serverThread.cliNum++;
  			inf->hostaddrp = inet_ntoa(inf->client.sin_addr);
  			if(inf->hostaddrp == NULL){
  				error("inet_ntoa()", 1);
  			}
+			*(inf->hostaddrp + (strlen(inf->hostaddrp))) = '\0';
 
-			for(i = 0; i < strlen(inf->hostaddrp); i++){
+			for(i = 0; i <= strlen(inf->hostaddrp); i++){
 				sendbuf[i] = *(inf->hostaddrp+i);
 			}
-			sendbuf[i] = '\0';
-			*(inf->hostaddrp + i) = '\0';
+			//sendbuf[i] = '\0';
 
  			write(fd[1], connectionAccepted, sizeof(connectionAccepted));
 			sleep(1);
-			write(fd[1], inf->hostaddrp, strlen(inf->hostaddrp)+1);
+			write(fd[1], sendbuf, strlen(sendbuf));
+			sleep(1);
+			write(fd[1], sockstr, strlen(sockstr));
  			write(new_s, sessionid, strlen(sessionid));
- 			*(serverThread.saved_sockets + sock) = new_s;
-			sock++;
 			write(fd[1], resetConnectionA, sizeof(resetConnectionA));
  		}
  	}
@@ -114,20 +118,24 @@ void *connection_handler(void * sock)
 	int leaveloop = 0;
 	int row, col;
 	//int pbs;
+
 	int t = *(int *) sock;
 	int s = *(serverThread.saved_sockets+t);
+	char buf[BUFSIZE];
 
-	//char buf[BUFSIZE];
-
-	getmaxyx(stdscr, row, col);
+	printConHandler(t);
+	while(( t =! serverThread.connectedTo) && (serverThread.allDone))
+		;
 
 	while(! leaveloop){
-		printw("im here %d\n", t); refresh();
-		while(( t =! serverThread.connectedTo))
-			;
-		mvprintw(row-1, col-1, "<p4p1 -%d-> ", s);
-		refresh();
+		sleep(1);
 
+		mvprintw(row-1, 0, "<p4p1 -%d-> ", s);
+		mvprintw(3, col - (col/2), "[ All Clients ready to be connected    ]\n");
+		mvprintw(row-1, 12, "");
+		refresh();
+		mvscanw(row-1, 12, "%s", buf);
+		clearmain();
 
 	}
 
@@ -146,4 +154,40 @@ void bnlisten(struct server_info * inf)
 
 	listen(inf->s, 3);
 
+}
+
+void printFirstScreen(struct server_info * inf)
+{
+	if(inf->argo.ncr){
+		getmaxyx(stdscr, inf->win.row, inf->win.col);
+
+		printlogo(inf);
+		mvprintw(((inf->win.row) / 2)-1, (inf->win.col-30)/2, "Hello %s You are", inf->username);
+		mvprintw((inf->win.row) / 2, (inf->win.col-35)/2,"listening on %s:%d", inf->ip, inf->portno);
+		mvprintw( (inf->win.row)-1, 0, "" );
+		refresh();
+	} else if(inf->argo.cli){
+
+	}
+}
+
+void printAcceptedConnection(struct server_info *)
+{
+	if(inf->argo.ncr){
+		clear();
+		printlogo(inf);
+		mvprintw(6, 0, "[*] Connection from %s:%d\n", readBuf, inf->portno);
+		refresh();
+	} else if(inf->argo.cli){
+
+	}
+}
+
+void printConHandler(int t)
+{
+	if(ncr)
+	getmaxyx(stdscr, row, col);
+	mvprintw(3, col - (col/2), "[ Initializing Client Conectors no: %d ]\n", t);
+	mvprintw(7, 0, "");
+	refresh();
 }
