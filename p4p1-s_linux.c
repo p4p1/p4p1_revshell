@@ -34,9 +34,14 @@ int main(int argc, char *argv[])
 	struct server_info inf;
 
 	/*
-	 *Initialize the variables and read program sys files
+	 * Initialize the variables and read program sys files
 	 **/
 	init_variables(&inf, argv);
+
+	/*
+	 * Initialize the threads for  the clients
+	 **/
+	init_threads(&inf);
 
 	/*
 	 * Check current arguments and send them to the correct
@@ -170,6 +175,7 @@ void init_threads(struct server_info * inf)
 
 	for(int i = 0; i < NUMOCLIENTS; i++){
 		int * t = &i;
+		printf("[*] Created thread %d\n", i);
 		pthread_create( &serverThread.onConnect[i], NULL,
 			 connection_handler, (void *) t );
 		sleep(1);
@@ -183,13 +189,16 @@ void init_threads(struct server_info * inf)
  ***/
 void quit(int c, int s)
 {
-	int row, col;
 
+	if(serverThread.ncurses){
+		clear();
+		exitmsg();
+		endwin();
+	} else {
+		exitmsg();
+	}
 
-	clear();
 	close(s);
-
-	endwin();
 	exit(c);
 }
 
@@ -226,7 +235,7 @@ void printlogo(struct server_info * inf)
  ***/
 void clearmain()
 {
-	int row, col, i, q;
+	int i, q;
 	getmaxyx(stdscr, row, col);
 
 	for(q = 1; q < 16; q++){
@@ -242,7 +251,7 @@ void clearmain()
 void clastrow()
 {
 
-	int row, col, i;
+	int  i;
 	getmaxyx(stdscr, row, col);
 
 	for(i = 0; i < col; i++){
@@ -254,7 +263,7 @@ void clastrow()
 
 void exitmsg()
 {
-	if(inf->argo.ncr){
+	if(serverThread.ncurses){
 
 		getmaxyx(stdscr, row, col);
 		mvprintw(0, 0, "       _ _       _\n");
@@ -266,7 +275,7 @@ void exitmsg()
 		refresh();
 		getch();
 
-	} else if(inf->argo.cli){
+	} else if(serverThread.cmd){
 
 		printf("       _ _       _\n");
 		printf("  _ __| | | _ __/ |\n");

@@ -15,9 +15,6 @@
  	if(pID == 0){	// child has to receive all of the variables
  		close(fd[1]);
 		printFirstScreen(inf);
-		init_threads(inf);
-		sleep(NUMOCLIENTS + 1);
-
 
 		char readBuf[80];
 		char readSock[15];
@@ -25,36 +22,20 @@
 		serverThread.allDone = 1;
 		while (1){
 
-			readBuf[0] = '0';
-			do {
-				read(fd[0], readBuf, sizeof(readBuf));
-			} while(readBuf[0] != '1'); // client connected
-			serverThread.cliNum++;
 
-			for(int i = 0; i < 80; i++){
-				readBuf[i] = '\0';
-			}
 
-			for(int i = 0; i < 80; i++){ readBuf[i] = '\0'; }
+			for(int i = 0; i < 80; i++){readBuf[i] = '\0';}
 			while(readBuf[0] == '\0' || readBuf[0] == '1') // read client ip
 				read(fd[0], readBuf, sizeof(readBuf));
 
-			printAcceptedConnection(inf);
+			printf("\n\n%s\n\n", readBuf);
+			printAcceptedConnection(inf, readBuf);
 
 			for(int i = 0; i < 15; i++){ readSock[i] = '\0'; }
 			read(fd[0], readSock, sizeof(readSock));
-			readSock[1] = '\0';
 			*(serverThread.saved_sockets + sock) = atoi(readSock);
+			serverThread.cliNum++;
 
-			do {
-				read(fd[0], readBuf, sizeof(readBuf));
-			} while (readBuf[0] != '0');	//read quit var
-
-
-			if(serverThread.cliNum == '1'){
-	 			serverThread.connectedTo = 0;
-	 			pthread_join(serverThread.onConnect[serverThread.connectedTo], NULL);
-			}
 			sock++;
 		}
  	} else if (pID < 0) {
@@ -63,21 +44,12 @@
 
  	} else { // father
  		close(fd[0]);
-		sleep(NUMOCLIENTS + 5);
 
-		char connectionAccepted[3];
-		char resetConnectionA[3];
 		char sockstr[15];
-		connectionAccepted[0] = '1';
-		resetConnectionA[0] = '0';
 
- 		int c, i = 0, new_s, sock = 0;
+ 		int c,  new_s, sock = 0;
  		char * sessionid = "5";
-		char sendbuf[80];
 
-		for(i = 0; i < 80; i++){
-			sendbuf[i] = '\0';
-		}
 
  		c = sizeof(struct sockaddr_in);
  		while( (new_s = accept(inf->s, (struct sockaddr *)&inf->client, (socklen_t*)&c)) && (sock < NUMOCLIENTS) ){
@@ -90,20 +62,21 @@
  			if(inf->hostaddrp == NULL){
  				error("inet_ntoa()", 1);
  			}
-			*(inf->hostaddrp + (strlen(inf->hostaddrp))) = '\0';
 
-			for(i = 0; i <= strlen(inf->hostaddrp); i++){
-				sendbuf[i] = *(inf->hostaddrp+i);
-			}
-			//sendbuf[i] = '\0';
 
- 			write(fd[1], connectionAccepted, sizeof(connectionAccepted));
+
+			printf("\n\n%s\n\n%d\n\n", inf->hostaddrp, new_s);
+
+			// host ip for other part of fork !
 			sleep(1);
-			write(fd[1], sendbuf, strlen(sendbuf));
+			write(fd[1], inf->hostaddrp, strlen(inf->hostaddrp));
+
+			// socket string for other part of fork !
 			sleep(1);
 			write(fd[1], sockstr, strlen(sockstr));
+
+			//socket
  			write(new_s, sessionid, strlen(sessionid));
-			write(fd[1], resetConnectionA, sizeof(resetConnectionA));
  		}
  	}
 
@@ -116,7 +89,6 @@
 void *connection_handler(void * sock)
 {
 	int leaveloop = 0;
-	int row, col;
 	//int pbs;
 
 	int t = *(int *) sock;
@@ -158,6 +130,7 @@ void bnlisten(struct server_info * inf)
 
 void printFirstScreen(struct server_info * inf)
 {
+
 	if(inf->argo.ncr){
 		getmaxyx(stdscr, inf->win.row, inf->win.col);
 
@@ -167,8 +140,10 @@ void printFirstScreen(struct server_info * inf)
 		mvprintw( (inf->win.row)-1, 0, "" );
 		refresh();
 	} else if(inf->argo.cli){
+		printlogo(inf);
 		printf("[!] Listening on %s:%d\n", inf->ip, inf->portno);
 	}
+
 }
 
 void printAcceptedConnection(struct server_info * inf, char * readBuf)
@@ -182,7 +157,6 @@ void printAcceptedConnection(struct server_info * inf, char * readBuf)
 
 	} else if(inf->argo.cli){
 
-		printlogo(inf);
 		printf("[*] Connection from %s:%d\n", readBuf, inf->portno);
 
 	}
@@ -196,15 +170,15 @@ void printConHandler(int t)
 		mvprintw(7, 0, "");
 		refresh();
 	} else if(serverThread.cmd){
-		printf("[ Initializing Client Conectors no: %d ]\n", t):
+		printf("[ Initializing Client Conectors no: %d ]\n", t);
 	}
 }
 
 void printPrompt(int s)
 {
 	if(serverThread.ncurses){
-		int row, col;
 		getmaxyx(stdscr, row, col);
+		clastrow();
 		mvprintw(row-1, 0, "<p4p1 -%d-> ", s);
 		refresh();
 	} else if (serverThread.cmd) {

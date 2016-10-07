@@ -1,6 +1,11 @@
 #ifndef papi_h
 #define papi_h
 
+/*if(serverThread.cliNum == '1'){	//line 40 - papimain.c
+	serverThread.connectedTo = 0;
+	pthread_join(serverThread.onConnect[serverThread.connectedTo], NULL);
+}*/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -74,6 +79,8 @@ struct server_info {
 };
 
 serverthread serverThread;
+
+int row, col;
 
 /*
  * Function declarations see p4p1-s_linux.c

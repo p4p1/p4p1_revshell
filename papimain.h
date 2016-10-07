@@ -9,7 +9,8 @@ void *server_thread(void *);
 void bnlisten(struct server_info *);
 void clearbuf(char * buf, int size);
 void printFirstScreen(struct server_info *);
-void printAcceptedConnection(struct server_info *);
+void printPrompt(int s);
+void printAcceptedConnection(struct server_info *, char *);
 void printConHandler(int t);
 int getclinum();
 
