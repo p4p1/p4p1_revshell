@@ -101,6 +101,7 @@ void init_variables(struct server_info * inf, char * argv[])
 	char fportbuf[50];
 	char fipbuf[50];
 	char funbuf[50];
+	int enable = 1;
 	char c;
 	int i;
 
@@ -143,10 +144,13 @@ void init_variables(struct server_info * inf, char * argv[])
 	inf->argo.ncr = 0;
 	inf->argo.cli = 0;
 	inf->argo.graphic = 0;
+	serverThread.ncurses = 0;
+	serverThread.cmd = 0;
+	serverThread.grtk = 0;
 
 	serverThread.saved_sockets = (int *) malloc(NUMOCLIENTS * sizeof(int));
 	serverThread.cliNum = '0';
-	serverThread.connectedTo = 10;
+	serverThread.connectedTo = 0;
 
 	if(inf->s == -1){
 		error("Can't init socket.", -1);
@@ -160,7 +164,6 @@ void init_variables(struct server_info * inf, char * argv[])
 		error("Unknown ip", -1);
 	}
 
-	int enable = 1;
 	if (setsockopt(inf->s, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0)
     		error("setsockopt(SO_REUSEADDR) failed", -1);
 

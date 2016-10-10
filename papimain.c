@@ -22,21 +22,24 @@
 		serverThread.allDone = 1;
 		while (1){
 
-
-
+			//Clear the buffer!
 			for(int i = 0; i < 80; i++){readBuf[i] = '\0';}
-			while(readBuf[0] == '\0' || readBuf[0] == '1') // read client ip
-				read(fd[0], readBuf, sizeof(readBuf));
+			//Clear reading socket buffer
+			for(int i = 0; i < 15; i++){ readSock[i] = '\0'; }
 
-			printf("\n\n%s\n\n", readBuf);
+			//read the client IP
+			read(fd[0], readBuf, sizeof(readBuf));
+
 			printAcceptedConnection(inf, readBuf);
 
-			for(int i = 0; i < 15; i++){ readSock[i] = '\0'; }
+			//read the client Socket
 			read(fd[0], readSock, sizeof(readSock));
 			*(serverThread.saved_sockets + sock) = atoi(readSock);
-			serverThread.cliNum++;
-
-			sock++;
+			serverThread.cliNum++;	//update the numofclient character
+			if(serverThread.cliNum == '1'){
+				pthread_join(serverThread.onConnect[serverThread.connectedTo], NULL);
+			}
+			sock++;	// keep track of wich pointer to update!
 		}
  	} else if (pID < 0) {
 
@@ -54,18 +57,12 @@
  		c = sizeof(struct sockaddr_in);
  		while( (new_s = accept(inf->s, (struct sockaddr *)&inf->client, (socklen_t*)&c)) && (sock < NUMOCLIENTS) ){
 
-			sprintf(sockstr, "%d", new_s);
-			sock++;
+			sprintf(sockstr, "%d", new_s);	// save socket in string
 
-			serverThread.cliNum++;
  			inf->hostaddrp = inet_ntoa(inf->client.sin_addr);
  			if(inf->hostaddrp == NULL){
  				error("inet_ntoa()", 1);
  			}
-
-
-
-			printf("\n\n%s\n\n%d\n\n", inf->hostaddrp, new_s);
 
 			// host ip for other part of fork !
 			sleep(1);
@@ -75,8 +72,9 @@
 			sleep(1);
 			write(fd[1], sockstr, strlen(sockstr));
 
-			//socket
+			//write to socket the session id to tell p4p1-o if in server or netcat
  			write(new_s, sessionid, strlen(sessionid));
+			sock++; // keep track of how many clients connected
  		}
  	}
 
@@ -88,27 +86,20 @@
  ***/
 void *connection_handler(void * sock)
 {
+
 	int leaveloop = 0;
 	//int pbs;
 
 	int t = *(int *) sock;
 	int s = *(serverThread.saved_sockets+t);
 	char buf[BUFSIZE];
-
+	printf("\n\n\n%d\n\n\n%d\n\n\n", t, serverThread.connectedTo);
 	printConHandler(t);
-	while(( t =! serverThread.connectedTo) && (serverThread.allDone))
-		;
 
 	while(! leaveloop){
-		sleep(1);
-
-		printPrompt(s);
-		mvprintw(3, col - (col/2), "[ All Clients ready to be connected    ]\n");
-		mvprintw(row-1, 12, "");
-		refresh();
-		mvscanw(row-1, 12, "%s", buf);
-		clearmain();
-
+		if(t == serverThread.connectedTo){
+			printf("IM HERE %d", s);
+		}
 	}
 
 	return 0;
