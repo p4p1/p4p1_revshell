@@ -37,7 +37,16 @@
 			*(serverThread.saved_sockets + sock) = atoi(readSock);
 			serverThread.cliNum++;	//update the numofclient character
 			if(serverThread.cliNum == '1'){
-				pthread_join(serverThread.onConnect[serverThread.connectedTo], NULL);
+
+				int pidToConnection = fork();
+				if(pidToConnection == 0){ // child
+					connection_handler(sock, inf);
+				} else if(pidToConnection < 0){
+					error("Secondfork error", -1);
+				} else { //father
+					printf("in father\n");
+				}
+				printf("out of dady\n");
 			}
 			sock++;	// keep track of wich pointer to update!
 		}
@@ -84,25 +93,20 @@
 /*
  * p4p1 connection handler for user
  ***/
-void *connection_handler(void * sock)
+void connection_handler(int t, struct server_info * inf)
 {
-
-	int leaveloop = 0;
-	//int pbs;
-
-	int t = *(int *) sock;
+	printf("in conn handler\n");
 	int s = *(serverThread.saved_sockets+t);
 	char buf[BUFSIZE];
-	printf("\n\n\n%d\n\n\n%d\n\n\n", t, serverThread.connectedTo);
 	printConHandler(t);
+	int leaveloop = 0;
 
 	while(! leaveloop){
-		if(t == serverThread.connectedTo){
-			printf("IM HERE %d", s);
-		}
+		printf("\n<p4p1 -%d-> ", s);
+		getchar();
 	}
 
-	return 0;
+
 }
 
 /*
@@ -174,5 +178,17 @@ void printPrompt(int s)
 		refresh();
 	} else if (serverThread.cmd) {
 		printf("\n<p4p1 -%d-> ", s);
+	}
+}
+
+void getInput(int sock, char * buff)
+{
+	char * buffer = (buff);
+	if(serverThread.ncurses){
+		printPrompt(sock);
+	} else if(serverThread.cmd){
+		//printPrompt(sock);
+		getchar();
+		//fgets(buffer, BUFSIZE, stdin);
 	}
 }

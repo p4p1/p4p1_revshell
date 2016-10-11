@@ -39,11 +39,6 @@ int main(int argc, char *argv[])
 	init_variables(&inf, argv);
 
 	/*
-	 * Initialize the threads for  the clients
-	 **/
-	init_threads(&inf);
-
-	/*
 	 * Check current arguments and send them to the correct
 	 * Main function.
 	 **/
@@ -105,7 +100,7 @@ void init_variables(struct server_info * inf, char * argv[])
 	char c;
 	int i;
 
-	if( ipfile == NULL || portfile == NULL || unamefile == NULL ) {
+	if( ipfile == NULL || portfile == NULL || unamefile == NULL) {
 		usage(argv[0]);
 		error("Cant find the files.", -1);
 	} else {
@@ -131,9 +126,11 @@ void init_variables(struct server_info * inf, char * argv[])
 		}
 		funbuf[i-1] = '\0';
 
+
 		strcpy(inf->username, funbuf);
 		strcpy(inf->ip, fipbuf);
 		inf->portno = atoi(fportbuf);
+
 	}
 
 	inf->s = socket(AF_INET, SOCK_STREAM, 0);
@@ -170,20 +167,6 @@ void init_variables(struct server_info * inf, char * argv[])
 	fclose(portfile);
 	fclose(ipfile);
 	fclose(unamefile);
-
-}
-
-void init_threads(struct server_info * inf)
-{
-
-	for(int i = 0; i < NUMOCLIENTS; i++){
-		int * t = &i;
-		printf("[*] Created thread %d\n", i);
-		pthread_create( &serverThread.onConnect[i], NULL,
-			 connection_handler, (void *) t );
-		sleep(1);
-
-	}
 
 }
 

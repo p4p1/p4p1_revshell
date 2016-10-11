@@ -87,7 +87,6 @@ int row, col;
  * for each function details
  ***/
 void init_variables(struct server_info * inf, char * argv[]);
-void init_threads(struct server_info * inf);
 void error(char * msg, int num);
 void usage(char * exname);
 void quit(int c, int s);

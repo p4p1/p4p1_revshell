@@ -4,8 +4,8 @@
 #include "papi.h"
 
 int main_loop(struct server_info * inf);
-void *connection_handler(void *);
-void *server_thread(void *);
+void connection_handler(int t);
+void getInput(int sock, char * buff);
 void bnlisten(struct server_info *);
 void clearbuf(char * buf, int size);
 void printFirstScreen(struct server_info *);
