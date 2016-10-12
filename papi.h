@@ -34,6 +34,8 @@ typedef struct {
 	int allDone;
 	int ncurses, cmd, grtk;
 
+	char buf[BUFSIZE];
+
 	pthread_t onConnect[NUMOCLIENTS];
 
 } serverthread;

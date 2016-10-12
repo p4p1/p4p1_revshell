@@ -17,6 +17,7 @@
 		printFirstScreen(inf);
 
 		char readBuf[80];
+		char * sessionid = "5";
 		char readSock[15];
 		int sock = 0;
 		serverThread.allDone = 1;
@@ -35,12 +36,19 @@
 			//read the client Socket
 			read(fd[0], readSock, sizeof(readSock));
 			*(serverThread.saved_sockets + sock) = atoi(readSock);
+
+			//write to socket the session id to tell p4p1-o if in server or netcat
+ 			write(*(serverThread.saved_sockets + sock), sessionid, strlen(sessionid));
+			printf("\n\n\n\n%d\n\n\n", *(serverThread.saved_sockets + sock));
 			serverThread.cliNum++;	//update the numofclient character
 			if(serverThread.cliNum == '1'){
 
 				int pidToConnection = fork();
 				if(pidToConnection == 0){ // child
+
+					serverThread.connectedTo = 0;
 					connection_handler(sock, inf);
+
 				} else if(pidToConnection < 0){
 					error("Secondfork error", -1);
 				} else { //father
@@ -56,12 +64,8 @@
 
  	} else { // father
  		close(fd[0]);
-
 		char sockstr[15];
-
  		int c,  new_s, sock = 0;
- 		char * sessionid = "5";
-
 
  		c = sizeof(struct sockaddr_in);
  		while( (new_s = accept(inf->s, (struct sockaddr *)&inf->client, (socklen_t*)&c)) && (sock < NUMOCLIENTS) ){
@@ -81,8 +85,6 @@
 			sleep(1);
 			write(fd[1], sockstr, strlen(sockstr));
 
-			//write to socket the session id to tell p4p1-o if in server or netcat
- 			write(new_s, sessionid, strlen(sessionid));
 			sock++; // keep track of how many clients connected
  		}
  	}
@@ -95,15 +97,23 @@
  ***/
 void connection_handler(int t, struct server_info * inf)
 {
+	char * sessionid = "hy";
+	write(*(serverThread.saved_sockets+t), sessionid, strlen(sessionid));
 	printf("in conn handler\n");
 	int s = *(serverThread.saved_sockets+t);
-	char buf[BUFSIZE];
-	printConHandler(t);
 	int leaveloop = 0;
 
+	printConHandler(t);
+
+	for(int i = 0 ; i < BUFSIZE; i++){ serverThread.buf[i] = '\0'; }
+
 	while(! leaveloop){
-		printf("\n<p4p1 -%d-> ", s);
-		getchar();
+
+		while (t != serverThread.connectedTo)
+			;
+		printPrompt(s);
+		commandInterpreter(inf, t);
+
 	}
 
 
@@ -159,6 +169,7 @@ void printAcceptedConnection(struct server_info * inf, char * readBuf)
 
 void printConHandler(int t)
 {
+
 	if(serverThread.ncurses){
 		getmaxyx(stdscr, row, col);
 		mvprintw(3, col - (col/2), "[ Initializing Client Conectors no: %d ]\n", t);
@@ -167,28 +178,49 @@ void printConHandler(int t)
 	} else if(serverThread.cmd){
 		printf("[ Initializing Client Conectors no: %d ]\n", t);
 	}
+
 }
 
 void printPrompt(int s)
 {
+
 	if(serverThread.ncurses){
 		getmaxyx(stdscr, row, col);
 		clastrow();
 		mvprintw(row-1, 0, "<p4p1 -%d-> ", s);
 		refresh();
-	} else if (serverThread.cmd) {
+	}
+	if (serverThread.cmd) {
 		printf("\n<p4p1 -%d-> ", s);
+		fgets(serverThread.buf, BUFSIZE, stdin);
 	}
 }
 
-void getInput(int sock, char * buff)
+/*
+ * List out all of the server commands!
+ */
+void help()
 {
-	char * buffer = (buff);
-	if(serverThread.ncurses){
-		printPrompt(sock);
-	} else if(serverThread.cmd){
-		//printPrompt(sock);
-		getchar();
-		//fgets(buffer, BUFSIZE, stdin);
+
+}
+
+/*
+ * Print out computer nmae & last connected ip
+ */
+void whoami()
+{
+
+}
+
+void commandInterpreter(struct server_info * inf, int t)
+{
+	if(!strcmp(serverThread.buf, "help\n")){
+		help();
+	} else if(!strcmp(serverThread.buf, "whoami\n")){
+		whoami();
+	} else if(!strcmp(serverThread.buf, "exit\n")){
+		char * leave = "&&";
+		write(*(serverThread.saved_sockets + t), leave, strlen(leave));
+		quit(0, *(serverThread.saved_sockets + t));
 	}
 }

@@ -38,6 +38,7 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 
 			// Gtk invironement with gui interface
 			inf->argo.graphic++;
+			serverThread.grtk++;
 			printf("IN PROGRESS\n");
 			usage(argv[0]);
 
@@ -46,12 +47,14 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 			// Verbose terminal mode no ncurses
 			// nor gtk
 			inf->argo.cli++;
+			serverThread.cmd++;
 			printf("IN PROGRESS\n");
 			usage(argv[1]);
 
 		} else if(!strcmp(argv[1], "-cli")){
 
 			inf->argo.cli++;
+			serverThread.cmd++;
 			main_loop(inf);
 
 		} else {
@@ -66,6 +69,7 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 		 * Main function
 		 **/
 		inf->argo.ncr++;
+		serverThread.ncurses++;
 		initscr();
 		keypad(stdscr, TRUE);
 		main_loop(inf);
