@@ -5,42 +5,73 @@
  ***/
  int main_loop(struct server_info * inf)
  {
- 	bnlisten(inf);
-	printFirstScreen(inf);
 
  	int sock = 0;
 	char * sessionid = "5";
+	char sockBuf[3];
+	int fd[2];
 	serverThread.allDone = 1;
+	pid_t pidToConnection;
+
+	pipe(fd);
+	bnlisten(inf);
+	printFirstScreen(inf);
 
 	while (1) {
 		loop:
 
 		ansetupcon(inf, sock);
-
 		printAcceptedConnection(inf, inf->hostaddrp);
-
 		write(*(serverThread.saved_sockets + sock), sessionid, strlen(sessionid));
 
 		//write to socket the session id to tell p4p1-o if in server or netcat
-
 		serverThread.cliNum++;	//update the numofclient character
-		if(serverThread.cliNum == '1'){
+		if(serverThread.cliNum == '1')
+			pidToConnection = fork();
 
-			pid_t pidToConnection = fork();
-			if(pidToConnection == 0){ // child
+		if(pidToConnection == 0){ // child
+			close(fd[1]);
 
-				serverThread.connectedTo = 0;
-				connection_handler(sock, inf);
+			int loop = 0;
+			int t_sock = 0;
+			char readBuf[3];
+			serverThread.connectedTo = 0;
+			while(loop != 1){
 
-			} else if(pidToConnection < 0){
-				error("Secondfork error", -1);
-			} else { //father
-				goto loop;
+				loop = connection_handler(sock, inf);
+				if(loop == 2){
+
+					t_sock++;
+					read(fd[0], readBuf, sizeof(readBuf));
+					printf("\n\n\n%s\n\n\n", readBuf);
+					int temp_s = atoi(readBuf);
+					*(serverThread.saved_sockets+t_sock) = temp_s;
+
+				} else {
+					randptoScreen(sock);
+				}
+
+
 			}
-			printf("out of dady\n");
+
+			quit(0, *(serverThread.saved_sockets+sock));
+
+		} else if(pidToConnection < 0){
+			error("fork", -1);
+		} else { //father
+
+			if(serverThread.cliNum == '1'){
+				close(fd[0]);
+			} else {
+				sprintf(sockBuf, "%d", *(serverThread.saved_sockets+sock));
+				write(fd[1], sockBuf, sizeof(sockBuf));
+			}
+
+			sock++; // keep track of how many clients connected
+			goto loop;
 
 		}
-		sock++;	// keep track of how many clients connected
+
 	}
 
 
@@ -51,28 +82,36 @@
 /*
  * p4p1 connection handler for user
  ***/
-void connection_handler(int t, struct server_info * inf)
+int connection_handler(int t, struct server_info * inf)
 {
-	char * sessionid = "hy";
-	write(*(serverThread.saved_sockets+t), sessionid, strlen(sessionid));
-	printf("in conn handler\n");
+
 	int s = *(serverThread.saved_sockets+t);
-	int leaveloop = 0;
-
-	printConHandler(t);
-
 	for(int i = 0 ; i < BUFSIZE; i++){ serverThread.buf[i] = '\0'; }
 
-	while(! leaveloop){
 
-		while (t != serverThread.connectedTo)
-			;
-		printPrompt(s);
-		commandInterpreter(inf, t);
+	while (t != serverThread.connectedTo)
+		;
+	printPrompt(s);
 
+	return commandInterpreter(inf, &t);;
+
+
+}
+
+void randptoScreen(int t)
+{
+	char readingBuf[BUFSIZE];
+	for(int i = 0; i < BUFSIZE; i++){ readingBuf[i] = '\0'; }
+
+	read(*(serverThread.saved_sockets+t), readingBuf, BUFSIZE);
+
+	if(serverThread.cmd){
+
+		printf("%s\n", readingBuf);
+
+	} else if(serverThread.ncurses){
+		// for ncurses
 	}
-
-
 }
 
 /*
@@ -142,20 +181,6 @@ void printAcceptedConnection(struct server_info * inf, char * readBuf)
 	}
 }
 
-void printConHandler(int t)
-{
-
-	if(serverThread.ncurses){
-		getmaxyx(stdscr, row, col);
-		mvprintw(3, col - (col/2), "[ Initializing Client Conectors no: %d ]\n", t);
-		mvprintw(7, 0, "");
-		refresh();
-	} else if(serverThread.cmd){
-		printf("[ Initializing Client Conectors no: %d ]\n", t);
-	}
-
-}
-
 void printPrompt(int s)
 {
 
@@ -187,15 +212,62 @@ void whoami()
 
 }
 
-void commandInterpreter(struct server_info * inf, int t)
+/*
+ * Change the client who you are sending data to :)
+ * Not Working for now ;)
+ */
+void changeClient(int * t)
 {
+	if(serverThread.cmd){
+
+		char chclin[BUFSIZE];
+		printf("CliNum -%c- -%d- #> ", serverThread.cliNum, *t);
+		fgets(chclin, BUFSIZE, stdin);
+
+		if(!strcmp(chclin, "+\n")){
+
+			*t += 1;
+
+		} else if(!strcmp(chclin, "-\n")){
+
+			*t -= 1;
+
+		} else{
+			printf("[!] Unknown command!\n");
+		}
+
+	} else if (serverThread.ncurses){
+		// for ncurses
+	}
+}
+
+int commandInterpreter(struct server_info * inf, int * t)
+{
+
+	int inc = *t;
+
 	if(!strcmp(serverThread.buf, "help\n")){
 		help();
 	} else if(!strcmp(serverThread.buf, "whoami\n")){
 		whoami();
 	} else if(!strcmp(serverThread.buf, "exit\n")){
+
 		char * leave = "&&";
-		write(*(serverThread.saved_sockets + t), leave, strlen(leave));
-		quit(0, *(serverThread.saved_sockets + t));
+		write(*(serverThread.saved_sockets+ inc), leave, strlen(leave));
+		return 1;
+
+	} else if(!strcmp(serverThread.buf, "change\n")){
+
+		changeClient(t);
+
+	} else if(!strcmp(serverThread.buf, "update\n")){
+
+		return 2;
+
+	} else {
+		write(*(serverThread.saved_sockets+inc), serverThread.buf, strlen(serverThread.buf));
 	}
+
+	return 0;
+
 }
