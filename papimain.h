@@ -7,6 +7,7 @@ int main_loop(struct server_info * inf);
 void connection_handler(int t, struct server_info * inf);
 void commandInterpreter(struct server_info * inf, int t);
 void bnlisten(struct server_info *);
+void ansetupcon(struct server_info *, int sock);
 void clearbuf(char * buf, int size);
 void printFirstScreen(struct server_info *);
 void printPrompt(int s);

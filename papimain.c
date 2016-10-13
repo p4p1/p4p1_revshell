@@ -5,89 +5,45 @@
  ***/
  int main_loop(struct server_info * inf)
  {
- 	pid_t pID;
- 	int fd[2];
  	bnlisten(inf);
+	printFirstScreen(inf);
 
- 	pipe(fd);
- 	pID = fork();
+ 	int sock = 0;
+	char * sessionid = "5";
+	serverThread.allDone = 1;
 
- 	if(pID == 0){	// child has to receive all of the variables
- 		close(fd[1]);
-		printFirstScreen(inf);
+	while (1) {
+		loop:
 
-		char readBuf[80];
-		char * sessionid = "5";
-		char readSock[15];
-		int sock = 0;
-		serverThread.allDone = 1;
-		while (1){
+		ansetupcon(inf, sock);
 
-			//Clear the buffer!
-			for(int i = 0; i < 80; i++){readBuf[i] = '\0';}
-			//Clear reading socket buffer
-			for(int i = 0; i < 15; i++){ readSock[i] = '\0'; }
+		printAcceptedConnection(inf, inf->hostaddrp);
 
-			//read the client IP
-			read(fd[0], readBuf, sizeof(readBuf));
+		write(*(serverThread.saved_sockets + sock), sessionid, strlen(sessionid));
 
-			printAcceptedConnection(inf, readBuf);
+		//write to socket the session id to tell p4p1-o if in server or netcat
 
-			//read the client Socket
-			read(fd[0], readSock, sizeof(readSock));
-			*(serverThread.saved_sockets + sock) = atoi(readSock);
+		serverThread.cliNum++;	//update the numofclient character
+		if(serverThread.cliNum == '1'){
 
-			//write to socket the session id to tell p4p1-o if in server or netcat
- 			write(*(serverThread.saved_sockets + sock), sessionid, strlen(sessionid));
-			printf("\n\n\n\n%d\n\n\n", *(serverThread.saved_sockets + sock));
-			serverThread.cliNum++;	//update the numofclient character
-			if(serverThread.cliNum == '1'){
+			pid_t pidToConnection = fork();
+			if(pidToConnection == 0){ // child
 
-				int pidToConnection = fork();
-				if(pidToConnection == 0){ // child
+				serverThread.connectedTo = 0;
+				connection_handler(sock, inf);
 
-					serverThread.connectedTo = 0;
-					connection_handler(sock, inf);
-
-				} else if(pidToConnection < 0){
-					error("Secondfork error", -1);
-				} else { //father
-					printf("in father\n");
-				}
-				printf("out of dady\n");
+			} else if(pidToConnection < 0){
+				error("Secondfork error", -1);
+			} else { //father
+				goto loop;
 			}
-			sock++;	// keep track of wich pointer to update!
+			printf("out of dady\n");
+
 		}
- 	} else if (pID < 0) {
+		sock++;	// keep track of how many clients connected
+	}
 
- 		error("Cant fork", -1);
 
- 	} else { // father
- 		close(fd[0]);
-		char sockstr[15];
- 		int c,  new_s, sock = 0;
-
- 		c = sizeof(struct sockaddr_in);
- 		while( (new_s = accept(inf->s, (struct sockaddr *)&inf->client, (socklen_t*)&c)) && (sock < NUMOCLIENTS) ){
-
-			sprintf(sockstr, "%d", new_s);	// save socket in string
-
- 			inf->hostaddrp = inet_ntoa(inf->client.sin_addr);
- 			if(inf->hostaddrp == NULL){
- 				error("inet_ntoa()", 1);
- 			}
-
-			// host ip for other part of fork !
-			sleep(1);
-			write(fd[1], inf->hostaddrp, strlen(inf->hostaddrp));
-
-			// socket string for other part of fork !
-			sleep(1);
-			write(fd[1], sockstr, strlen(sockstr));
-
-			sock++; // keep track of how many clients connected
- 		}
- 	}
 
  	return 0;
  }
@@ -131,6 +87,25 @@ void bnlisten(struct server_info * inf)
 
 	listen(inf->s, 3);
 
+}
+
+void ansetupcon(struct server_info * inf, int sock)
+{
+	int new_s;
+	int c = sizeof(struct sockaddr_in);
+	if( ((new_s = accept(inf->s, (struct sockaddr *)&inf->client, (socklen_t*)&c)) && (sock < NUMOCLIENTS)) > 0 ){
+
+		*(serverThread.saved_sockets + sock) = new_s;
+
+		inf->hostaddrp = inet_ntoa(inf->client.sin_addr);
+		if(inf->hostaddrp == NULL){
+			error("inet_ntoa()", 1);
+		}
+
+
+	} else {
+		error("Accept failed", 1);
+	}
 }
 
 void printFirstScreen(struct server_info * inf)
