@@ -19,5 +19,6 @@ void printAcceptedConnection(struct server_info *, char *);
 void help();
 void whoami();
 void changeClient(int * t);
+void download(int sock);
 
 #endif

