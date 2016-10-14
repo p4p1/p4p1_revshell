@@ -1,14 +1,17 @@
-A simple remote administration tool to send commands in 9 easy steps :)
+p4p1 is a simple remote administration tool to send commands to a client.<br />
 
-How To Use:
+How to install:<br />
+To install p4p1 you need to be on mac or linux. If you are on one of the ubuntu varients its better(not obligatory).<br />
+1/ download the repository<br />
+2/ run the p4p1-i_Instaler as root and follow the steps<br />
+<img src="/p4p1/p4p1/blob/master/Documentation/Untitled.png?raw=true">
 
-1/ clone or download the repository! <br />
-2/ Unzip it<br />
-3/ Go in the master directory<br />
-4/ run ./p4p1-i_Installer -> compile and install the program<br />
-5/ put the exe in a windows computer<br />
-6/ add a ip.cfg file in the same file as the exe with your ip<br />
-7/ run nc -l 4441 on youre computer<br />
-8/ Send in the 0 character to indicate to the exe you are using netcat<br />
-9/ Start sending comands!!!<br />
+
+How To Use With netcat:<br />
+
+1/ put the exe in a windows computer<br />
+2/ add a ip.cfg file in the same file as the exe with your ip<br />
+3/ run nc -l 4441 on youre computer<br />
+4/ Send in the 0 character to indicate to the exe you are using netcat<br />
+5/ Start sending comands!!!<br />
 <img src="https://github.com/p4p1/p4p1/blob/master/Documentation/Screen%20Shot%202016-10-14%20at%2001.02.24.png?raw=true" >
