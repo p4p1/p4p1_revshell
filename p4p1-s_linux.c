@@ -180,7 +180,7 @@ void quit(int c, int s)
 		clear();
 		exitmsg();
 		endwin();
-	} else {
+	} else if (serverThread.cmd){
 		exitmsg();
 	}
 
@@ -263,12 +263,7 @@ void exitmsg()
 
 	} else if(serverThread.cmd){
 
-		printf("       _ _       _\n");
-		printf("  _ __| | | _ __/ |\n");
-		printf(" | '_ \\_  _| '_ \\ |\n");
-		printf(" | .__/ |_|| .__/_|\n");
-		printf( " |_|       |_|\n");
-		printf( "thank you for using byebye\n");
+		printf( "[!] Thank you for using byebye!\n");
 
 	}
 }
