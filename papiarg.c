@@ -25,13 +25,12 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 			}
 
 		} else if(!strcmp(argv[1], "-c")){
-
-			printf("Check for connections and send notif");
+			// check for connection and send the notification to the screen and to a file :)
 
 			if(argc >= 3){
 				printf("Email notification at %s", argv[2]);
 			} else {
-				printf("On screen notification");
+				acandsendnotif(inf);
 			}
 
 		} else if(!strcmp(argv[1], "-gtk")){
@@ -79,4 +78,19 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 
 	}
 
+}
+
+void acandsendnotif(struct server_info * inf)
+{
+	bnlisten(inf);
+	int sock;
+	char * sessionid = "5";
+	char * leave = "&&";
+	while (1){
+		ansetupcon(inf, sock);
+		write(*(serverThread.saved_sockets + sock), sessionid, strlen(sessionid));
+		write(*(serverThread.saved_sockets + sock), leave, strlen(leave));
+		printf("[!!!!!!]Accepted a client!!!!\n");
+		sock++;
+	}
 }

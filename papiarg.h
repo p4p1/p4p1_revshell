@@ -5,5 +5,6 @@
 #include "papimain.h"
 
 void check_arg(struct server_info * inf, char * argv[], int argc);
+void acandsendnotif(struct server_info * inf);
 
 #endif
