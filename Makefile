@@ -11,7 +11,7 @@
 CC=gcc
 CCWIN=i686-w64-mingw32-gcc
 WFLAGS=-lwsock32
-LFLAGS=-Wall -pthread -lpthread -lncurses
+LFLAGS=-Wall -pthread -lpthread -lncurses -std=c99
 WEXEC=p4p1-o_Vx.exe
 LSEXEC=p4p1-s_Vx
 
