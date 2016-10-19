@@ -1,11 +1,6 @@
 #ifndef papi_h
 #define papi_h
 
-/*if(serverThread.cliNum == '1'){	//line 40 - papimain.c
-	serverThread.connectedTo = 0;
-	pthread_join(serverThread.onConnect[serverThread.connectedTo], NULL);
-}*/
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -36,18 +31,7 @@ typedef struct {
 
 	char buf[BUFSIZE];
 
-	pthread_t onConnect[NUMOCLIENTS];
-
 } serverthread;
-
-/*
- * Window structure
- ***/
-struct window {
-
-	int row, col;
-
-};
 
 /*
  * Argument options structure
@@ -55,10 +39,6 @@ struct window {
 struct arg_options {
 
 	char * usb_path;
-	int cli;
-	int ncr;
-	int graphic;
-	int verbose;
 
 };
 
@@ -75,13 +55,18 @@ struct server_info {
 	char * hostaddrp;
 
 	struct arg_options argo;
-	struct window win;
 	struct sockaddr_in server, client;
 
 };
 
+/*
+ * Main structure for global variables
+ */
 serverthread serverThread;
 
+/*
+ * window variables
+ */
 int row, col;
 
 /*

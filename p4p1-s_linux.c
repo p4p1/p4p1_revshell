@@ -123,9 +123,6 @@ void init_variables(struct server_info * inf, char * argv[])
 	inf->server.sin_addr.s_addr = INADDR_ANY;
 	inf->server.sin_port = htons( inf->portno );
 
-	inf->argo.ncr = 0;
-	inf->argo.cli = 0;
-	inf->argo.graphic = 0;
 	serverThread.ncurses = 0;
 	serverThread.cmd = 0;
 	serverThread.grtk = 0;
@@ -178,7 +175,7 @@ void quit(int c, int s)
  ***/
 void printlogo(struct server_info * inf)
 {
-	if(inf->argo.ncr){
+	if(serverThread.ncurses){
 
 		getmaxyx(stdscr, inf->win.row, inf->win.col);
 
@@ -189,7 +186,7 @@ void printlogo(struct server_info * inf)
 	    	mvprintw(4, 0, " |_|       |_|\n");
 		mvprintw(2, (inf->win.col )/2, "[ NumberOfClients: %c ]", serverThread.cliNum);
 
-	} else if(inf->argo.cli){
+	} else if(serverThread.cmd){
 
 		printf("       _ _       _\n");
 	    	printf("  _ __| | | _ __/ |\n");
@@ -231,7 +228,9 @@ void clastrow()
 
 }
 
-
+/*
+ * print exit mesg on screen
+ */
 void exitmsg()
 {
 	if(serverThread.ncurses){

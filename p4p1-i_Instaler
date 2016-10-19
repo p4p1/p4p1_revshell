@@ -12,6 +12,7 @@
 # User guide to use p4p1-o
 # ./p4p1-o_UserGuide
 
+# Remove function to remove and backup last version of p4p1
 function Remove {
 
 	REMOVED_ALL=0
@@ -25,6 +26,7 @@ function Remove {
 
 }
 
+# install compiler for linux
 function installComp {
 
 	E_NOLINUX=1
@@ -53,26 +55,28 @@ function installComp {
 
 }
 
+# debuf function to add the exe to the correct path
 function Debug {
 
 	DEGUBED=0
 	UNDEBUG=1
 	EXE_PATH=/usr/.p4p1-o/exe/
 	VER=`cat /usr/.p4p1-o/cfg/ver.cfg`
-	if [[ ! -e "p4p1-o_32_V$VER.exe" && ! -e "p4p1-o_64_V$VER.exe"  &&  ! -e "p4p1-v_32_V$VER.exe" && ! -e "p4p1-v_64_V$VER.exe" ]]; then
+	if [[ ! -e "p4p1-o_V$VER.exe" ]]; then
 
 		echo "[!] NO FILES!"
 		exit $UNDEBUG
 
 	else
 
-		mv -v p4p1-*_*_V$VER.exe $EXE_PATH
+		mv -v p4p1-o_V*.exe $EXE_PATH
 		exit $DEGUBED
 
 	fi
 
 }
 
+#define all of local variables
 E_NOINSTALL=40
 E_EXEMISS=41
 E_NOCHOICE=42

@@ -10,6 +10,7 @@
 	char * sessionid = "5";
 	char sockBuf[3];
 	int fd[2];
+
 	serverThread.allDone = 1;
 	pid_t pidToConnection;
 
@@ -101,6 +102,9 @@ int connection_handler(int t, struct server_info * inf)
 
 }
 
+/*
+ * read socket and print to screen
+ */
 void randptoScreen(int t)
 {
 	sleep(1);
@@ -133,6 +137,9 @@ void bnlisten(struct server_info * inf)
 
 }
 
+/*
+ * accept and setup the connection
+ */
 void ansetupcon(struct server_info * inf, int sock)
 {
 	int new_s;
@@ -152,6 +159,7 @@ void ansetupcon(struct server_info * inf, int sock)
 	}
 }
 
+/*Print startup screen*/
 void printFirstScreen(struct server_info * inf)
 {
 
@@ -170,6 +178,9 @@ void printFirstScreen(struct server_info * inf)
 
 }
 
+/*
+ * Print entering connections that got accepted
+ */
 void printAcceptedConnection(struct server_info * inf, char * readBuf)
 {
 	if(inf->argo.ncr){
@@ -186,6 +197,9 @@ void printAcceptedConnection(struct server_info * inf, char * readBuf)
 	}
 }
 
+/*
+ * print the prompt on the screen
+ */
 void printPrompt(int s)
 {
 
@@ -220,14 +234,6 @@ void help()
 		mvprintw(11, 0, "	- download -> download a file as bin.exe\n");
 		mvprintw(12, 0, "	change its name if you want an other extention\n");
 	}
-}
-
-/*
- * Print out computer nmae & last connected ip
- */
-void whoami()
-{
-
 }
 
 /*
@@ -307,6 +313,9 @@ void changeClient(int * t)
 	}
 }
 
+/*
+ * function that detrmines the entered commands
+ */
 int commandInterpreter(struct server_info * inf, int * t)
 {
 
@@ -314,8 +323,6 @@ int commandInterpreter(struct server_info * inf, int * t)
 	if (serverThread.ncurses){ clearmain(); }
 	if(!strcmp(serverThread.buf, "help\n") || !strcmp(serverThread.buf, "help")){
 		help();
-	} else if(!strcmp(serverThread.buf, "whoami\n") || !strcmp(serverThread.buf, "whoami")){
-		whoami();
 	} else if(!strcmp(serverThread.buf, "exit\n") || !strcmp(serverThread.buf, "exit")){
 
 		char * leave = "&&";

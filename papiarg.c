@@ -36,7 +36,6 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 		} else if(!strcmp(argv[1], "-gtk")){
 
 			// Gtk invironement with gui interface
-			inf->argo.graphic++;
 			serverThread.grtk++;
 			printf("IN PROGRESS\n");
 			usage(argv[0]);
@@ -45,14 +44,12 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 
 			// Verbose terminal mode no ncurses
 			// nor gtk
-			inf->argo.cli++;
 			serverThread.cmd++;
 			printf("IN PROGRESS\n");
 			usage(argv[1]);
 
 		} else if(!strcmp(argv[1], "-cli")){
 
-			inf->argo.cli++;
 			serverThread.cmd++;
 			main_loop(inf);
 
@@ -67,7 +64,6 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 		/*
 		 * Main function
 		 **/
-		inf->argo.ncr++;
 		serverThread.ncurses++;
 		initscr();
 		keypad(stdscr, TRUE);
@@ -80,7 +76,10 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 
 }
 
-void acandsendnotif(struct server_info * inf)
+/*
+ * accept a connection and send a notification on screen
+ */
+void acandsendnotif(struct server_info * inf, int flaf)
 {
 	bnlisten(inf);
 	int sock;
@@ -91,6 +90,9 @@ void acandsendnotif(struct server_info * inf)
 		write(*(serverThread.saved_sockets + sock), sessionid, strlen(sessionid));
 		write(*(serverThread.saved_sockets + sock), leave, strlen(leave));
 		printf("[!!!!!!]Accepted a client!!!!\n");
+		if(flag)
+			//send email
 		sock++;
+		getchar();
 	}
 }
