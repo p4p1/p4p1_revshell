@@ -163,15 +163,15 @@ void ansetupcon(struct server_info * inf, int sock)
 void printFirstScreen(struct server_info * inf)
 {
 
-	if(inf->argo.ncr){
-		getmaxyx(stdscr, inf->win.row, inf->win.col);
+	if(serverThread.ncurses){
+		getmaxyx(stdscr, row, col);
 
 		printlogo(inf);
-		mvprintw(((inf->win.row) / 2)-1, (inf->win.col-30)/2, "Hello %s You are", inf->username);
-		mvprintw((inf->win.row) / 2, (inf->win.col-35)/2,"listening on %s:%d", inf->ip, inf->portno);
-		mvprintw( (inf->win.row)-1, 0, "" );
+		mvprintw(((row) / 2)-1, (col-30)/2, "Hello %s You are", inf->username);
+		mvprintw((row) / 2, (col-35)/2,"listening on %s:%d", inf->ip, inf->portno);
+		mvprintw( (row)-1, 0, "" );
 		refresh();
-	} else if(inf->argo.cli){
+	} else if(serverThread.cmd){
 		printlogo(inf);
 		printf("[!] Listening on %s:%d\n", inf->ip, inf->portno);
 	}
@@ -183,14 +183,14 @@ void printFirstScreen(struct server_info * inf)
  */
 void printAcceptedConnection(struct server_info * inf, char * readBuf)
 {
-	if(inf->argo.ncr){
+	if(serverThread.ncurses){
 
 		clear();
 		printlogo(inf);
 		mvprintw(6, 0, "[*] Connection from %s:%d\n", readBuf, inf->portno);
 		refresh();
 
-	} else if(inf->argo.cli){
+	} else if(serverThread.cmd){
 
 		printf("[*] Connection from %s:%d\n", readBuf, inf->portno);
 

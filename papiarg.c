@@ -30,7 +30,7 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 			if(argc >= 3){
 				printf("Email notification at %s", argv[2]);
 			} else {
-				acandsendnotif(inf);
+				acandsendnotif(inf, 0);
 			}
 
 		} else if(!strcmp(argv[1], "-gtk")){
@@ -79,7 +79,7 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 /*
  * accept a connection and send a notification on screen
  */
-void acandsendnotif(struct server_info * inf, int flaf)
+void acandsendnotif(struct server_info * inf, int flag)
 {
 	bnlisten(inf);
 	int sock;

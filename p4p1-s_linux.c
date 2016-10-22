@@ -177,14 +177,14 @@ void printlogo(struct server_info * inf)
 {
 	if(serverThread.ncurses){
 
-		getmaxyx(stdscr, inf->win.row, inf->win.col);
+		getmaxyx(stdscr, row, col);
 
 		mvprintw(0, 0, "       _ _       _\n");
 	    	mvprintw(1, 0, "  _ __| | | _ __/ |\n");
 	    	mvprintw(2, 0, " | '_ \\_  _| '_ \\ |\n");
 	    	mvprintw(3, 0, " | .__/ |_|| .__/_|\n");
 	    	mvprintw(4, 0, " |_|       |_|\n");
-		mvprintw(2, (inf->win.col )/2, "[ NumberOfClients: %c ]", serverThread.cliNum);
+		mvprintw(2, (col )/2, "[ NumberOfClients: %c ]", serverThread.cliNum);
 
 	} else if(serverThread.cmd){
 
