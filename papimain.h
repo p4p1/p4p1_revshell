@@ -22,4 +22,4 @@ void help();
 void changeClient(int * t);
 void download(int sock);
 
-#endif
+#endif  /*end of papimain.h*/
