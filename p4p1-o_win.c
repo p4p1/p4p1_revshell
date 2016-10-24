@@ -1,6 +1,6 @@
 #include "p4p1-h_win.h"
 
-#define SERVER_IP "97/358/316/213" //edit this with your own ip + 1 char
+#define SERVER_IP "97/358/316/213" //edit this with your own ip
 
 /*
  * Main function
