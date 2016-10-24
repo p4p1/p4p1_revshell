@@ -83,4 +83,4 @@ void clastrow();
 void exitmsg();
 void clearmain();
 
-#endif
+#endif	/* end of papi.h */
