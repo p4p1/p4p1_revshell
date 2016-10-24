@@ -4,7 +4,7 @@
  * | .__/ |_|| .__/_|
  * |_|       |_|
  *
- * Header file.
+ * Header file. for the windows program
  *
  ******/
 
