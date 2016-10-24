@@ -3,7 +3,7 @@
  *
  * Made by p4p1
  *
- * C reverse shell trojan
+ * C reverse shell administration tool
  * Do not use this for illegal purposes
  ****/
 
