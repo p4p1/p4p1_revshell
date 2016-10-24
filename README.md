@@ -1,4 +1,5 @@
-p4p1 is a simple remote administration tool to send commands to a client.<br />
+#p4p1
+This is a simple remote administration tool to send commands to a client.<br />
 
 How to install:<br />
 To install p4p1 you need to be on mac or linux. If you are on one of the ubuntu varients its better(not obligatory).<br />
