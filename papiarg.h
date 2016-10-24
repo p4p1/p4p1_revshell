@@ -7,4 +7,4 @@
 void check_arg(struct server_info * inf, char * argv[], int argc);
 void acandsendnotif(struct server_info * inf, int flag);
 
-#endif
+#endif  /* end of papiarg.h */
