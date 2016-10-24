@@ -30,7 +30,7 @@
 		if(serverThread.cliNum == '1')
 			pidToConnection = fork();
 
-		if(pidToConnection == 0){ // child
+		if(pidToConnection == 0){ // child process
 			close(fd[1]);
 
 			int loop = 0;
@@ -63,7 +63,7 @@
 
 		} else if(pidToConnection < 0){
 			error("fork", -1);
-		} else { //father
+		} else { //father process
 
 			if(serverThread.cliNum == '1'){
 				close(fd[0]);
