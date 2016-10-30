@@ -5,6 +5,7 @@
  * |_|       |_|
  *
  * Header file. for the windows program
+ * Made by p4p1 its pretty dumb so good luck
  *
  ******/
 

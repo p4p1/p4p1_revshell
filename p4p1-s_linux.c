@@ -38,23 +38,24 @@ int main(int argc, char *argv[])
 void usage(char * exname)
 {
 
-	printf("Documentation:\n");
-	printf("      %s Is a server for p4p1-o it listens on the port\n", exname);
-	printf("      Configured by the installer, if you did not use the\n");
-	printf("      Installer please download it from github(https://github.com/p4p1/p4p1)\n");
-	printf("Program Usage:\n");
-	printf("      When you run this app and a client connects\n");
-	printf("      you can use special commands in the command prompt\n");
-	printf("      The special ones are:\n");
-	printf("          *url -> dowload from a url the path is requiered\n");
-	printf("                  by this prompt #!url >\n");
-	printf("          &q   -> quit the program correctly\n");
-	printf("	  cd   -> Change directory\n");
-	printf("          !ch  -> Change client who you are connected to\n");
-	printf("Command Usage:\n");
-	printf("      %s -cli  -> command line interface only\n", exname);
-	printf("      %s -v    -> verbose mode\n", exname);
-	printf("      %s -h    -> show this message\n", exname);
+	printf("Documentation:\n"
+	       "      %s Is a server for p4p1-o it listens on the port\n"
+	       "      Configured by the installer, if you did not use the\n"
+	       "      Installer please download it from github(https://github.com/p4p1/p4p1)\n"
+	       "Program Usage:\n"
+	       "      When you run this app and a client connects\n"
+	       "      you can use special commands in the command prompt\n"
+	       "      The special ones are:\n"
+	       "          *url -> dowload from a url the path is requiered\n"
+	       "                  by this prompt #!url >\n"
+	       "          &q   -> quit the program correctly\n"
+	       "	  cd   -> Change directory\n"
+	       "          !ch  -> Change client who you are connected to\n"
+	       "Command Usage:\n"
+	       "      %s -cli  -> command line interface only\n"
+	       "      %s -v    -> verbose mode\n"
+	       "      %s -h    -> show this message\n",
+	       exname, exname, exname, exname);
 
 }
 
@@ -188,12 +189,13 @@ void printlogo(struct server_info * inf)
 
 	} else if(serverThread.cmd){
 
-		printf("       _ _       _\n");
-	    	printf("  _ __| | | _ __/ |\n");
-	    	printf(" | '_ \\_  _| '_ \\ |\n");
-	    	printf(" | .__/ |_|| .__/_|\n");
-	    	printf(" |_|       |_|\n");
-		printf("[ NumberOfClients: %c ]", serverThread.cliNum);
+		printf("       _ _       _\n"
+	    	       "  _ __| | | _ __/ |\n"
+	    	       " | '_ \\_  _| '_ \\ |\n"
+	    	       " | .__/ |_|| .__/_|\n"
+	    	       " |_|       |_|\n"
+		       "[ NumberOfClients: %c ]",
+		       serverThread.cliNum);
 
 	}
 }

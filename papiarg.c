@@ -12,6 +12,7 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 
 			if(argc >= 3){
 				printf("Email notification at %s", argv[2]);
+				acandsendnotif(inf, 1);
 			} else {
 				acandsendnotif(inf, 0);
 			}
@@ -36,6 +37,7 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 
 	} else {
 
+		//=========================NCURSES MODE=====================
 		/*
 		 * Main function
 		 **/
@@ -46,6 +48,7 @@ void check_arg(struct server_info * inf, char * argv[], int argc)
 		refresh();
 		getch();
 		endwin();
+		//==========================================================
 
 	}
 

