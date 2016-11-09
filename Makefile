@@ -20,9 +20,9 @@ all: linux windows
 windows: p4p1-h_win.h p4p1-o_win.c
 	$(CCWIN) p4p1-o_win.c $(WFLAGS) -o $(WEXEC)
 
-linux: p4p1-s_linux.c papimain.c papi.h papimain.h papiarg.c papiarg.h
-	$(CC) $(LFLAGS) -c p4p1-s_linux.c papimain.c papiarg.c
-	$(CC) -o $(LSEXEC) $(LFLAGS) p4p1-s_linux.o papimain.o papiarg.o $(LFLAGS)
+linux:
+	$(CC) $(LFLAGS) -c server/*.c
+	$(CC) -o $(LSEXEC) $(LFLAGS) *.o $(LFLAGS)
 
 clean:
 	rm -rf *.o
