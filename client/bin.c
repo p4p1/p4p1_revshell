@@ -14,12 +14,17 @@ int cd(char *buf)				// change directory function
 		path = malloc(len * sizeof(char));	// create a path that is a special size
 		for(i = 3; i < strlen(buf); i++)	// for the buff.
 			path[z++] = buf[i];		// cp the buffer char to the path
+	} else {
+		path = malloc(strlen(buf) * sizeof(char));
+		if(path == NULL)
+			return -1;
 	}
 	chdir(path);			// change directory part.
 	free(path);			// free alocated path after moving.
+	return 0;
 }
 
-int exe(char *cmd, char *r_buf)			// execute commands that are unknown to the
+int exe(char *cmd, char *r_buf)// execute commands that are unknown to the
 {						// shell.
 	FILE * cmd_f = _popen(cmd, "r");	// open the terminal for commands
 	char ch;
@@ -32,18 +37,18 @@ int exe(char *cmd, char *r_buf)			// execute commands that are unknown to the
 	} else {
 		while((ch = fgetc(cmd_f)) != EOF)			// get initial size of the buffer
 			i++;
-		printf("len of cmd : %d\n", i);
 		r_buf = malloc(i * sizeof(char));			// allocate it
 		if(r_buf == NULL)					// process errors
 			return -1;
 		i = 0;
-		rewind(cmd_f);						// rewind the file to
-		while((ch = fgetc(cmd_f)) != EOF) {			// write back out the buffer to the given
-			r_buf[i++] = ch;				// char *
-			putchar(ch);
+		_pclose(cmd_f);						// close and reopen the file stream bc you cant
+		cmd_f = _popen(cmd, "r");	// just rewind it sadly
+		while((ch = fgetc(cmd_f)) != EOF) {// write back out the buffer to the given
+			r_buf[i] = ch;								// char *
+			i++;
 		}
 		r_buf[i] = '\0';
 	}
 	_pclose(cmd_f);							// close terminal
-	 return 0;
+	return 0;
 }

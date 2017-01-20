@@ -18,7 +18,10 @@ int sender(SOCKET s, char * buf, int buf_size, int * connection_flag)	// send a 
 		if( bs == SOCKET_ERROR ) {
 			*connection_flag = SOCKET_ERROR;
 		}
+	} else {
+		return -1;
 	}
+	return 0;
 }
 
 int receiver(SOCKET s, char * buf, int buf_size, int * connection_flag)	// recv a buffer and update the cn
@@ -34,4 +37,5 @@ int receiver(SOCKET s, char * buf, int buf_size, int * connection_flag)	// recv 
 		if(br == 0 || br == WSAECONNRESET || br < 0)
 			*connection_flag = SOCKET_ERROR;
 	}
+	return 0;
 }

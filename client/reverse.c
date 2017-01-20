@@ -5,8 +5,7 @@ DWORD WINAPI command_handler(void *inf)
 	struct main_struct * m_s = (struct main_struct*)inf;		// retreive the struct pointer
 	char * send_buf;
 
-	printf("in thread cmd = %s\n", m_s->buf);
-	if(exe(m_s->buf, send_buf) < 0) {				// execute the given command.
+	if(exe(m_s->buf, send_buf) < 0) {		// execute the given command.
 		printf("cant use program");
 	}
 	printf("whatever = %s\n", send_buf);
