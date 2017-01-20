@@ -1,4 +1,4 @@
-#include "network.h"
+#include "../header/network.h"
 
 int cnt(struct main_struct *m_s)	// connect to the server.
 {

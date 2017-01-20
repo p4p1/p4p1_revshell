@@ -7,12 +7,12 @@
  *
  */
 
-#include "main.h"
-#include "win_api.h"
-#include "setup.h"
-#include "reverse.h"
-#include "network.h"
-#include "bin.h"
+#include "header/main.h"
+#include "header/win_api.h"
+#include "header/setup.h"
+#include "header/reverse.h"
+#include "header/network.h"
+#include "header/bin.h"
 
 int main(int ac, char * av[])
 {

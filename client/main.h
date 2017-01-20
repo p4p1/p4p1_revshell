@@ -7,10 +7,8 @@
 #include <string.h>
 #include <winsock2.h>
 #include <windows.h>
+#include "default.h"
 
-#define DEFAULT_PORT 4441
-#define DEFAULT_IP "127.0.0.1"
-#define DEFAULT_IP_SIZE 9
 #define _DEBUG
 
 struct main_struct {

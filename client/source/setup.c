@@ -1,4 +1,4 @@
-#include "setup.h"
+#include "../header/setup.h"
 
 void setup_vars(struct main_struct *m_s)
 {

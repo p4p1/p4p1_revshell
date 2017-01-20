@@ -1,4 +1,4 @@
-#include "reverse.h"
+#include "../header/reverse.h"
 
 DWORD WINAPI command_handler(void *inf)
 {

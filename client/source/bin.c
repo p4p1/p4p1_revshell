@@ -1,4 +1,4 @@
-#include "bin.h"
+#include "../header/bin.h"
 
 int cd(char *buf)				// change directory function
 {						// processes the command buffer

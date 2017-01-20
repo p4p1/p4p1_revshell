@@ -1,4 +1,4 @@
-#include "win_api.h"
+#include "../header/win_api.h"
 
 void stealth()						// set up stealth
 {
