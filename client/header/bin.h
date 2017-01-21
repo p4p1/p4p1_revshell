@@ -1,9 +1,9 @@
 #ifndef _BIN_H_
 #define _BIN_H_
 
-#include "main.h"
+#include "../main.h"
 
 int cd(char *);
-int exe(char *, char *);
+int exe(struct main_struct *);
 
 #endif

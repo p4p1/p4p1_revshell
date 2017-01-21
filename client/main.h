@@ -16,6 +16,7 @@ struct main_struct {
 	int port;
 	int cn;
 	char * ip;
+	char * cmd;
 	char * buf;
 
 	SOCKET s;

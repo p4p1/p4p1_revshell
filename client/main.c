@@ -7,7 +7,7 @@
  *
  */
 
-#include "header/main.h"
+#include "main.h"
 #include "header/win_api.h"
 #include "header/setup.h"
 #include "header/reverse.h"

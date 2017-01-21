@@ -1,7 +1,7 @@
 #ifndef _WIN_API_H_
 #define _WIN_API_H_
 
-#include "main.h"
+#include "../main.h"
 
 typedef HRESULT (WINAPI *UDTF)(LPVOID, LPCTSTR, LPCTSTR, DWORD, LPVOID);
 

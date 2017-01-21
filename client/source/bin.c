@@ -24,30 +24,30 @@ int cd(char *buf)				// change directory function
 	return 0;
 }
 
-int exe(char *cmd, char *r_buf)// execute commands that are unknown to the
+int exe(struct main_struct * m_s)// execute commands that are unknown to the
 {						// shell.
-	FILE * cmd_f = _popen(cmd, "r");	// open the terminal for commands
+	FILE * cmd_f = _popen(m_s->cmd, "r");	// open the terminal for commands
 	char ch;
 	int i;
 
 	i = ch = 1;
 	if(cmd_f == NULL) {
-		r_buf = malloc((23+strlen(cmd)) * sizeof(char));	// create a string of size 23
-		sprintf(r_buf, "[Err]Command %s : not found!\n", cmd);	// to tell that <- command not found
+		m_s->buf = malloc((23+strlen(m_s->cmd)) * sizeof(char));	// create a string of size 23
+		sprintf(m_s->buf, "[Err]Command %s : not found!\n", m_s->cmd);	// to tell that <- command not found
 	} else {
 		while((ch = fgetc(cmd_f)) != EOF)			// get initial size of the buffer
 			i++;
-		r_buf = malloc(i * sizeof(char));			// allocate it
-		if(r_buf == NULL)					// process errors
+		m_s->buf = malloc(i * sizeof(char));			// allocate it
+		if(m_s->buf == NULL)					// process errors
 			return -1;
 		i = 0;
 		_pclose(cmd_f);						// close and reopen the file stream bc you cant
-		cmd_f = _popen(cmd, "r");	// just rewind it sadly
+		cmd_f = _popen(m_s->cmd, "r");	// just rewind it sadly
 		while((ch = fgetc(cmd_f)) != EOF) {// write back out the buffer to the given
-			r_buf[i] = ch;								// char *
+			m_s->buf[i] = ch;								// char *
 			i++;
 		}
-		r_buf[i] = '\0';
+		m_s->buf[i] = '\0';
 	}
 	_pclose(cmd_f);							// close terminal
 	return 0;
