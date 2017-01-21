@@ -38,3 +38,18 @@ int download_web(char *url, char *path)			// download a file from the web and th
 
 	return r;
 }
+
+int my_strcmp(char * str1, char *str2)
+{
+	int i;
+
+	i = 0;
+	if(strlen(str1) != strlen(str2))
+		return 0;
+	while((str1[i] == str2[i]) && (i <= strlen(str1)))
+		i++;
+	if(i < strlen(str1))
+		return 0;
+	else
+		return 1;
+}

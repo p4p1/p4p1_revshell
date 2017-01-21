@@ -18,7 +18,6 @@ int main(int ac, char * av[])
 {
 	struct main_struct m_s;		// main structure for all of the variables
 
-	printf("r_buf = %d", SOCKET_ERROR);
 	setup(&m_s);			// setup the remote administration tool
 	while(1) {
 		cnt(&m_s);		// connect to server
