@@ -9,5 +9,6 @@ THIS FOR ILLEGAL ACTIVITIES, THIS IS FREE SOFTWARE IT SHOULD NOT BE SOLD.
 This project is open source, and can be modified at will.
 
 ##Disclamer
-This version for now does not work. The last stable version is in old.zip have
-fun using it if you want to, but this next version will be way better :D.
+This version for now does work but has mostly glitches and unifinished parts. The last stable version is up there have
+fun using it if you want to change the ip or port, simply add a ip.cfg file in the same folder for the ip and a port.cfg file. !
+warning it has to be a .cfg file not .cfg.txt or whatever.
