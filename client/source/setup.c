@@ -29,9 +29,6 @@ void setup_vars(struct main_struct *m_s)
 
 void setup_connection(struct main_struct *m_s)
 {
-	m_s->s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if(m_s->s == INVALID_SOCKET)
-		error("socket");
 	m_s->server.sin_family = AF_INET;
 	m_s->server.sin_port = htons(m_s->port);
 	m_s->server.sin_addr.s_addr = inet_addr(m_s->ip);

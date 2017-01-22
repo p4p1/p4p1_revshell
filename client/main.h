@@ -27,7 +27,9 @@ struct main_struct {
 };
 
 void error(char *);
+#ifdef _DEBUG
 void debug(struct main_struct *);
+#endif
 void first_line_to_buffer(FILE *, char *);
 
 #endif

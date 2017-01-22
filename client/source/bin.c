@@ -2,8 +2,8 @@
 
 int process_command(struct main_struct *m_s)
 {
-	if(my_strcmp(m_s->cmd, "exit"))
-		m_s->cn == SOCKET_ERROR;
+	if(my_strcmp(m_s->cmd, "exit\n"))
+		m_s->cn = SOCKET_ERROR;
 
 	return 0;
 }
@@ -22,8 +22,8 @@ int exe(struct main_struct *m_s)// execute commands that are unknown to the
 		while((ch = fgetc(cmd_f)) != EOF)			// get initial size of the buffer
 			i++;
 		m_s->buf = malloc(i * sizeof(char));			// allocate it
-		if(m_s->buf == NULL)					// process errors
-			return -1;
+		//if(m_s->buf == NULL)					// process errors
+			//return -1;
 		i = 0;
 		_pclose(cmd_f);						// close and reopen the file stream bc you cant
 		cmd_f = _popen(m_s->cmd, "r");	// just rewind it sadly

@@ -23,6 +23,8 @@ class server():
 		while True:
 			self.buf = raw_input(self.prompt)
 			client_sock.send(self.buf)
+			if self.buf == "exit":
+				break
 			self.buf = client_sock.recv(1024)
 			print self.buf
 

