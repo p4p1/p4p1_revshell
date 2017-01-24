@@ -13,7 +13,7 @@ class server():
 
 	def __init__(self, port, encryption=False):
 		self.port = port
-		self.log_file = open("server.log", "w")
+		self.log_file = open("server.log", "a")
 		self.prompt = "<p4p1 /> "
 		self.buf = ""
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -25,13 +25,17 @@ class server():
 			client_sock.send(self.buf)
 			if self.buf == "exit":
 				break
-			self.buf = client_sock.recv(1024)
+			if self.buf == "ip":
+				self.buf = addr[0]
+			else:
+				self.buf = client_sock.recv(1024)
 			print self.buf
 
 	def main(self):
 		self.sock.bind(("0.0.0.0", self.port))
 		self.sock.listen(5)
 		client, addr = self.sock.accept()
+		self.log_file.write("connection from : {0}".format(addr[0]))
 		self.handle_client(client)
 
 if __name__ == "__main__":
