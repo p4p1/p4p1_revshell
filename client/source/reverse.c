@@ -4,6 +4,8 @@ int is_command(char * cmd)
 {
 	if(my_strcmp(cmd, "exit\n"))
 		return 1;
+	if(cmd[0] == 'c' && cmd[1] == 'd' && cmd[2] == ' ')
+		return 1;
 	return 0;
 }
 
