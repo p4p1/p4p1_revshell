@@ -29,26 +29,26 @@ int exe(struct main_struct *m_s)// execute commands that are unknown to the
 		do {
 			m_s->buf = malloc(size * sizeof(char));		// alocate a string of size size
 			if (size > 1024 && m_s->buf != NULL){			// if its the first loop it will be 1024 so skip those line on first loop
-				strcat(m_s->buf, temp);								// save temp into m_s->buf
+				my_strcpy(m_s->buf, temp, strlen(temp));								// save temp into m_s->buf
 				free(temp);													// free temp to be realocated after
 			}
 			temp = malloc(size * sizeof(char));		// allocate temporary (only used if
 			if(m_s->buf == NULL || temp == NULL)	// output bigger than 1024)
 				return -1;											// check errors
 			while(((ch = fgetc(cmd_f)) != EOF) && i <= (size-1)) {
-				m_s->buf[i] = ch;						// read from file and save to buf
+				m_s->buf[i] = ch;	// read from file and save to buf
 				i++;												// increment i;
 			}		
-			if((ch != EOF) && i <= size){		// if reading the output is not at eof
-				strcpy(temp, m_s->buf);				// save it to the temp
-				size *= 2;										// add more size
-				free(m_s->buf);								// free the buffer
+			if((ch != EOF) && i <= size){	// if reading the output is not at eof
+				my_strcpy(temp, m_s->buf, strlen(m_s->buf));	// save it to the temp
+				size *= 2;		// add more size
+				free(m_s->buf);		// free the buffer
 			} else {
-				m_s->buf[i] = '\0';						// end buff
-				done = 1;											
+				m_s->buf[i] = '\0';		// end buff
+				done = 1;
 			}
 		} while (!done);
 	}
-	_pclose(cmd_f);							// close terminal
+	_pclose(cmd_f);				// close terminal
 	return 0;
 }

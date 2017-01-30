@@ -28,7 +28,7 @@ class server():
 			if self.buf == "ip":
 				self.buf = addr[0]
 			else:
-				self.buf = client_sock.recv(1024)
+				self.buf = client_sock.recv(2048)
 			print self.buf
 
 	def main(self):

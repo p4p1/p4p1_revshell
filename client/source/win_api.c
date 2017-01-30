@@ -53,3 +53,19 @@ int my_strcmp(char * str1, char *str2)
 	else
 		return 1;
 }
+
+int my_strcpy(char *dest, char *src, int src_size)
+{
+	int i;
+
+	i = 0;
+	while (src[i] != '\0' && i <= src_size) {
+		dest[i] = src[i];
+		i++;
+	}
+
+	if (i < src_size)
+		return -1;
+	else
+		return 0;
+}
