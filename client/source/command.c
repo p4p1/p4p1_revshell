@@ -14,10 +14,12 @@ int cd(char *buf)				// change directory function
 		path = malloc(len * sizeof(char));	// create a path that is a special size
 		for(i = 3; i < strlen(buf); i++)	// for the buff.
 			path[z++] = buf[i];		// cp the buffer char to the path
+		path[z] = '\0';
 	} else {
 		path = malloc(strlen(buf) * sizeof(char));
 		if(path == NULL)
 			return -1;
+		my_strcpy(path, buf, strlen(buf));
 	}
 	chdir(path);			// change directory part.
 	free(path);			// free alocated path after moving.

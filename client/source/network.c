@@ -3,8 +3,8 @@
 int cnt(struct main_struct *m_s)	// connect to the server.
 {
 	m_s->s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-  if(m_s->s == INVALID_SOCKET)
-    error("socket");
+	if(m_s->s == INVALID_SOCKET)
+		error("socket");
 	do {
 		m_s->cn = connect(m_s->s, (SOCKADDR*)&m_s->server, sizeof(m_s->server));
 	} while (m_s->cn == SOCKET_ERROR);

