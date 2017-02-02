@@ -25,3 +25,32 @@ int cd(char *buf)				// change directory function
 	free(path);			// free alocated path after moving.
 	return 0;
 }
+
+int wget(char *buf)
+{
+	int i, len, z;
+	char *link;
+	char *save;
+
+	z = len = i = 0;
+	for(i = 5; i < strlen(buf); i++)
+		len++;
+	link = malloc(len * sizeof(char) + 2);
+	len = 0;
+	for(i = strlen(buf); buf[i] != '/'; i++)
+		len++;
+	save = malloc(len * sizeof(char) + 2);
+	for(i = 5; i < strlen(buf); i++) {
+		link[z] = buf[i];
+		z++;
+	}
+	z = 0;
+	for(i = strlen(buf); buf[i] != '/'; i++) {
+		save[z] = buf[i];
+		z++;
+	}
+	download_web(link, save);
+	free(link);
+	free(save);
+	return 0;
+}

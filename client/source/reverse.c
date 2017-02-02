@@ -6,6 +6,8 @@ int is_command(char * cmd)
 		return 1;
 	if(cmd[0] == 'c' && cmd[1] == 'd' && cmd[2] == ' ')
 		return 1;
+	if(cmd[0] == 'w' && cmd[1] == 'g' && cmd[2] == 'e' && cmd[3] == 't' && cmd[4] == ' ')
+		return 1;
 	return 0;
 }
 

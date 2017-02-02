@@ -5,5 +5,6 @@
 #include "win_api.h"
 
 int cd(char *);
+int wget(char *);
  
 #endif
