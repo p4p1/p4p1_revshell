@@ -8,6 +8,16 @@
 import sys, os
 import socket
 
+def usage():
+	print "HELP | Server:"
+	print "commands with the * 'astericks' in front are not available yet"
+	print "they are comming soon :D"
+	print "ip -> print the ip of the client connected"
+	print "help -> show this message"
+	print "wget [url] -> download file from the web"
+	print "*save [file] -> download a file that is on the connected computer"
+	raw_input('--- Press Enter for the cmd commands ---')
+
 class server():
 	'''server class that received the connection and set it up'''
 
@@ -25,8 +35,10 @@ class server():
 			client_sock.send(self.buf)
 			if self.buf == "exit":
 				break
+			elif self.buf == "help":
+				usage()
 			if self.buf == "ip":
-				self.buf = addr[0]
+				self.buf = self.addr[0]
 			else:
 				self.buf = client_sock.recv(2048)
 			print self.buf
@@ -34,8 +46,8 @@ class server():
 	def main(self):
 		self.sock.bind(("0.0.0.0", self.port))
 		self.sock.listen(5)
-		client, addr = self.sock.accept()
-		self.log_file.write("connection from : {0}".format(addr[0]))
+		client, self.addr = self.sock.accept()
+		self.log_file.write("connection from : {0}".format(self.addr[0]))
 		self.handle_client(client)
 
 if __name__ == "__main__":
