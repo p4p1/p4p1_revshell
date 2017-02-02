@@ -6,14 +6,13 @@ int is_command(char * cmd)
 		return 1;
 	if(cmd[0] == 'c' && cmd[1] == 'd' && cmd[2] == ' ')
 		return 1;
-	if(my_strcmp(cmd, "help\n"))
-		return 1;
 	return 0;
 }
 
 DWORD WINAPI command_handler(void *inf)
 {
 	struct main_struct * m_s = (struct main_struct*)inf;		// retreive the struct pointer
+
 	if(is_command(m_s->cmd) == 1) {
 		process_command(m_s);
 	} else {
