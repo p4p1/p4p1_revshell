@@ -35,20 +35,20 @@ int wget(char *buf)
 	z = len = i = 0;
 	for(i = 5; i < strlen(buf); i++)
 		len++;
-	link = malloc(len * sizeof(char) + 2);
+	link = malloc(len * sizeof(char));
 	len = 0;
-	for(i = strlen(buf); buf[i] != '/'; i++)
+	for(i = strlen(buf); buf[i] != '/'; i--)
 		len++;
-	save = malloc(len * sizeof(char) + 2);
+	save = malloc(len * sizeof(char));
 	for(i = 5; i < strlen(buf); i++) {
 		link[z] = buf[i];
 		z++;
 	}
 	z = 0;
-	for(i = strlen(buf); buf[i] != '/'; i++) {
-		save[z] = buf[i];
-		z++;
-	}
+	for(i = strlen(buf); buf[i] != '/'; i--)
+		;
+	for(z = 0; i < strlen(buf); z++)
+		save[z] = buf[++i];
 	download_web(link, save);
 	free(link);
 	free(save);

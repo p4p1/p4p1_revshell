@@ -9,7 +9,7 @@
 #include <windows.h>
 #include "default.h"
 
-#define _DEBUG
+//#define _DEBUG
 
 struct main_struct {
 
