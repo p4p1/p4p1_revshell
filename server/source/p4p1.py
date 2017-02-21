@@ -32,6 +32,7 @@ class server():
 		while True:
 			self.buf = raw_input(self.prompt)
 			client_sock.send(self.buf)
+			self.log_file.write("command sent : {0}\n".format(self.buf))
 			if self.buf == "exit":
 				break
 			elif self.buf == "help":
