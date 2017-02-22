@@ -1,6 +1,9 @@
 #ifndef _REVERCE_H_
 #define _REVERCE_H_
 
+/* main reverse shell header.
+*/
+
 #include "../main.h"
 #include "win_api.h"
 #include "network.h"

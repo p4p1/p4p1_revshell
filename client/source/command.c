@@ -26,31 +26,31 @@ int cd(char *buf)				// change directory function
 	return 0;
 }
 
-int wget(char *buf)
+int wget(char *buf)	// download from the web command
 {
 	int i, len, z;
-	char *link;
-	char *save;
+	char *link;		// main url : this is retreived for the buffer
+	char *save;		// save file name: truncated from the end of the url
 
 	z = len = i = 0;
-	for(i = 5; i < strlen(buf); i++)
+	for(i = 5; i < strlen(buf); i++)		// get the length of url without counting the wget at the start
 		len++;
-	link = malloc(len * sizeof(char));
+	link = malloc(len * sizeof(char));		// allocate memory
 	len = 0;
-	for(i = strlen(buf); buf[i] != '/'; i--)
+	for(i = strlen(buf); buf[i] != '/'; i--)	// get the length if save file name by going backwords the buffer until u touch a '\'
 		len++;
-	save = malloc(len * sizeof(char));
-	for(i = 5; i < strlen(buf); i++) {
-		link[z] = buf[i];
+	save = malloc(len * sizeof(char));		// allocate memory
+	for(i = 5; i < strlen(buf); i++) {		// start moving each characters around
+		link[z] = buf[i];			// create the link
 		z++;
 	}
 	z = 0;
 	for(i = strlen(buf); buf[i] != '/'; i--)
 		;
 	for(z = 0; i < strlen(buf); z++)
-		save[z] = buf[++i];
-	download_web(link, save);
-	free(link);
-	free(save);
+		save[z] = buf[++i];			// create the file name
+	download_web(link, save);			// download it
+	free(link);					// free the memory
+	free(save);					// free the memory
 	return 0;
 }

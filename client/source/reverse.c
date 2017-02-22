@@ -22,6 +22,9 @@ DWORD WINAPI command_handler(void *inf)
 			m_s->buf = malloc(1024 * sizeof(char));
 			sprintf(m_s->buf, "Error: type exit to reboot the connection");
 		}
+		if(strlen(m_s->buf) < 2) {			// if there is no utput dont make the server crash
+			sprintf(m_s->buf, "....");
+		}
 		sender(m_s->s, m_s->buf, strlen(m_s->buf), &m_s->cn);		// send output
 		free(m_s->buf);							// free the allocated output.
 	}

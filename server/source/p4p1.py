@@ -31,15 +31,15 @@ class server():
 	def handle_client(self, client_sock):
 		while True:
 			self.buf = raw_input(self.prompt)
-			client_sock.send(self.buf)
-			self.log_file.write("command sent : {0}\n".format(self.buf))
 			if self.buf == "exit":
 				break
 			elif self.buf == "help":
 				usage()
-			if self.buf == "ip":
+			elif self.buf == "ip":
 				self.buf = self.addr[0]
 			else:
+				client_sock.send(self.buf)
+				self.log_file.write("command sent : {0}\n".format(self.buf))
 				self.buf = client_sock.recv(2048)
 			print self.buf
 
