@@ -13,7 +13,9 @@ int setup_win(struct main_struct * m_s)			// create winsock and hide cmd
 	int err;
 
 	err = 0;
-	stealth();		// hide program.
+	#ifndef _DEBUG
+		stealth();		// hide program.
+	#endif
 	err = WSAStartup(MAKEWORD(2, 2), &m_s->wsa);
 	if(err != NO_ERROR)
 		return -1;

@@ -14,7 +14,7 @@
 /*
 ** Main structure with all of the variables
 ** and important data
-**/
+*/
 
 struct main_struct {
 
