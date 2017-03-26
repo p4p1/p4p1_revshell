@@ -9,6 +9,7 @@
 #
 # On windows please use gcc instead
 CC=i686-w64-mingw32-gcc
+WIN_CC=gcc
 FLAGS=-lwsock32 -Wall
 SERVER_EXEC=cd server; ./main.py 4441
 EXEC=p4p1.exe

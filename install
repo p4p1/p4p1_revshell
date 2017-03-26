@@ -1,0 +1,13 @@
+#!/bin/bash
+# Made by Leo Smith.
+# Description: Installer script for p4p1,
+#	it will make the client and install the server
+# Usage:
+#	./install	# you might have to chmod 755 it if it cannot run
+
+SERVER_P4P1=server/main.py
+CLIENT_P4P1=p4p1.exe
+
+make all
+make clean
+chmod 755 $SERVER_P4P1
