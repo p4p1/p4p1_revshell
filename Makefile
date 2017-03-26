@@ -1,3 +1,13 @@
+# Makefile for p4p1.exe
+# Made by Leo Smith
+# this is freesoftware
+#
+# How to compiler
+# 	- run make all
+# 	- run make clean
+# p4p1.exe should then be compiled
+#
+# On windows please use gcc instead
 CC=i686-w64-mingw32-gcc
 FLAGS=-lwsock32 -Wall
 SERVER_EXEC=cd server; ./main.py 4441
@@ -42,8 +52,8 @@ buildp4p1: $(OBJECTS)
 
 .PHONY: clean
 
-clean:
-	rm -rf $(OBJECTS) 
+clean:	$(OBJECTS)
+	rm -rf $(OBJECTS)
 
 mrproper:
 	rm -rf $(EXEC)

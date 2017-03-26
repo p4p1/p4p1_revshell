@@ -17,10 +17,26 @@ try:
 except:
 	usage()
 
-print """\
-[*] p4p1 - server listening on 4441
-[*] waiting for client to connect....\
-"""
-p4p1.usage()
-s = p4p1.server(int(port))
-s.main()
+def main():
+    print """\
+    [*] p4p1 - server listening on {0}
+    [*] waiting for client to connect....\
+    """.format(port)
+    p4p1.usage()
+    s = p4p1.server(int(port))
+    s.main()
+
+def main_old():
+    print """\
+    [*] p4p1 old verions - server listening on {0}
+    [*] waiting for client to connect....\
+    """.format(4441)
+    p4p1.usage()
+    s = p4p1.server(4441)
+    s.main(True)
+
+
+if int(port) == 0:
+    main_old()
+else:
+    main()
