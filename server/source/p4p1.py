@@ -44,11 +44,11 @@ class server():
             print self.buf
 
     def handle_old_client(self, client_sock):
-        client_sock.send('0')
-        print client_sock.recv(2048)
+        client_sock.send('5')
         while True:
-            self.buf = raw_input(client_sock.recv(2048))
+            self.buf = raw_input(self.prompt)
             if self.buf == "exit":
+                client_sock.send('&')
                 break
             elif self.buf == "help":
                 usage()
