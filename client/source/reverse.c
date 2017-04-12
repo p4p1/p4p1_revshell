@@ -2,11 +2,17 @@
 
 int is_command(char * cmd)
 {
+    /*
+     * Do not forget to indent properly or the compiler will show a warning
+     * only tabs here
+     */
 	if(my_strcmp(cmd, "exit\n"))
 		return 1;
 	if(cmd[0] == 'c' && cmd[1] == 'd' && cmd[2] == ' ')
 		return 1;
 	if(cmd[0] == 'w' && cmd[1] == 'g' && cmd[2] == 'e' && cmd[3] == 't' && cmd[4] == ' ')
+		return 1;
+    if(cmd[0] == 'g' && cmd[1] == 'e' && cmd[2] == 't' && cmd[3] == '-' && cmd[4] == 'f' && cmd[5] == 'i' && cmd[6] == 'l' && cmd[7] == 'e' && cmd[8] == ' ')
 		return 1;
 	return 0;
 }

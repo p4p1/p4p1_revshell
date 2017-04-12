@@ -9,5 +9,6 @@
 
 int cd(char *);
 int wget(char *);
+int get_file(char *, int );
 
 #endif

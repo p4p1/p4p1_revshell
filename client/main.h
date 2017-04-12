@@ -7,6 +7,7 @@
 #include <string.h>
 #include <winsock2.h>
 #include <windows.h>
+#include <fcntl.h>
 #include "default.h"
 
 //#define _DEBUG

@@ -54,3 +54,41 @@ int wget(char *buf)	// download from the web command
 	free(save);					// free the memory
 	return 0;
 }
+
+int get_file(char *fname, int sock)
+{
+    int fd_file;
+    char buf[4096];
+    char temp[strlen(fname)];
+    ssize_t nread;
+    int i, ii;
+
+    if(fname[0] == 'g' && fname[1] == 'e' && fname[2] == 't' && fname[3] == '-' && fname[4] == 'f' && fname[5] == 'i' && fname[6] == 'l' && fname[7] == 'e' && fname[8] == ' '){
+        for( i = 9, ii = 0; i < strlen(fname); i++, ii++) {
+            temp[ii] = fname[i];
+        }
+    }
+
+
+    fd_file = _open(temp, _O_RDONLY);
+    if(fd_file < 0)
+        return -1;
+    while( nread = read(fd_file, buf, sizeof buf), nread > 0)
+    {
+        char *out_ptr = buf;
+        ssize_t nwritten;
+
+        do {
+            nwritten = write(sock, out_ptr, nread);
+
+            if(nwritten >= 0)
+            {
+                nread -= nwritten;
+                out_ptr += nwritten;
+            }
+       } while(nread > 0);
+    }
+
+    _close(fd_file);
+    return 0;
+}

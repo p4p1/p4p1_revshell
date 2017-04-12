@@ -40,7 +40,7 @@ SOURCE=$(MAIN_SOURCE)\
 
 OBJECTS=$(SOURCE:.c=.o)
 
-all: buildp4p1
+all: buildp4p1 clean
 
 run:
 	$(SERVER_EXEC)
