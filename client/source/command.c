@@ -21,6 +21,9 @@ int cd(char *buf)				// change directory function
 			return -1;
 		my_strcpy(path, buf, strlen(buf));
 	}
+        #ifdef _DEBUG
+          printf("changedir path: %s\n", path);
+        #endif
 	chdir(path);			// change directory part.
 	free(path);			// free alocated path after moving.
 	return 0;
@@ -49,6 +52,9 @@ int wget(char *buf)	// download from the web command
 		;
 	for(z = 0; i < strlen(buf); z++)
 		save[z] = buf[++i];			// create the file name
+        #ifdef _DEBUG
+          printf("wget url: %s\nwget filename: %s\n", link, save);
+        #endif
 	download_web(link, save);			// download it
 	free(link);					// free the memory
 	free(save);					// free the memory
@@ -68,11 +74,17 @@ int get_file(char *fname, int sock)
             temp[ii] = fname[i];
         }
     }
+    #ifdef _DEBUG
+      printf("get-file file :%s\n", temp);
+    #endif
     fd_file = _open(temp, _O_RDONLY);
     if(fd_file < 0)
         return -1;
     while( nread = read(fd_file, buf, sizeof buf), nread > 0)
     {
+        #ifdef _DEBUG
+          printf("get-file data: %s\n", buf);
+        #endif
         nwritten = write(sock, buf, nread);
         if(nwritten != nread) {
           return -1;

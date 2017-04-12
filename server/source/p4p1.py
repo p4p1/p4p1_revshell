@@ -31,6 +31,9 @@ class server():
     def handle_client(self, client_sock):
         while True:
             self.buf = raw_input(self.prompt)
+            if len(self.buf) >= 1024:
+                print "[!] buf size to long!"
+                continue
             if self.buf == "exit":
                 break
             elif self.buf == "help":
@@ -40,6 +43,7 @@ class server():
             elif "get-file" in self.buf:
                 with open(self.buf[9:], 'wb') as f:
                     data = client_sock.recv(4096)
+                    print data
                     while(data):
                         if str(data) != -1:
                             f.write(data)

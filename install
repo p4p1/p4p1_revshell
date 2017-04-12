@@ -55,6 +55,11 @@ function build_p4p1() {
 
 }
 
+function web() {
+	printf "\e[;31m[!]Function for the dev!\n\e[;0m"
+        cp p4p1.exe /Library/WebServer/Documents/
+}
+
 function install_p4p1() {
 
 	OS_X_LIB=/Library/Python/2.7/site-packages/
@@ -115,29 +120,33 @@ if [ -z "$*" ]; then
 
 else
 
-		if [[ "$1" = "-r" ]]; then
+	if [[ "$1" = "-r" ]]; then
 
-			if [[ "$OS" = "Darwin" ]]; then
+		if [[ "$OS" = "Darwin" ]]; then
 
-				rm -rf /usr/local/bin/p4p1.pyc
-				rm -rf /usr/local/bin/p4p1
-				printf "\e[;32m[*] Removed p4p1.\n\e[;0m"
+			rm -rf /usr/local/bin/p4p1.pyc
+			rm -rf /usr/local/bin/p4p1
+			printf "\e[;32m[*] Removed p4p1.\n\e[;0m"
 
-			fi
+		fi
 
-		elif [[ "$1" = "-c" ]]; then
+	elif [[ "$1" = "-c" ]]; then
 		
-			printf "[*] You are now editing the p4p1 client, enter the port then the ip\n\e[;0m"
-			printf "\e[;31m[$] PORT :> \e[;0m"
-			read PORT
-			printf "\e[;31m[$] IP :> \e[;0m"
-			read IP
-			update_client $PORT $IP
-			build_p4p1
+		printf "[*] You are now editing the p4p1 client, enter the port then the ip\n\e[;0m"
+		printf "\e[;31m[$] PORT :> \e[;0m"
+		read PORT
+		printf "\e[;31m[$] IP :> \e[;0m"
+		read IP
+		update_client $PORT $IP
+		build_p4p1
 
-		else
+	elif [[ "$1" = "-web" ]];then
 
-			usage 1
+		web
+
+	else
+
+		usage 1
 
 	fi
 fi

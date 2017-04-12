@@ -10,8 +10,6 @@
 #include <fcntl.h>
 #include "default.h"
 
-//#define _DEBUG
-
 /*
 ** Main structure with all of the variables
 ** and important data
