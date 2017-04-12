@@ -38,13 +38,16 @@ class server():
             elif self.buf == "ip":
                 self.buf = self.addr[0]
             elif "get-file" in self.buf:
-                with open(self.buf[9:], 'w') as f:
+                with open(self.buf[9:], 'wb') as f:
                     data = client_sock.recv(4096)
-                    if str(data) != -1:
-                        f.write(bytes(client_sock.recv(4096).split()))
-                        f.close()
-                    else:
-                        print "Error with connection, couldnt open the file on remote device."
+                    while(data):
+                        if str(data) != -1:
+                            f.write(data)
+                            data = client_sock.recv(4096)
+                        else:
+                            print "Error with connection, couldnt open the file on remote device."
+                            break
+                    f.close()
             else:
                 client_sock.send(self.buf)
                 self.log_file.write("command sent : {0}\n".format(self.buf))
