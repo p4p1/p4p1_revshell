@@ -36,7 +36,6 @@ void error(char * msg)			// function used if errors occure
 #ifdef _DEBUG
 void debug(struct main_struct *ms)		// function to print out vars if needed
 {
-	system("dir");
 	printf("-----------------------\n"
 	"Connection status 0 = active\n"
 	"cn = %d\n", ms->cn);

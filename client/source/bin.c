@@ -27,7 +27,7 @@ int exe(struct main_struct *m_s)// execute commands that are unknown to the
 	int i, size, done;
 
 	done = 0;
-	ch = 1;
+    ch = 1;
 	size = 1024;
 	if(cmd_f == NULL) {
 		m_s->buf = malloc((23+strlen(m_s->cmd)) * sizeof(char));	// create a string of size 23

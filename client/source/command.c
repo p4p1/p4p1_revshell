@@ -66,6 +66,7 @@ int get_file(char *fname, int sock)
     int fd_file;
     char buf[4096];
     char temp[strlen(fname)];
+    char file_name[strlen(fname)];
     ssize_t nread, nwritten;
     int i, ii;
 
@@ -73,11 +74,22 @@ int get_file(char *fname, int sock)
         for( i = 9, ii = 0; i < strlen(fname); i++, ii++) {
             temp[ii] = fname[i];
         }
+        if((temp[0] != '.' && temp[1] != '\\') || temp[0] != '\\'){
+            file_name[0] = '.';
+            file_name[1] = '\\';
+            for( i = 2, ii = 0; i < strlen(fname); i++, ii++){
+                file_name[i] = temp[ii];
+            }
+        } else {
+            for( i = 0; i < strlen(fname); i++){
+                file_name[i] = temp[i];
+            }
+        }
     }
     #ifdef _DEBUG
-      printf("get-file file :%s\n", temp);
+        printf("get-file file :%s\n", file_name);
     #endif
-    fd_file = _open(temp, _O_RDONLY);
+    fd_file = _open(file_name, _O_RDONLY);
     if(fd_file < 0)
         return -1;
     while( nread = read(fd_file, buf, sizeof buf), nread > 0)
@@ -85,9 +97,9 @@ int get_file(char *fname, int sock)
         #ifdef _DEBUG
           printf("get-file data: %s\n", buf);
         #endif
-        nwritten = write(sock, buf, nread);
-        if(nwritten != nread) {
-          return -1;
+        nwritten = send(sock, buf, strlen(buf), 0);
+        if(nwritten == SOCKET_ERROR) {
+            return -1;
         }
     }
     _close(fd_file);

