@@ -16,24 +16,23 @@
 */
 
 struct main_struct {
+    int port;
+    int cn;
 
-	int port;
-	int cn;
-	char * ip;
-	char * cmd;
-	char * buf;
+    char * ip;
+    char * cmd;
+    char * buf;
 
-	SOCKET s;
-	WSADATA wsa;
+    SOCKET s;
+    WSADATA wsa;
 
-	struct sockaddr_in server;
-
+    struct sockaddr_in server;
 };
 
 void error(char *);
+void first_line_to_buffer(FILE *, char *);
 #ifdef _DEBUG
 void debug(struct main_struct *);
 #endif
-void first_line_to_buffer(FILE *, char *);
 
 #endif
