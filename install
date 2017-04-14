@@ -22,7 +22,7 @@
 
 #endif
 
-SERVER_P4P1=server/main.py
+SERVER_P4P1=server/p4p1
 SERVER_P4P1_LIB=server/p4p1.pyc
 CLIENT_P4P1=p4p1.exe
 OS=$(uname)
@@ -74,6 +74,8 @@ function install_p4p1() {
 	chmod 755 $SERVER_P4P1
 	if [[ "$OS" = "Darwin" ]]; then
 		mv $SERVER_P4P1 /usr/local/bin/p4p1
+    else
+        cp server/p4p1 /usr/bin/ && cp server/p4p1.pyc /usr/bin
 	fi
 
 
