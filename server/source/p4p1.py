@@ -47,7 +47,7 @@ class server():
                 if "-1" in str(data):
                     print "Error With the file, this error is client side" 
                 else:
-                    with open("download/" + self.buf[9:], 'wb') as f:
+                    with open("/tmp/" + self.buf[9:], 'wb') as f:
                         f.write(data)
                         f.close()
                 self.buf = "[!] File downloaded."
