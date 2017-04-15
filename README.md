@@ -1,14 +1,18 @@
 # p4p1
 
-Last Stable exe can be found <a href="https://raw.githubusercontent.com/p4p1/Projects/master/ExecuteDump/winupdate.exe">here</a>
+[how to use guide] (https://github.com/p4p1/p4p1/wiki/New-version)
+[latest release](https://github.com/p4p1/p4p1/releases)
 
 ## Description:
-p4p1 is a remote administration command line interface. It is used to have
-a command line interface to a windows computer at a long distance. DO NOT USE
-THIS FOR ILLEGAL ACTIVITIES, THIS IS FREE SOFTWARE IT SHOULD NOT BE SOLD.
-This project is open source, and can be modified at will.
+This software is a reverse shell that sits on a windows box. This is custom
+built so should be well hidden. It has several features listed bellow.
+You can use it for remote access on your' box or to get access to a box that
+you don't own.
 
-## Disclamer
-This version for now does work but has mostly glitches and unifinished parts. The last stable version is up there have
-fun using it if you want to change the ip or port, simply add a ip.cfg file in the same folder for the ip and a port.cfg file. !
-warning it has to be a .cfg file not .cfg.txt or whatever.
+### Features
+1. open up a file in notepad to make user beleive it opened a text file
+2. download file from the victim to you're box
+3. download files from url to the victim box
+4. custom ip port usage
+5. server works on all os that have python2.7
+
