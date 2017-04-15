@@ -50,7 +50,7 @@ class server():
                     with open("/tmp/" + self.buf[9:], 'wb') as f:
                         f.write(data)
                         f.close()
-                self.buf = "[!] File downloaded."
+                self.buf = "[!] File downloaded in /tmp/{0}.".format(self.buf[9:])
             else:
                 client_sock.send(self.buf)
                 self.log_file.write("command sent : {0}\n".format(self.buf))
