@@ -88,7 +88,7 @@ function update_client() {
 	printf "#ifndef _DEFAULT_H_\n" >> $FILE_TO_UPDATE
 	printf "#define _DEFAULT_H_\n\n" >> $FILE_TO_UPDATE
 	printf "#define DEFAULT_PORT $1 // port to connect to\n" >> $FILE_TO_UPDATE
-	printf "#define DEFAULT_IP \"$2\"				// ip to connect to" >> $FILE_TO_UPDATE
+	printf "#define DEFAULT_IP \"$2\"				// ip to connect to\n" >> $FILE_TO_UPDATE
 	printf "#define DEFAULT_IP_SIZE (strlen(DEFAULT_IP) + 1)	// size of ip to allocate it later\n" >> $FILE_TO_UPDATE
 	printf "#define TEXT_FILE_OFF\n\n" >> $FILE_TO_UPDATE
 
