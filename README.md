@@ -1,6 +1,6 @@
 # p4p1
 
-[how to use guide] (https://github.com/p4p1/p4p1/wiki/New-version)
+[how to use guide](https://github.com/p4p1/p4p1/wiki/New-version)
 [latest release](https://github.com/p4p1/p4p1/releases)
 
 ## Description:
