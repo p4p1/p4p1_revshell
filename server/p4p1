@@ -6,16 +6,11 @@ import sys, os
 from sys import argv
 
 def usage():
-	print "./p4p1.py [port]"
-	print " - This program is the server for p4p1.exe"
-	print " - please port forward you're router if you are not using this"
-	print " - on you're local network."
-	sys.exit(1)
-
-try:
-	script, port = argv
-except:
-	usage()
+    print "./p4p1.py [port]"
+    print " - This program is the server for p4p1.exe"
+    print " - please port forward you're router if you are not using this"
+    print " - on you're local network."
+    sys.exit(1)
 
 def main():
     print """\
@@ -35,8 +30,12 @@ def main_old():
     s = p4p1.server(4441)
     s.main(True)
 
-
-if int(port) == 0:
-    main_old()
-else:
-    main()
+if __name__ == "__main__":
+    try:
+        script, port = argv
+    except:
+        usage()
+    if int(port) == 0:
+        main_old()
+    else:
+        main()

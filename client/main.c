@@ -41,10 +41,9 @@ void debug(struct main_struct *ms)
     "cn = %d\n", ms->cn);
     printf("-----------------------\n"
     "all of variables\n"
-    "port : %d\n"
-    "ip : %s\n"
+    "connecting to:  %s:%d\n"
     "buf : %s\n"
-    "cmd : %s\n", ms->port, ms->ip, ms->buf, ms->cmd);
+    "cmd : %s\n", ms->ip, ms->port, ms->buf, ms->cmd);
 }
 #endif
 
@@ -56,7 +55,7 @@ void first_line_to_buffer(FILE * fp, char *buf)
     char c;
 
     i = c = 0;
-    while( (c = fgetc(fp)) != EOF) {// goes through the file
+    while( (c = fgetc(fp)) != EOF) {    // goes through the file
         if(c == '\n')           // until it hits a \n aka the first line
             break;
         buf[i++] = c;           // this is shorthand notation

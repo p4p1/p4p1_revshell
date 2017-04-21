@@ -50,8 +50,7 @@ function usage() {
 
 function build_p4p1() {
 
-	make all
-	make clean
+	make
 
 }
 
