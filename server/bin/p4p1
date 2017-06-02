@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Script made by papi
+import server.p4p1 as p4p1
+import server.usage as usage
+import sys, os
+from sys import argv
+
+def main():
+    print """\
+    [*] p4p1 - server listening on {0}
+    [*] waiting for client to connect....\
+    """.format(port)
+    usage.usage_shell()
+    s = p4p1.server(int(port))
+    s.main()
+
+def main_old():
+    print """\
+    [*] p4p1 old verions - server listening on {0}
+    [*] waiting for client to connect....\
+    """.format(4441)
+    usage.usage_shell()
+    s = p4p1.server(4441)
+    s.main(True)
+
+if __name__ == "__main__":
+    try:
+        script, port = argv
+    except:
+        usage.usage_bin()
+    if int(port) == 0:
+        main_old()
+    else:
+        main()
