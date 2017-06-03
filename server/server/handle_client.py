@@ -14,6 +14,7 @@ class client_handler():
 
     def __init__(self, sock, ip):
         self.log_file = open("/tmp/p4p1_server.log", "a")
+        self.prompt = '<p4p1 |%s| />' % ip
         self.addr = ip
         self.sock = sock
         self.buf = ""
