@@ -1,7 +1,6 @@
 import os,sys
 import socket, server.usage as usage, server.handle_client as handle_client
 import threading
-import multiprocessing
 
 class server():
 
@@ -31,6 +30,12 @@ class server():
         s.connect(('127.0.0.1', self.port))
         s.close()
 
+    def send_all(self, msg):
+        for ip in self.client:
+            self.client_data[ip][0].send(msg)
+            data = self.client_data[ip][0].recv(4096)
+            print data
+
     def main(self, old=False):
         accept = threading.Thread(target=self.accept, args=(old, ))
         accept.start()
@@ -39,7 +44,7 @@ class server():
             if buf == 'list':
                 for i in self.client:
                     print i
-            if "connect" in buf:
+            elif "connect" in buf:
                 b = buf.split(' ')
                 if b[1] in self.client:
                     hd = handle_client.client_handler(self.client_data[b[1]][0], self.client_data[b[1]][1])
@@ -49,6 +54,10 @@ class server():
                         hd.handle_old_client()
                 else:
                     print "[!] Client non existant!"
+            elif "sendall" in buf:
+                b = buf.split(' ')
+                if len(b) > 1:
+                    self.send_all(' '.join(b[1:]))
             elif buf == 'exit':
                 self.on = False
                 self.close_connection()
