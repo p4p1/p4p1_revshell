@@ -40,7 +40,14 @@ class server():
         accept = threading.Thread(target=self.accept, args=(old, ))
         accept.start()
         while True:
-            buf = raw_input(self.prompt)
+            try:
+                buf = raw_input(self.prompt)
+            except EOFError:
+                print
+                self.on = False
+                self.close_connection()
+                accept.join()
+                break
             if buf == 'list':
                 for i in self.client:
                     print i
