@@ -13,7 +13,7 @@
 #define _DEBUG
 
 #if defined(TEXT_FILE_ON)
-	#define TEXT_CONTENT "credit card information:"
-	#define FILE_NAME "NAME_O_FILE.TXT"
+	#define TEXT_CONTENT "helloWorld"
+	#define FILE_NAME "nameofthefile.txt"
 #endif
 #endif
