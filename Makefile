@@ -8,53 +8,47 @@
 # p4p1.exe should then be compiled
 #
 # On windows please use gcc instead
+
 CC=i686-w64-mingw32-gcc
-WIN_CC=gcc
-FLAGS=-lwsock32 -Wall
+FLAGS=-Wall -Wextra -I./include
+LFLAGS=-lwsock32
 SERVER_EXEC=cd server; ./main.py 4441
 EXEC=p4p1.exe
 
-HEADER=client/header/bin.h\
-	client/header/setup.h\
-	client/header/command.h\
-	client/header/win_api.h\
-	client/header/network.h\
-	client/header/reverse.h\
+HEADER=client/header/bin.h								\
+	client/header/setup.h								\
+	client/header/command.h								\
+	client/header/win_api.h								\
+	client/header/network.h								\
+	client/header/reverse.h								\
 	client/main.h
 
-EXECUTION_SOURCE=client/source/command.c\
-	client/source/bin.c\
-	client/source/reverse.c
+SRC_PATH=$(realpath ./src)
+SRC=$(SRC_PATH)/source/command.c								\
+		$(SRC_PATH)/source/bin.c								\
+		$(SRC_PATH)/source/reverse.c							\
+		$(SRC_PATH)/source/setup.c							\
+		$(SRC_PATH)/source/win_api.c							\
+		$(SRC_PATH)/source/network.c							\
+		$(SRC_PATH)/main.c
 
-SETUP_SOURCE=client/source/setup.c\
-	client/source/win_api.c
+OBJ=$(SRC:.c=.o)
 
-NETWORKING_SOURCE=client/source/network.c
-
-MAIN_SOURCE=client/main.c
-
-SOURCE=$(MAIN_SOURCE)\
-	$(NETWORKING_SOURCE)\
-	$(SETUP_SOURCE)\
-	$(EXECUTION_SOURCE)
-
-OBJECTS=$(SOURCE:.c=.o)
-
-all: buildp4p1 clean
+all: $(OBJ)
+	$(CC) $(OBJ) $(FLAGS) -o $(EXEC) $(LFLAGS)
 
 run:
 	$(SERVER_EXEC)
 
-buildp4p1: $(OBJECTS)
-	$(CC) $(OBJECTS) $(FLAGS) -o $(EXEC)
-
-.c.o:	$(HEADER) $(SOURCE)
+.c.o:	$(HEADER) $(SRC)
 	$(CC) $(FLAGS) -o $@ -c $<
 
-.PHONY: clean
+clean:	$(OBJ)
+	rm -rf $(OBJ)
 
-clean:	$(OBJECTS)
-	rm -rf $(OBJECTS)
-
-mrproper:
+fclean:	clean
 	rm -rf $(EXEC)
+
+re:	fclean all
+
+.PHONY: clean re fclean
